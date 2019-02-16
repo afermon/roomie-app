@@ -1,4 +1,4 @@
-package com.cosmicode.roomie.auth.dto;
+package com.cosmicode.roomie.domain;
 
 public class User {
 

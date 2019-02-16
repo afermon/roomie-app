@@ -1,9 +1,9 @@
-package com.cosmicode.roomie.auth.dto.api;
+package com.cosmicode.roomie.domain;
 
 /*import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)*/
-public class AccountResponseDto {
+public class AccountResponse {
 
     private int id;
     private String login;

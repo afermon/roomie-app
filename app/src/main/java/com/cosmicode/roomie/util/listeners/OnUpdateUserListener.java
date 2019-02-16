@@ -1,6 +1,6 @@
-package com.cosmicode.roomie.auth.listeners;
+package com.cosmicode.roomie.util.listeners;
 
-import com.cosmicode.roomie.auth.dto.User;
+import com.cosmicode.roomie.domain.User;
 
 public interface OnUpdateUserListener {
     void onUpdateUserSuccess(User user);

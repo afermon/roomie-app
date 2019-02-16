@@ -1,7 +1,7 @@
-package com.cosmicode.roomie.auth.dto.api;
+package com.cosmicode.roomie.domain;
 
 
-public class RegisterDto {
+public class Register {
 
     private String firstName;
     private String lastName;
@@ -11,10 +11,10 @@ public class RegisterDto {
     private String langKey;
     private String login;
 
-    public RegisterDto(){
+    public Register(){
         //Needed for jackson
     }
-    public RegisterDto(String login, String firstName, String lastName, String email, String phoneNumber, String password, String langKey){
+    public Register(String login, String firstName, String lastName, String email, String phoneNumber, String password, String langKey){
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;

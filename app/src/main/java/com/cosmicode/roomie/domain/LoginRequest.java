@@ -1,14 +1,14 @@
-package com.cosmicode.roomie.auth.dto.api;
+package com.cosmicode.roomie.domain;
 
-public class LoginDto {
+public class LoginRequest {
 
     private String password;
     private String username;
 
-    public LoginDto(){
+    public LoginRequest(){
         //Needed for jackson
     }
-    public LoginDto(String username, String password){
+    public LoginRequest(String username, String password){
         this.username = username;
         this.password = password;
     }

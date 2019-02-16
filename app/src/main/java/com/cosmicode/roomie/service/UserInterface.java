@@ -1,15 +1,15 @@
-package com.cosmicode.roomie.auth;
+package com.cosmicode.roomie.service;
 
-import com.cosmicode.roomie.auth.dto.User;
-import com.cosmicode.roomie.auth.listeners.OnChangePasswordListener;
-import com.cosmicode.roomie.auth.listeners.OnLoginListener;
-import com.cosmicode.roomie.auth.listeners.OnLoginStatusListener;
-import com.cosmicode.roomie.auth.listeners.OnRecoverPasswordRequestListener;
-import com.cosmicode.roomie.auth.listeners.OnRegisterListener;
-import com.cosmicode.roomie.auth.listeners.OnUpdateUserListener;
-import com.cosmicode.roomie.auth.listeners.OnUserAvailableListener;
+import com.cosmicode.roomie.domain.User;
+import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
+import com.cosmicode.roomie.util.listeners.OnLoginListener;
+import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
+import com.cosmicode.roomie.util.listeners.OnRecoverPasswordRequestListener;
+import com.cosmicode.roomie.util.listeners.OnRegisterListener;
+import com.cosmicode.roomie.util.listeners.OnUpdateUserListener;
+import com.cosmicode.roomie.util.listeners.OnUserAvailableListener;
 
-public interface JhiUsers {
+public interface UserInterface {
 
     boolean isLoginSaved();
 

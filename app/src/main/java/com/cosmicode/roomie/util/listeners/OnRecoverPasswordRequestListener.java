@@ -1,4 +1,4 @@
-package com.cosmicode.roomie.auth.listeners;
+package com.cosmicode.roomie.util.listeners;
 
 public interface OnRecoverPasswordRequestListener {
     void onRecoverPasswordSuccess();

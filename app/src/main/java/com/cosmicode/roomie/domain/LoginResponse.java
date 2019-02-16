@@ -1,9 +1,9 @@
-package com.cosmicode.roomie.auth.dto.api;
+package com.cosmicode.roomie.domain;
 
-public class LoginResponseDto {
+public class LoginResponse {
     public String id_token;
 
-    public LoginResponseDto(){
+    public LoginResponse(){
 
     }
 

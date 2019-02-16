@@ -1,6 +1,6 @@
-package com.cosmicode.roomie.auth.dto.api;
+package com.cosmicode.roomie.domain;
 
-public class AccountRequestDto {
+public class AccountRequest {
 
     private boolean activated;
     private String email;
@@ -10,7 +10,7 @@ public class AccountRequestDto {
     private String lastName;
     private String login;
 
-    public AccountRequestDto(boolean activated, String email, String firstName, String imageUrl, String langKey, String lastName, String login) {
+    public AccountRequest(boolean activated, String email, String firstName, String imageUrl, String langKey, String lastName, String login) {
         this.activated = activated;
         this.email = email;
         this.firstName = firstName;
@@ -20,7 +20,7 @@ public class AccountRequestDto {
         this.login = login;
     }
 
-    public AccountRequestDto() {
+    public AccountRequest() {
         //NEEDED FOR JACKSON
     }
 
