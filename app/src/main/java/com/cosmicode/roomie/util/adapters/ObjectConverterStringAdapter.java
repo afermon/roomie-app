@@ -1,4 +1,4 @@
-package com.cosmicode.roomie.viewadapters;
+package com.cosmicode.roomie.util.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -6,11 +6,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.cosmicode.roomie.domain.LoginRequest;
+import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.User;
-import com.cosmicode.roomie.domain.AccountRequest;
-import com.cosmicode.roomie.domain.AccountResponse;
-import com.cosmicode.roomie.domain.LoginResponse;
+import com.cosmicode.roomie.domain.Authorization;
 import com.cosmicode.roomie.domain.Register;
 import com.cosmicode.roomie.util.ApiServiceGenerator;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
@@ -63,17 +61,17 @@ public class UserService implements UserInterface {
 
     @Override
     public void login(final String login, final String password, final OnLoginListener listener) {
-        LoginRequest loginRequest = new LoginRequest(login,password);
+        Authorization authorization = new Authorization(login,password, true);
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
-        Call<LoginResponse> call = apiService.postLogin(loginRequest);
+        Call<Authorization> call = apiService.postLogin(authorization);
 
-        call.enqueue(new Callback<LoginResponse>() {
+        call.enqueue(new Callback<Authorization>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getId_token();
+                    authToken= response.body().getIdToken();
 
                     listener.onLoginSuccess();
                     if(statusListener!=null){
@@ -85,13 +83,13 @@ public class UserService implements UserInterface {
                     loadUser();
 
                 } else {
-                    Log.e("Core","LoginRequest error");
+                    Log.e("Core","Login Request error");
                     listener.onLoginError(response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(Call<Authorization> call, Throwable t) {
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
             }
@@ -132,11 +130,11 @@ public class UserService implements UserInterface {
 
             UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class, authToken);
 
-            Call<AccountResponse> call = apiService.getAccount();
+            Call<JhiAccount> call = apiService.getAccount();
 
-            call.enqueue(new Callback<AccountResponse>() {
+            call.enqueue(new Callback<JhiAccount>() {
                 @Override
-                public void onResponse(Call<AccountResponse> call, Response<AccountResponse> response) {
+                public void onResponse(Call<JhiAccount> call, Response<JhiAccount> response) {
                     if (response.code() == 200) { // Login OK
                         onUserResponse(response.body());
 
@@ -148,7 +146,7 @@ public class UserService implements UserInterface {
                 }
 
                 @Override
-                public void onFailure(Call<AccountResponse> call, Throwable t) {
+                public void onFailure(Call<JhiAccount> call, Throwable t) {
                     Toast.makeText(context, "Something went wrong!",
                             Toast.LENGTH_LONG).show();
                     synchronized (userLock) {
@@ -160,8 +158,8 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public void register(String email, String firstName, String lastName, String password, final OnRegisterListener listener, String phoneNumber) {
-        Register register = new Register(email,firstName,lastName,email, phoneNumber, password, Locale.getDefault().getLanguage());
+    public void register(String email, String firstName, String lastName, String password, final OnRegisterListener listener) {
+        Register register = new Register(email,firstName,lastName,email, password, Locale.getDefault().getLanguage());
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
@@ -203,11 +201,11 @@ public class UserService implements UserInterface {
 
     @Override
     public void update(final User user, final OnUpdateUserListener listener) {
-        AccountRequest request = new AccountRequest(true,user.getEmail(),user.getFirstName(),null, Locale.getDefault().getLanguage(), user.getLastName(),user.getLogin());
+        JhiAccount account = new JhiAccount(true,user.getEmail(),user.getFirstName(),null, Locale.getDefault().getLanguage(), user.getLastName(),user.getLogin());
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class, authToken);
 
-        Call<Void> call = apiService.postAccountUpdate(request);
+        Call<Void> call = apiService.postAccountUpdate(account);
 
         call.enqueue(new Callback<Void>() {
             @Override
@@ -307,13 +305,13 @@ public class UserService implements UserInterface {
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
-        Call<LoginResponse> call = apiService.postLoginFacebook(token);
+        Call<Authorization> call = apiService.postLoginFacebook(token);
 
-        call.enqueue(new Callback<LoginResponse>() {
+        call.enqueue(new Callback<Authorization>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getId_token();
+                    authToken= response.body().getIdToken();
 
                     listener.onLoginSuccess();
                     if(statusListener!=null){
@@ -325,23 +323,23 @@ public class UserService implements UserInterface {
                     loadUser();
 
                 } else {
-                    Log.e("Core","LoginRequest error");
+                    Log.e("Core","Login Request error");
                     listener.onLoginError(response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(Call<Authorization> call, Throwable t) {
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void onUserResponse(AccountResponse response) {
+    private void onUserResponse(JhiAccount account) {
         synchronized (userLock) {
             gettingUser = false;
-            user = new User(response.getLogin(),response.getEmail(),response.getFirstName(),response.getLastName(),response.getPhoneNumber());
+            user = new User(account.getLogin(),account.getEmail(),account.getFirstName(),account.getLastName());
             for (OnUserAvailableListener listener : userListeners) {
                 listener.onUserAvailable(user);
             }
@@ -354,13 +352,13 @@ public class UserService implements UserInterface {
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
-        Call<LoginResponse> call = apiService.postLoginGoogle(token);
+        Call<Authorization> call = apiService.postLoginGoogle(token);
 
-        call.enqueue(new Callback<LoginResponse>() {
+        call.enqueue(new Callback<Authorization>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getId_token();
+                    authToken= response.body().getIdToken();
 
                     listener.onLoginSuccess();
                     if(statusListener!=null){
@@ -372,13 +370,13 @@ public class UserService implements UserInterface {
                     loadUser();
 
                 } else {
-                    Log.e("Core","LoginRequest error");
+                    Log.e("Core","Login request error");
                     listener.onLoginError(response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(Call<Authorization> call, Throwable t) {
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
             }

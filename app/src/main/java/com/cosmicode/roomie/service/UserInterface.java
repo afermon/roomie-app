@@ -20,7 +20,7 @@ public interface UserInterface {
     void autoLogin(OnLoginListener listener);
 
     void login(String login, String password, OnLoginListener listener);
-    void register(String email, String firstName, String lastName, String password, OnRegisterListener listener, String phoneNumber);
+    void register(String email, String firstName, String lastName, String password, OnRegisterListener listener);
     void logout();
 
     void update(User user, OnUpdateUserListener listener);

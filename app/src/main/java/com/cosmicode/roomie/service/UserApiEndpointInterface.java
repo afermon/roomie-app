@@ -1,9 +1,7 @@
 package com.cosmicode.roomie.service;
 
-import com.cosmicode.roomie.domain.AccountRequest;
-import com.cosmicode.roomie.domain.AccountResponse;
-import com.cosmicode.roomie.domain.LoginRequest;
-import com.cosmicode.roomie.domain.LoginResponse;
+import com.cosmicode.roomie.domain.Authorization;
+import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
 
 import retrofit2.Call;
@@ -12,27 +10,27 @@ import retrofit2.http.*;
 public interface UserApiEndpointInterface {
 
     @POST("authenticate")
-    Call<LoginResponse> postLogin(@Body LoginRequest loginRequest);
+    Call<Authorization> postLogin(@Body Authorization authorization);
 
     @GET("account")
-    Call<AccountResponse> getAccount();
+    Call<JhiAccount> getAccount();
 
     @POST("register")
     Call<Void> postRegister(@Body Register register);
 
     @POST("account")
-    Call<Void> postAccountUpdate(@Body  AccountRequest request);
+    Call<Void> postAccountUpdate(@Body JhiAccount account);
 
     @POST("account/change-password")
     Call<Void> postChangePassword(@Body String newPassword);
 
     @POST("account/reset-password/init")
-    Call<Void> postRecoverPassword(String email);
+    Call<Void> postRecoverPassword(@Body String email);
 
-    @POST("authenticate/appFacebook")
-    Call<LoginResponse> postLoginFacebook(String token);
+    @POST("authenticate/facebook")
+    Call<Authorization> postLoginFacebook(@Body String token);
 
-    @POST("authenticate/appGoogle")
-    Call<LoginResponse> postLoginGoogle(String token);
+    @POST("authenticate/google")
+    Call<Authorization> postLoginGoogle(@Body String token);
 
 }

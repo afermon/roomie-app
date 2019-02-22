@@ -1,22 +1,31 @@
 package com.cosmicode.roomie.domain;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Register {
 
-    private String firstName;
-    private String lastName;
-    private String phoneNumber;
-    private String password;
-    private String email;
-    private String langKey;
+    @SerializedName("login")
+    @Expose
     private String login;
+    @SerializedName("firstName")
+    @Expose
+    private String firstName;
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
+    @SerializedName("email")
+    @Expose
+    private String email;
+    @SerializedName("langKey")
+    @Expose
+    private String langKey;
+    @SerializedName("password")
+    @Expose
+    private String password;
 
-    public Register(){
-        //Needed for jackson
-    }
-    public Register(String login, String firstName, String lastName, String email, String phoneNumber, String password, String langKey){
+    public Register(String login, String firstName, String lastName, String email, String password, String langKey) {
         this.email = email;
-        this.phoneNumber = phoneNumber;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -56,28 +65,35 @@ public class Register {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getFullName() {
-        return getFirstName()+" "+getLastName();
+        return getFirstName() + " " + getLastName();
     }
 
     public String getLogin() {
         return login;
     }
+
     public void setLogin(String login) {
         this.login = login;
     }
+
     public String getLangKey() {
         return langKey;
     }
+
     public void setLangKey(String langKey) {
         this.langKey = langKey;
+    }
+
+    @Override
+    public String toString() {
+        return "Register{" +
+                "login='" + login + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", langKey='" + langKey + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

@@ -1,12 +1,18 @@
 <resources>
     <string name="app_name">Roomie</string>
 
-    <!-- Strings related to facebook login -->
+    <!-- Roomie API -->
+    <string name="roomie_api_server_prod" translatable="false">https://prod-roomie-web.herokuapp.com/api/</string>
+    <string name="roomie_api_server_staging" translatable="false">https://staging-roomie-web.herokuapp.com/api/</string>
+    <string name="roomie_api_server_dev" translatable="false">https://dev-roomie-web.herokuapp.com/api/</string>
+    <string name="roomie_api_server_local" translatable="false">http://10.0.2.1:8080/api/</string>
+
+    <!-- Facebook login -->
     <string name="fb_login_protocol_scheme" translatable="false">fb235433017402895</string>
     <string name="facebook_app_id" translatable="false">235433017402895</string>
 
-    <!-- Strings related to google login -->
-    <string name="default_web_client_id" translatable="false">64621209556-akvj12c1n9ph1pu7rmh61pfq8ho6hr87.apps.googleusercontent.com</string>
+    <!-- Google login -->
+    <string name="default_web_client_id" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
