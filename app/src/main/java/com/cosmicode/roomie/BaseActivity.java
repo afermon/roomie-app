@@ -1,5 +1,6 @@
 package com.cosmicode.roomie;
 
+import android.app.Application;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -9,11 +10,11 @@ import com.cosmicode.roomie.util.Core;
 public class BaseActivity extends AppCompatActivity {
 
     public UserInterface getJhiUsers() {
-        return ((MyApplication)this.getApplication()).getUserInterface();
+        return ((RoomieApplication) this.getApplication()).getUserInterface() ;
     }
 
     public final Core getCore() {
-        return ((MyApplication)this.getApplication()).getCore();
+        return ((RoomieApplication)this.getApplication()).getCore();
     }
 
     public boolean onOptionsItemSelected( MenuItem item) {

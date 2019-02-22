@@ -8,7 +8,7 @@ import com.cosmicode.roomie.service.UserService;
 import com.cosmicode.roomie.util.Core;
 import com.cosmicode.roomie.util.CoreConfiguration;
 
-public class MyApplication extends Application {
+public class RoomieApplication extends Application {
     private UserInterface userInterface;
     private Core core;
     private CoreConfiguration config;
