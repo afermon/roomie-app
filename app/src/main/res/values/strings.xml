@@ -23,8 +23,10 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="action_login_with_facebook">Sign in with Facebook</string>
-    <string name="action_login_with_google">Sign in with Google</string>
+    <string name="action_login_with_facebook">Facebook</string>
+    <string name="action_login_with_google">Google</string>
+    <string name="action_login_with_facebook_long">Sign in with Facebook</string>
+    <string name="action_login_with_google_long">Sign in with Google</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -71,4 +73,9 @@
     <string name="recover_password">Forgot password?</string>
     <string name="recover_password_success">We have sent you an email with password recovery instructions</string>
     <string name="ok">OK</string>
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_notifications">Notifications</string>
+    <string name="bottom_nav_account">Account</string>
+    <string name="bottom_nav_menu">Menu</string>
+    <string name="login_or">Or</string>
 </resources>

@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -58,7 +59,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     private EditText passwordEditText;
     private Button email_sign_in_button, email_sign_in_with_facebook_button, email_sign_in_with_google_button;
     private TextView recover_password_button, email_sign_up_button;
-    private ScrollView login_form;
+    private ConstraintLayout login_form;
     private ProgressBar login_progress;
 
     public static final Intent clearTopIntent(Context from) {
