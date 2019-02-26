@@ -120,7 +120,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
 
     private void facebookSignInSetup() {
         callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, (new FacebookCallback() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback() {
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 if ( accessToken != null && !accessToken.isExpired()) {
@@ -133,15 +133,17 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
             }
 
             public void onCancel() {
+                showProgress(false);
             }
 
             public void onError(FacebookException exception) {
-
+                showProgress(false);
             }
-        }));
+        });
     }
 
     private void loginWithFacebook() {
+        showProgress(true);
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
     }
 
@@ -151,6 +153,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     }
 
     private  void loginWithGoogle() {
+        showProgress(true);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -163,7 +166,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
             if(BuildConfig.DEBUG){
                 Toast.makeText(this,"Google login error "+ e.getMessage(),Toast.LENGTH_SHORT).show();
             }
-            //TODO: show in ui
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
