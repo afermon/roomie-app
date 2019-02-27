@@ -38,14 +38,14 @@ public class ApiServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    public static <S> S createService(Class<S> serviceClass, final String token ) {
-        if ( token != null ) {
+    public static <S> S createService(Class<S> serviceClass, final String token) {
+        if (token != null) {
             httpClient.interceptors().clear();
-            httpClient.addInterceptor( chain -> {
+            httpClient.addInterceptor(chain -> {
                 Request original = chain.request();
                 Request request = original.newBuilder()
                         .header("Authorization", "Bearer " + token)
-                        .header("User-Agent", "RoomieAndroid")
+                        .header("RoomieUser-Agent", "RoomieAndroid")
                         .build();
                 return chain.proceed(request);
             });

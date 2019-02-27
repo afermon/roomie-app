@@ -2,13 +2,14 @@ package com.cosmicode.roomie;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,14 +32,14 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainHomeFragment.newInstance("",""));
+        openFragment(MainHomeFragment.newInstance("", ""));
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()){
+        switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
-                MainHomeFragment homeFragment = MainHomeFragment.newInstance("","");
+                MainHomeFragment homeFragment = MainHomeFragment.newInstance("", "");
                 openFragment(homeFragment);
                 return true;
             case R.id.navigation_view_account:
@@ -48,17 +49,17 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
                 return true;
             case R.id.navigation_view_options:
-                MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("","");
+                MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
                 openFragment(optionsFragment);
                 return true;
             default:
-                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("","");
+                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("", "");
                 openFragment(defaultFragment);
                 return super.onOptionsItemSelected(menuItem);
         }
     }
 
-    private void openFragment(Fragment fragment){
+    private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
@@ -83,8 +84,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         startActivity(LoginActivity.clearTopIntent(this));
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //TODO: replace this with real interface
+    public BaseActivity getBaseActivity() {
+        return this;
     }
+
 }
