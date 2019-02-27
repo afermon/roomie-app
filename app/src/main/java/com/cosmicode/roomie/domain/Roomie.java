@@ -24,6 +24,9 @@ public class Roomie {
     @SerializedName("phone")
     @Expose
     private String phone;
+    @SerializedName("biography")
+    @Expose
+    private String biography;
     @SerializedName("mobileDeviceID")
     @Expose
     private String mobileDeviceID;
@@ -46,12 +49,13 @@ public class Roomie {
     public Roomie() {
     }
 
-    public Roomie(Long id, LocalDate birthDate, String picture, Gender gender, String phone, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
+    public Roomie(Long id, LocalDate birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
         this.id = id;
         this.birthDate = birthDate;
         this.picture = picture;
         this.gender = gender;
         this.phone = phone;
+        this.biography = biography;
         this.mobileDeviceID = mobileDeviceID;
         this.userId = userId;
         this.stateId = stateId;
@@ -148,5 +152,12 @@ public class Roomie {
         this.lifestyles = lifestyles;
     }
 
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
 }
 
