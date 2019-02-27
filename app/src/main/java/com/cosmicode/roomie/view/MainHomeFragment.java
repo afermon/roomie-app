@@ -1,12 +1,16 @@
-package com.cosmicode.roomie;
+package com.cosmicode.roomie.view;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.RoomieUser;
 
 
 /**
@@ -67,13 +71,6 @@ public class MainHomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_main_home, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -91,6 +88,17 @@ public class MainHomeFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mListener != null)
+            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> updateUserTestInfo(user));
+    }
+
+    public void updateUserTestInfo(RoomieUser roomieUser) {
+        TextView textView = getView().findViewById(R.id.home_test_textview);
+        textView.setText(roomieUser.toString());
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -102,7 +110,6 @@ public class MainHomeFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
     }
 }

@@ -6,11 +6,10 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.cosmicode.roomie.domain.JhiAccount;
-import com.cosmicode.roomie.domain.User;
 import com.cosmicode.roomie.domain.Authorization;
+import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
-import com.cosmicode.roomie.util.network.ApiServiceGenerator;
+import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
@@ -18,6 +17,7 @@ import com.cosmicode.roomie.util.listeners.OnRecoverPasswordRequestListener;
 import com.cosmicode.roomie.util.listeners.OnRegisterListener;
 import com.cosmicode.roomie.util.listeners.OnUpdateUserListener;
 import com.cosmicode.roomie.util.listeners.OnUserAvailableListener;
+import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,8 @@ public class UserService implements UserInterface {
     private final Handler handler;
     private final boolean keepLogedIn;
     private final SharedPreferences preferences;
-    private String authToken="";
-    private User user;
+    private String authToken = "";
+    private RoomieUser roomieUser;
 
     private final Object userLock = new Object();
     private boolean gettingUser = false;
@@ -48,11 +48,11 @@ public class UserService implements UserInterface {
 
     private Context context;
 
-    public static UserInterface with(Context context, String serverUrl, boolean keepLogedIn, SharedPreferences preferences){
+    public static UserInterface with(Context context, String serverUrl, boolean keepLogedIn, SharedPreferences preferences) {
         return new UserService(context, keepLogedIn, preferences);
     }
 
-    private UserService(Context context, boolean keepLogedIn, SharedPreferences preferences){
+    private UserService(Context context, boolean keepLogedIn, SharedPreferences preferences) {
         this.keepLogedIn = keepLogedIn;
         this.preferences = preferences;
         this.handler = new Handler();
@@ -61,7 +61,7 @@ public class UserService implements UserInterface {
 
     @Override
     public void login(final String login, final String password, final OnLoginListener listener) {
-        Authorization authorization = new Authorization(login,password, true);
+        Authorization authorization = new Authorization(login, password, true);
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
@@ -71,19 +71,19 @@ public class UserService implements UserInterface {
             @Override
             public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getIdToken();
+                    authToken = response.body().getIdToken();
 
                     listener.onLoginSuccess();
-                    if(statusListener!=null){
+                    if (statusListener != null) {
                         statusListener.onLogin(authToken);
                     }
-                    if(keepLogedIn){
-                        saveLogin(login,password);
+                    if (keepLogedIn) {
+                        saveLogin(login, password);
                     }
                     loadUser();
 
                 } else {
-                    Log.e("Core","Login Request error");
+                    Log.e("Core", "Login Request error");
                     listener.onLoginError(response.message());
                 }
             }
@@ -98,35 +98,37 @@ public class UserService implements UserInterface {
 
     private void saveLogin(String login, String password) {
         preferences.edit()
-                .putString(USERNAME_PREF,login)
-                .putString(PASSWORD_PREF,password)
+                .putString(USERNAME_PREF, login)
+                .putString(PASSWORD_PREF, password)
                 .apply();
     }
 
     @Override
     public boolean isLoginSaved() {
-        return preferences.getString(USERNAME_PREF,null)!=null;
+        return preferences.getString(USERNAME_PREF, null) != null;
     }
+
     @Override
-    public boolean isGoogleLoginSaved(){
-        return preferences.getBoolean(GOOGLE_SAVED_PREF,false);
+    public boolean isGoogleLoginSaved() {
+        return preferences.getBoolean(GOOGLE_SAVED_PREF, false);
     }
+
     @Override
-    public boolean isFacebookLoginSaved(){
-        return preferences.getBoolean(FACEBOOK_SAVED_PREF,false);
+    public boolean isFacebookLoginSaved() {
+        return preferences.getBoolean(FACEBOOK_SAVED_PREF, false);
     }
 
     @Override
     public void autoLogin(OnLoginListener listener) {
-        login(preferences.getString(USERNAME_PREF,null),preferences.getString(PASSWORD_PREF,null),listener);
+        login(preferences.getString(USERNAME_PREF, null), preferences.getString(PASSWORD_PREF, null), listener);
     }
 
     private void loadUser() {
         synchronized (userLock) {
-            if(gettingUser) {
+            if (gettingUser) {
                 return;
             }
-            gettingUser=true;
+            gettingUser = true;
 
             UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class, authToken);
 
@@ -159,7 +161,7 @@ public class UserService implements UserInterface {
 
     @Override
     public void register(String email, String firstName, String lastName, String password, final OnRegisterListener listener) {
-        Register register = new Register(email,firstName,lastName,email, password, Locale.getDefault().getLanguage());
+        Register register = new Register(email, firstName, lastName, email, password, Locale.getDefault().getLanguage());
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
@@ -172,7 +174,7 @@ public class UserService implements UserInterface {
                     listener.onRegisterSuccess();
 
                 } else {
-                    Log.e(TAG,"Register error");
+                    Log.e(TAG, "Register error");
                     listener.onRegisterError(response.message());
                 }
             }
@@ -187,21 +189,21 @@ public class UserService implements UserInterface {
 
     @Override
     public void logout() {
-        synchronized (userLock){
-            user = null;
+        synchronized (userLock) {
+            roomieUser = null;
             gettingUser = false;
         }
         authToken = null;
-        if(statusListener!=null){
+        if (statusListener != null) {
             statusListener.onLogout();
         }
-        saveLogin(null,null);
-        preferences.edit().putBoolean(GOOGLE_SAVED_PREF,false).putBoolean(FACEBOOK_SAVED_PREF,false).apply();
+        saveLogin(null, null);
+        preferences.edit().putBoolean(GOOGLE_SAVED_PREF, false).putBoolean(FACEBOOK_SAVED_PREF, false).apply();
     }
 
     @Override
-    public void update(final User user, final OnUpdateUserListener listener) {
-        JhiAccount account = new JhiAccount(true,user.getEmail(),user.getFirstName(),null, Locale.getDefault().getLanguage(), user.getLastName(),user.getLogin());
+    public void update(final RoomieUser roomieUser, final OnUpdateUserListener listener) {
+        JhiAccount account = new JhiAccount(true, roomieUser.getEmail(), roomieUser.getFirstName(), null, Locale.getDefault().getLanguage(), roomieUser.getLastName(), roomieUser.getLogin());
 
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class, authToken);
 
@@ -211,13 +213,13 @@ public class UserService implements UserInterface {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.code() == 200) { // OK
-                    synchronized (userLock){
-                        UserService.this.user = user;
+                    synchronized (userLock) {
+                        UserService.this.roomieUser = roomieUser;
                     }
-                    listener.onUpdateUserSuccess(user);
+                    listener.onUpdateUserSuccess(roomieUser);
 
                 } else {
-                    Log.e(TAG,"Update error");
+                    Log.e(TAG, "Update error");
                     listener.onUpdateUserError("");
                 }
             }
@@ -243,7 +245,7 @@ public class UserService implements UserInterface {
                 if (response.code() == 200) { // OK
                     listener.onChangePasswordSuccess();
                 } else {
-                    Log.e(TAG,"Password error");
+                    Log.e(TAG, "Password error");
                     listener.onChangePasswordError("");
                 }
             }
@@ -270,7 +272,7 @@ public class UserService implements UserInterface {
                     listener.onRecoverPasswordSuccess();
                 } else {
                     // 400 email does not exist
-                    Log.e(TAG,"Recover error: " + response.code());
+                    Log.e(TAG, "Recover error: " + response.code());
                     listener.onRecoverPasswordError("");
                 }
             }
@@ -285,11 +287,10 @@ public class UserService implements UserInterface {
 
     @Override
     public void getLogedUser(OnUserAvailableListener listener) {
-        synchronized (userLock){
-            if(user!=null){
-                listener.onUserAvailable(user);
-            }
-            else{
+        synchronized (userLock) {
+            if (roomieUser != null) {
+                listener.onUserAvailable(roomieUser);
+            } else {
                 loadUser();
                 userListeners.add(listener);
             }
@@ -312,19 +313,19 @@ public class UserService implements UserInterface {
             @Override
             public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getIdToken();
+                    authToken = response.body().getIdToken();
 
                     listener.onLoginSuccess();
-                    if(statusListener!=null){
+                    if (statusListener != null) {
                         statusListener.onLogin(authToken);
                     }
-                    if(keepLogedIn) {
+                    if (keepLogedIn) {
                         saveFacebookLogin();
                     }
                     loadUser();
 
                 } else {
-                    Log.e("Core","Login Request error");
+                    Log.e("Core", "Login Request error");
                     listener.onLoginError(response.message());
                 }
             }
@@ -340,9 +341,9 @@ public class UserService implements UserInterface {
     private void onUserResponse(JhiAccount account) {
         synchronized (userLock) {
             gettingUser = false;
-            user = new User(account.getLogin(),account.getEmail(),account.getFirstName(),account.getLastName());
+            roomieUser = new RoomieUser(account.getLogin(), account.getEmail(), account.getFirstName(), account.getLastName());
             for (OnUserAvailableListener listener : userListeners) {
-                listener.onUserAvailable(user);
+                listener.onUserAvailable(roomieUser);
             }
             userListeners.clear();
         }
@@ -359,19 +360,19 @@ public class UserService implements UserInterface {
             @Override
             public void onResponse(Call<Authorization> call, Response<Authorization> response) {
                 if (response.code() == 200) { // Login OK
-                    authToken= response.body().getIdToken();
+                    authToken = response.body().getIdToken();
 
                     listener.onLoginSuccess();
-                    if(statusListener!=null){
+                    if (statusListener != null) {
                         statusListener.onLogin(authToken);
                     }
-                    if(keepLogedIn) {
+                    if (keepLogedIn) {
                         saveGoogleLogin();
                     }
                     loadUser();
 
                 } else {
-                    Log.e("Core","Login request error");
+                    Log.e("Core", "Login request error");
                     listener.onLoginError(response.message());
                 }
             }
@@ -385,11 +386,11 @@ public class UserService implements UserInterface {
     }
 
     private void saveGoogleLogin() {
-        preferences.edit().putBoolean(GOOGLE_SAVED_PREF,true).apply();
+        preferences.edit().putBoolean(GOOGLE_SAVED_PREF, true).apply();
     }
 
     private void saveFacebookLogin() {
-        preferences.edit().putBoolean(FACEBOOK_SAVED_PREF,true).apply();
+        preferences.edit().putBoolean(FACEBOOK_SAVED_PREF, true).apply();
     }
 
     @Override

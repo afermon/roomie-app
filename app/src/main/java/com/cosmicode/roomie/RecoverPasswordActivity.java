@@ -11,10 +11,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -33,7 +33,7 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class RecoverPasswordActivity extends BaseActivity  implements LoaderCallbacks, OnRecoverPasswordRequestListener {
+public class RecoverPasswordActivity extends BaseActivity implements LoaderCallbacks, OnRecoverPasswordRequestListener {
 
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final int RC_SIGN_IN = 175;
@@ -131,7 +131,8 @@ public class RecoverPasswordActivity extends BaseActivity  implements LoaderCall
 
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
-        if (checkSelfPermission("android.permission.READ_CONTACTS") == PackageManager.PERMISSION_GRANTED) return true;
+        if (checkSelfPermission("android.permission.READ_CONTACTS") == PackageManager.PERMISSION_GRANTED)
+            return true;
         if (shouldShowRequestPermissionRationale("android.permission.READ_CONTACTS"))
             Snackbar.make(emailAutoCompeteView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, v -> requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS));
@@ -180,26 +181,26 @@ public class RecoverPasswordActivity extends BaseActivity  implements LoaderCall
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        recoverForm.setVisibility(((show)? View.GONE : View.VISIBLE ));
+        recoverForm.setVisibility(((show) ? View.GONE : View.VISIBLE));
 
         recoverForm.animate()
                 .setDuration(shortAnimTime)
-                .alpha((float)((show) ? 0 : 1))
+                .alpha((float) ((show) ? 0 : 1))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        recoverForm.setVisibility(((show)? View.GONE : View.VISIBLE ));
+                        recoverForm.setVisibility(((show) ? View.GONE : View.VISIBLE));
                     }
                 });
 
-        recoverProgress.setVisibility(((show)? View.VISIBLE : View.GONE ));
+        recoverProgress.setVisibility(((show) ? View.VISIBLE : View.GONE));
         recoverProgress.animate()
                 .setDuration(shortAnimTime)
-                .alpha((float)((show) ? 1 : 0))
+                .alpha((float) ((show) ? 1 : 0))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        recoverProgress.setVisibility(((show)? View.VISIBLE : View.GONE ));
+                        recoverProgress.setVisibility(((show) ? View.VISIBLE : View.GONE));
                     }
                 });
     }
@@ -209,7 +210,7 @@ public class RecoverPasswordActivity extends BaseActivity  implements LoaderCall
         Cursor cursor = (Cursor) pCursor;
         ArrayList emails = new ArrayList();
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(RecoverPasswordActivity.ProfileQuery.INSTANCE.getADDRESS()));
             cursor.moveToNext();
         }
