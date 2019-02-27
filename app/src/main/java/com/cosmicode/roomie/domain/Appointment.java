@@ -12,9 +12,9 @@ public class Appointment {
     @Expose
     private Long id;
 
-    @SerializedName("desciption")
+    @SerializedName("description")
     @Expose
-    private String desciption;
+    private String description;
 
     @SerializedName("dateTime")
     @Expose
@@ -36,9 +36,9 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, String desciption, Instant dateTime, AppointmentState state, Long petitionerId, Long roomId) {
+    public Appointment(Long id, String description, Instant dateTime, AppointmentState state, Long petitionerId, Long roomId) {
         this.id = id;
-        this.desciption = desciption;
+        this.description = description;
         this.dateTime = dateTime;
         this.state = state;
         this.petitionerId = petitionerId;
@@ -54,11 +54,11 @@ public class Appointment {
     }
 
     public String getDesciption() {
-        return desciption;
+        return description;
     }
 
-    public void setDesciption(String desciption) {
-        this.desciption = desciption;
+    public void setDesciption(String description) {
+        this.description = description;
     }
 
     public Instant getDateTime() {

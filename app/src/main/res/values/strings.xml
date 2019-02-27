@@ -14,71 +14,83 @@
     <!-- Google login -->
     <string name="default_web_client_id" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
 
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="action_login_with_facebook">Facebook</string>
-    <string name="action_login_with_google">Google</string>
-    <string name="action_login_with_facebook_long">Sign in with Facebook</string>
-    <string name="action_login_with_google_long">Sign in with Google</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-    <string name="loginErrorMsg">Login error</string>
-    <string name="recoverErrorMsg">Error recovering password</string>
-    <string name="registerErrorMsg">Sign up error</string>
-    <string name="title_activity_register">Register</string>
-    <string name="action_sign_up">Don\'t have an account?</string>
-    <string name="action_sign_up_short">Sign up</string>
-    <string name="error_password_not_match">Repeat password not match</string>
-    <string name="prompt_name">Name</string>
-    <string name="prompt_description">Description (Optional)</string>
-    <string name="prompt_number">Number (Optional)</string>
-    <string name="action_save">Save</string>
-    <string name="save_error">Save error</string>
-    <string name="delete_error">Delete error</string>
-    <string name="error_mandatory_field">Mandatory field</string>
-    <string name="account">Account</string>
-    <string name="logout">Logout</string>
-    <string name="error_getting_items">Error getting items</string>
-    <string name="delete">Delete</string>
-    <string name="edit">Edit</string>
-    <string name="cancel">Cancel</string>
-    <string name="sure_to_delete">Are you sure to delete?</string>
-    <string name="dependency_load_error">Error getting resources</string>
-    <string name="title_activity_account">Account</string>
-    <string name="action_change">Change</string>
-    <string name="change_password">Change password</string>
-    <string name="promt_last_name">Last name</string>
-    <string name="promt_first_name">First name</string>
-    <string name="error_invalid_first_name">Invalid first name</string>
-    <string name="error_invalid_last_name">Invalid last name</string>
-    <string name="save_success">Save success</string>
-    <string name="my_account">My account</string>
-    <string name="unknown_error">Unknown Error</string>
-    <string name="error_existing_email">This account is already registered</string>
-    <string name="activate_account_first">Confirm your email first</string>
-    <string name="action_recover">Recover</string>
-    <string name="title_activity_recover_password">Recover password</string>
-    <string name="recover_password">Forgot password?</string>
-    <string name="recover_password_success">We have sent you an email with password recovery instructions</string>
-    <string name="ok">OK</string>
-    <string name="bottom_nav_home">Home</string>
-    <string name="bottom_nav_notifications">Notifications</string>
-    <string name="bottom_nav_account">Account</string>
-    <string name="bottom_nav_menu">Menu</string>
-    <string name="login_or">Or</string>
+    <string name="prompt_email" translatable="false">Email</string>
+    <string name="prompt_password" translatable="false">Password</string>
+    <string name="action_sign_in" translatable="false">Sign in</string>
+    <string name="action_sign_in_short" translatable="false">Sign in</string>
+    <string name="error_invalid_email" translatable="false">This email address is invalid</string>
+    <string name="error_invalid_password" translatable="false">This password is too short</string>
+    <string name="error_incorrect_password" translatable="false">This password is incorrect</string>
+    <string name="error_field_required" translatable="false">This field is required</string>
+    <string name="permission_rationale" translatable="false">"Contacts permissions are needed for providing email completions."</string>
+    <string name="action_login_with_facebook" translatable="false">Facebook</string>
+    <string name="action_login_with_google" translatable="false">Google</string>
+    <string name="action_login_with_facebook_long" translatable="false">Sign in with Facebook</string>
+    <string name="action_login_with_google_long" translatable="false">Sign in with Google</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="loginErrorMsg" translatable="false">Login error</string>
+    <string name="recoverErrorMsg" translatable="false">Error recovering password</string>
+    <string name="registerErrorMsg" translatable="false">Sign up error</string>
+    <string name="title_activity_register" translatable="false">Register</string>
+    <string name="action_sign_up" translatable="false">Don\'t have an account?</string>
+    <string name="action_sign_up_short" translatable="false">Sign up</string>
+    <string name="error_password_not_match" translatable="false">Repeat password not match</string>
+    <string name="prompt_name" translatable="false">Name</string>
+    <string name="prompt_description" translatable="false">Description (Optional)</string>
+    <string name="prompt_number" translatable="false">Number (Optional)</string>
+    <string name="action_save" translatable="false">Save</string>
+    <string name="save_error" translatable="false">Save error</string>
+    <string name="delete_error" translatable="false">Delete error</string>
+    <string name="error_mandatory_field" translatable="false">Mandatory field</string>
+    <string name="account" translatable="false">Account</string>
+    <string name="logout" translatable="false">Logout</string>
+    <string name="error_getting_items" translatable="false">Error getting items</string>
+    <string name="delete" translatable="false">Delete</string>
+    <string name="edit" translatable="false">Edit</string>
+    <string name="cancel" translatable="false">Cancel</string>
+    <string name="sure_to_delete" translatable="false">Are you sure to delete?</string>
+    <string name="dependency_load_error" translatable="false">Error getting resources</string>
+    <string name="title_activity_account" translatable="false">Account</string>
+    <string name="action_change" translatable="false">Change</string>
+    <string name="change_password" translatable="false">Change password</string>
+    <string name="promt_last_name" translatable="false">Last name</string>
+    <string name="promt_first_name" translatable="false">First name</string>
+    <string name="error_invalid_first_name" translatable="false">Invalid first name</string>
+    <string name="error_invalid_last_name" translatable="false">Invalid last name</string>
+    <string name="save_success" translatable="false">Save success</string>
+    <string name="my_account" translatable="false">My account</string>
+    <string name="unknown_error" translatable="false">Unknown Error</string>
+    <string name="error_existing_email" translatable="false">This account is already registered</string>
+    <string name="activate_account_first" translatable="false">Confirm your email first</string>
+    <string name="action_recover" translatable="false">Recover</string>
+    <string name="title_activity_recover_password" translatable="false">Recover password</string>
+    <string name="recover_password" translatable="false">Forgot password?</string>
+    <string name="recover_password_success" translatable="false">We have sent you an email with password recovery instructions</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="bottom_nav_home" translatable="false">Home</string>
+    <string name="bottom_nav_notifications" translatable="false">Notifications</string>
+    <string name="bottom_nav_account" translatable="false">Account</string>
+    <string name="bottom_nav_menu" translatable="false">Menu</string>
+    <string name="login_or" translatable="false">Or</string>
+
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+
+    <!--Profile-->
+    <string name="profile_gender">Gender:</string>
+    <string name="profile_age">Age:</string>
+    <string name="profile_phone">Phone:</string>
+    <string name="profile_city">City:</string>
+    <string name="profile_bio">About me</string>
+    <string name="profile_lifestyle">Lifestyle</string>
+    <string name="profile_location">Location</string>
 </resources>

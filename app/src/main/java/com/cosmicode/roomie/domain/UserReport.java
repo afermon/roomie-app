@@ -16,9 +16,9 @@ public class UserReport {
     @Expose
     private LocalDate date;
 
-    @SerializedName("desciption")
+    @SerializedName("description")
     @Expose
-    private String desciption;
+    private String description;
 
     @SerializedName("type")
     @Expose
@@ -35,10 +35,10 @@ public class UserReport {
     public UserReport() {
     }
 
-    public UserReport(Long id, LocalDate date, String desciption, ReportType type, Long roomieId, Long roomId) {
+    public UserReport(Long id, LocalDate date, String description, ReportType type, Long roomieId, Long roomId) {
         this.id = id;
         this.date = date;
-        this.desciption = desciption;
+        this.description = description;
         this.type = type;
         this.roomieId = roomieId;
         this.roomId = roomId;
@@ -61,11 +61,11 @@ public class UserReport {
     }
 
     public String getDesciption() {
-        return desciption;
+        return description;
     }
 
-    public void setDesciption(String desciption) {
-        this.desciption = desciption;
+    public void setDesciption(String description) {
+        this.description = description;
     }
 
     public ReportType getType() {

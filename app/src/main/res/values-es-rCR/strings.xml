@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">Roomie</string>
+    <string name="profile_gender" translatable="false">Género:</string>
+    <string name="profile_age">Edad:</string>
+    <string name="profile_phone">Teléfono:</string>
+    <string name="profile_city">Ciudad:</string>
+    <string name="profile_bio">Sobre mi</string>
+    <string name="profile_lifestyle">Estilo de vida</string>
+    <string name="profile_location">Ubicación</string>
+</resources>

@@ -16,9 +16,9 @@ public class RoomExpense {
     @Expose
     private String name;
 
-    @SerializedName("desciption")
+    @SerializedName("description")
     @Expose
-    private String desciption;
+    private String description;
 
     @SerializedName("currency")
     @Expose
@@ -51,10 +51,10 @@ public class RoomExpense {
     public RoomExpense() {
     }
 
-    public RoomExpense(Long id, String name, String desciption, CurrencyType currency, Double amount, Integer periodicity, Integer monthDay, LocalDate startDate, LocalDate finishDate, Long roomId) {
+    public RoomExpense(Long id, String name, String description, CurrencyType currency, Double amount, Integer periodicity, Integer monthDay, LocalDate startDate, LocalDate finishDate, Long roomId) {
         this.id = id;
         this.name = name;
-        this.desciption = desciption;
+        this.description = description;
         this.currency = currency;
         this.amount = amount;
         this.periodicity = periodicity;
@@ -81,11 +81,11 @@ public class RoomExpense {
     }
 
     public String getDesciption() {
-        return desciption;
+        return description;
     }
 
-    public void setDesciption(String desciption) {
-        this.desciption = desciption;
+    public void setDesciption(String description) {
+        this.description = description;
     }
 
     public CurrencyType getCurrency() {
