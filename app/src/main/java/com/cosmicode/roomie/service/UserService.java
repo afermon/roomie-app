@@ -10,7 +10,7 @@ import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.User;
 import com.cosmicode.roomie.domain.Authorization;
 import com.cosmicode.roomie.domain.Register;
-import com.cosmicode.roomie.util.ApiServiceGenerator;
+import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
@@ -257,11 +257,11 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public void recoverPassword(String email, final OnRecoverPasswordRequestListener listener) {
-
+    public void recoverPassword(String mail, final OnRecoverPasswordRequestListener listener) {
+        Log.i(TAG, "Recovering password for: ->" + mail + "<-");
         UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
 
-        Call<Void> call = apiService.postRecoverPassword(email);
+        Call<Void> call = apiService.postRecoverPassword(mail);
 
         call.enqueue(new Callback<Void>() {
             @Override
@@ -269,7 +269,8 @@ public class UserService implements UserInterface {
                 if (response.code() == 200) { // OK
                     listener.onRecoverPasswordSuccess();
                 } else {
-                    Log.e(TAG,"Recover error");
+                    // 400 email does not exist
+                    Log.e(TAG,"Recover error: " + response.code());
                     listener.onRecoverPasswordError("");
                 }
             }

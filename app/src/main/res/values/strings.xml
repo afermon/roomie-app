@@ -70,7 +70,7 @@
     <string name="activate_account_first">Confirm your email first</string>
     <string name="action_recover">Recover</string>
     <string name="title_activity_recover_password">Recover password</string>
-    <string name="recover_password">Forgot password?</string>
+    <string name="recover_password">Forgot your password?</string>
     <string name="recover_password_success">We have sent you an email with password recovery instructions</string>
     <string name="ok">OK</string>
     <string name="bottom_nav_home">Home</string>

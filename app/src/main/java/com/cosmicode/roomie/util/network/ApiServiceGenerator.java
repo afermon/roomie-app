@@ -1,4 +1,4 @@
-package com.cosmicode.roomie.util;
+package com.cosmicode.roomie.util.network;
 
 import com.cosmicode.roomie.BuildConfig;
 import com.google.gson.Gson;
