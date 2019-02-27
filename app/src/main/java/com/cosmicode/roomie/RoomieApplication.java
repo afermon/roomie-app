@@ -16,6 +16,12 @@ public class RoomieApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        if (BuildConfig.DEBUG) {
+            this.config = new CoreConfiguration("https://dev-roomie-web.herokuapp.com/api/");
+        } else {
+            this.config = new CoreConfiguration("https://prod-roomie-web.herokuapp.com/api/");
+        }
+
         userInterface = UserService.with(this, config.getServerUrl(), true, this.getSharedPreferences("UserInterface", 0));
         core = new Core(userInterface, config, getSharedPreferences("Core", Context.MODE_PRIVATE));
 

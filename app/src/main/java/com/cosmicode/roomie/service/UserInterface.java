@@ -25,7 +25,7 @@ public interface UserInterface {
 
     void update(User user, OnUpdateUserListener listener);
     void changePassword(String newPassword, OnChangePasswordListener listener);
-    void recoverPassword(String email, OnRecoverPasswordRequestListener listener);
+    void recoverPassword(String mail, OnRecoverPasswordRequestListener listener);
 
     void getLogedUser(OnUserAvailableListener listener);
     String getAuthToken();

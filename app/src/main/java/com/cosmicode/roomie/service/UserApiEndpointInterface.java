@@ -25,7 +25,7 @@ public interface UserApiEndpointInterface {
     Call<Void> postChangePassword(@Body String newPassword);
 
     @POST("account/reset-password/init")
-    Call<Void> postRecoverPassword(@Body String email);
+    Call<Void> postRecoverPassword(@Body String mail);
 
     @POST("authenticate/facebook")
     Call<Authorization> postLoginFacebook(@Body String token);
