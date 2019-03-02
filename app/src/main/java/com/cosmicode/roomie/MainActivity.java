@@ -9,12 +9,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
 import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
 
     // Variables
     private BottomNavigationView navigationView;
@@ -46,7 +47,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 performLogout();
                 return true;
             case R.id.navigation_view_notifications:
-
+                MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
+                openFragment(notificationFragment);
                 return true;
             case R.id.navigation_view_options:
                 MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
@@ -88,4 +90,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         return this;
     }
 
+    @Override
+    public void returnToHomeFragment() {
+        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("","");
+        openFragment(mainHomeFragment);
+    }
 }
