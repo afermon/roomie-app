@@ -77,6 +77,14 @@ public class Notification {
         this.entityId = entityId;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", type=" + type +
+                ", entityId=" + entityId +
+                '}';
+    }
 }
