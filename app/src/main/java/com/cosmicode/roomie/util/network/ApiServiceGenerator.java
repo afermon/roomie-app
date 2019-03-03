@@ -1,4 +1,4 @@
-package com.cosmicode.roomie.util;
+package com.cosmicode.roomie.util.network;
 
 import com.cosmicode.roomie.BuildConfig;
 import com.google.gson.Gson;
@@ -14,7 +14,7 @@ public class ApiServiceGenerator {
     private static final String ROOMIE_API_PROD = "https://prod-roomie-web.herokuapp.com/api/";
     private static final String ROOMIE_API_STAGING = "https://staging-roomie-web.herokuapp.com/api/";
     private static final String ROOMIE_API_DEV = "https://dev-roomie-web.herokuapp.com/api/";
-    private static final String ROOMIE_API_LOCAL = "http://10.0.2.1:8080/api/";
+    private static final String ROOMIE_API_LOCAL = "http://10.0.2.2:8080/api/";
 
 
     private static String getServerURL() {
@@ -38,14 +38,14 @@ public class ApiServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    public static <S> S createService(Class<S> serviceClass, final String token ) {
-        if ( token != null ) {
+    public static <S> S createService(Class<S> serviceClass, final String token) {
+        if (token != null) {
             httpClient.interceptors().clear();
-            httpClient.addInterceptor( chain -> {
+            httpClient.addInterceptor(chain -> {
                 Request original = chain.request();
                 Request request = original.newBuilder()
                         .header("Authorization", "Bearer " + token)
-                        .header("User-Agent", "RoomieAndroid")
+                        .header("RoomieUser-Agent", "RoomieAndroid")
                         .build();
                 return chain.proceed(request);
             });

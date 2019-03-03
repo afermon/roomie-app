@@ -1,6 +1,6 @@
 package com.cosmicode.roomie.domain;
 
-public class User {
+public class RoomieUser {
 
     private String login;
     private String email;
@@ -8,15 +8,16 @@ public class User {
     private String firstName;
     private String lastName;
 
-    public User(String login, String email, String firstName, String lastName, String password) {
+    public RoomieUser(String login, String email, String firstName, String lastName, String password) {
         this.login = login;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
     }
-    public User(String login, String email, String firstName, String lastName) {
-        this(login,email,firstName,lastName,null);
+
+    public RoomieUser(String login, String email, String firstName, String lastName) {
+        this(login, email, firstName, lastName, null);
     }
 
     public String getLogin() {
@@ -52,6 +53,17 @@ public class User {
     }
 
     public String getFullName() {
-        return firstName+" "+lastName;
+        return firstName + " " + lastName;
+    }
+
+    @Override
+    public String toString() {
+        return "RoomieUser{" +
+                "login='" + login + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }

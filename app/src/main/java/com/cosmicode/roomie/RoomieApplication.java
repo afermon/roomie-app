@@ -15,12 +15,11 @@ public class RoomieApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
-        /* TODO: Initialize restrofit */
 
         if (BuildConfig.DEBUG) {
-            this.config = new CoreConfiguration("http://192.168.189.1:8080");
+            this.config = new CoreConfiguration("https://dev-roomie-web.herokuapp.com/api/");
         } else {
-            this.config = new CoreConfiguration("www.test.com");
+            this.config = new CoreConfiguration("https://prod-roomie-web.herokuapp.com/api/");
         }
 
         userInterface = UserService.with(this, config.getServerUrl(), true, this.getSharedPreferences("UserInterface", 0));

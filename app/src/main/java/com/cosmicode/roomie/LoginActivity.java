@@ -11,10 +11,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -23,7 +23,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,10 +56,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
 
     private AutoCompleteTextView emailAutoComplteView;
     private EditText passwordEditText;
-    private Button email_sign_in_button, email_sign_in_with_facebook_button, email_sign_in_with_google_button;
-    private TextView recover_password_button, email_sign_up_button;
-    private ConstraintLayout login_form;
-    private ProgressBar login_progress;
+    private Button emailSignInButton, emailSignInWithFacebookButton, emailSignInWithGoogleButton;
+    private TextView recoverPasswordButton, emailSignUpButton;
+    private ConstraintLayout loginForm;
+    private ProgressBar loginProgress;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, LoginActivity.class);
@@ -77,13 +76,13 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
 
         emailAutoComplteView = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
-        email_sign_in_button = findViewById(R.id.email_sign_in_button);
-        email_sign_up_button = findViewById(R.id.email_sign_up_button);
-        recover_password_button = findViewById(R.id.recover_password_button);
-        email_sign_in_with_facebook_button = findViewById(R.id.email_sign_in_with_facebook_button);
-        email_sign_in_with_google_button = findViewById(R.id.email_sign_in_with_google_button);
-        login_form = findViewById(R.id.login_form);
-        login_progress = findViewById(R.id.login_progress);
+        emailSignInButton = findViewById(R.id.email_sign_in_button);
+        emailSignUpButton = findViewById(R.id.email_sign_up_button);
+        recoverPasswordButton = findViewById(R.id.recover_password_button);
+        emailSignInWithFacebookButton = findViewById(R.id.email_sign_in_with_facebook_button);
+        emailSignInWithGoogleButton = findViewById(R.id.email_sign_in_with_google_button);
+        loginForm = findViewById(R.id.login_form);
+        loginProgress = findViewById(R.id.login_progress);
 
         passwordEditText.setOnEditorActionListener((($noName_0, id, $noName_2) -> {
             if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -94,14 +93,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
             }
         }));
 
-        email_sign_in_button.setOnClickListener((it -> attemptLogin()));
-        email_sign_up_button.setOnClickListener((it -> register()));
-        recover_password_button.setOnClickListener((it -> startActivity(RecoverPasswordActivity.openIntent(this))));
-        email_sign_in_with_facebook_button.setOnClickListener((it -> loginWithFacebook()));
+        emailSignInButton.setOnClickListener((it -> attemptLogin()));
+        emailSignUpButton.setOnClickListener((it -> register()));
+        recoverPasswordButton.setOnClickListener((it -> startActivity(RecoverPasswordActivity.openIntent(this))));
+        emailSignInWithFacebookButton.setOnClickListener((it -> loginWithFacebook()));
 
         facebookSignInSetup();
 
-        email_sign_in_with_google_button.setOnClickListener((it -> loginWithGoogle()));
+        emailSignInWithGoogleButton.setOnClickListener((it -> loginWithGoogle()));
 
         googleSignInSetup();
 
@@ -120,28 +119,30 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
 
     private void facebookSignInSetup() {
         callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, (new FacebookCallback() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback() {
             public void onSuccess(LoginResult loginResult) {
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                if ( accessToken != null && !accessToken.isExpired()) {
+                if (accessToken != null && !accessToken.isExpired()) {
                     LoginActivity.this.getJhiUsers().loginWithFacebook(accessToken.getToken(), LoginActivity.this);
                 }
             }
 
             public void onSuccess(Object var1) {
-                this.onSuccess((LoginResult)var1);
+                this.onSuccess((LoginResult) var1);
             }
 
             public void onCancel() {
+                showProgress(false);
             }
 
             public void onError(FacebookException exception) {
-
+                showProgress(false);
             }
-        }));
+        });
     }
 
     private void loginWithFacebook() {
+        showProgress(true);
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
     }
 
@@ -150,20 +151,20 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    private  void loginWithGoogle() {
+    private void loginWithGoogle() {
+        showProgress(true);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     private void handleSignInResult(Task task) {
         try {
-            GoogleSignInAccount account = (GoogleSignInAccount)task.getResult(ApiException.class);
+            GoogleSignInAccount account = (GoogleSignInAccount) task.getResult(ApiException.class);
             handleSignInResult(account);
         } catch (Exception e) {
-            if(BuildConfig.DEBUG){
-                Toast.makeText(this,"Google login error "+ e.getMessage(),Toast.LENGTH_SHORT).show();
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(this, "Google login error " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            //TODO: show in ui
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -185,7 +186,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
 
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
-        if (checkSelfPermission("android.permission.READ_CONTACTS") == PackageManager.PERMISSION_GRANTED) return true;
+        if (checkSelfPermission("android.permission.READ_CONTACTS") == PackageManager.PERMISSION_GRANTED)
+            return true;
         if (shouldShowRequestPermissionRationale("android.permission.READ_CONTACTS"))
             Snackbar.make(emailAutoComplteView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, v -> requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS));
@@ -247,7 +249,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            getJhiUsers().login(emailStr,passwordStr,this);
+            getJhiUsers().login(emailStr, passwordStr, this);
         }
     }
 
@@ -256,7 +258,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     }
 
     public void onLoginError(String error) {
-        if(error != null){
+        if (error != null) {
             if (error.contains("was not activated")) {
                 emailAutoComplteView.setError(getString(R.string.activate_account_first));
             } else {
@@ -279,26 +281,26 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        login_form.setVisibility(((show)? View.GONE : View.VISIBLE ));
+        loginForm.setVisibility(((show) ? View.GONE : View.VISIBLE));
 
-        login_form.animate()
+        loginForm.animate()
                 .setDuration(shortAnimTime)
-                .alpha((float)((show) ? 0 : 1))
-                .setListener(new AnimatorListenerAdapter() {
-                                 @Override
-                                 public void onAnimationEnd(Animator animation) {
-                                     login_form.setVisibility(((show)? View.GONE : View.VISIBLE ));
-                                 }
-                             });
-
-        login_progress.setVisibility(((show)? View.VISIBLE : View.GONE ));
-        login_progress.animate()
-                .setDuration(shortAnimTime)
-                .alpha((float)((show) ? 1 : 0))
+                .alpha((float) ((show) ? 0 : 1))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        login_progress.setVisibility(((show)? View.VISIBLE : View.GONE ));
+                        loginForm.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        loginProgress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        loginProgress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        loginProgress.setVisibility(((show) ? View.VISIBLE : View.GONE));
                     }
                 });
     }
@@ -322,7 +324,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
         Cursor cursor = (Cursor) pCursor;
         ArrayList emails = new ArrayList();
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.INSTANCE.getADDRESS()));
             cursor.moveToNext();
         }
@@ -337,13 +339,13 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(),
-        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+                android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         emailAutoComplteView.setAdapter(adapter);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
         super.onActivityResult(requestCode, resultCode, data);

@@ -1,18 +1,24 @@
 package com.cosmicode.roomie;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.view.MenuItem;
 
+import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainOptionsFragment;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener {
+
+    // Variables
+    private BottomNavigationView navigationView;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -25,14 +31,44 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button logout_button = findViewById(R.id.logout_button);
-        logout_button.setOnClickListener(v -> {
-            performLogout();
-        });
+        navigationView = findViewById(R.id.navigation_view);
+        navigationView.setOnNavigationItemSelectedListener(this);
+        openFragment(MainHomeFragment.newInstance("", ""));
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.navigation_view_home:
+                MainHomeFragment homeFragment = MainHomeFragment.newInstance("", "");
+                openFragment(homeFragment);
+                return true;
+            case R.id.navigation_view_account:
+                ProfileFragment profileFragment = ProfileFragment.newInstance("", "");
+                openFragment(profileFragment);
+                return true;
+            case R.id.navigation_view_notifications:
 
-    private final void performLogout() {
+                return true;
+            case R.id.navigation_view_options:
+                MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
+                openFragment(optionsFragment);
+                return true;
+            default:
+                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("", "");
+                openFragment(defaultFragment);
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public final void performLogout() {
         try {
             GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
@@ -49,4 +85,9 @@ public class MainActivity extends BaseActivity {
         getJhiUsers().logout();
         startActivity(LoginActivity.clearTopIntent(this));
     }
+
+    public BaseActivity getBaseActivity() {
+        return this;
+    }
+
 }

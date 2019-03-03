@@ -1,8 +1,9 @@
 package com.cosmicode.roomie.util.listeners;
 
-import com.cosmicode.roomie.domain.User;
+import com.cosmicode.roomie.domain.RoomieUser;
 
 public interface OnUpdateUserListener {
-    void onUpdateUserSuccess(User user);
+    void onUpdateUserSuccess(RoomieUser roomieUser);
+
     void onUpdateUserError(String error);
 }

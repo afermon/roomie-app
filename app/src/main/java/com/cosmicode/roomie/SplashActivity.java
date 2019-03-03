@@ -1,16 +1,16 @@
 package com.cosmicode.roomie;
 
-import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.service.UserInterface;
+import com.cosmicode.roomie.util.listeners.OnLoginListener;
+import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.facebook.AccessToken;
-import com.cosmicode.roomie.util.listeners.OnLoginListener;
 
 public class SplashActivity extends BaseActivity implements OnLoginListener {
 

@@ -1,16 +1,7 @@
 package com.cosmicode.roomie;
 
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 public class RegisterActivity extends BaseActivity {
     private static final int REQUEST_READ_CONTACTS = 0;
