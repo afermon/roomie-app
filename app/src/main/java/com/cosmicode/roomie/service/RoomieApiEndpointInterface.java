@@ -12,12 +12,6 @@ import retrofit2.http.Path;
 
 public interface RoomieApiEndpointInterface {
 
-    @POST("/roomies")
-    Call<Void> postCreateRoomie(@Body Roomie roomie);
-
-    @PUT("/roomies")
-    Call<Void> putUpdateRoomie(@Body Roomie roomie);
-
-    @GET("/roomies/{id}")
-    Call<Roomie> getRoomieById(@Path("id") Long id);
+    @GET("currentRoomie")
+    Call<Roomie> getCurrentRoomie();
 }

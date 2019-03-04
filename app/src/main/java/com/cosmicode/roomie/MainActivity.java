@@ -9,15 +9,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
 import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
 
-    // Variables
     private BottomNavigationView navigationView;
 
     public static final Intent clearTopIntent(Context from) {
@@ -44,11 +44,12 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 openFragment(homeFragment);
                 return true;
             case R.id.navigation_view_account:
-                ProfileFragment profileFragment = ProfileFragment.newInstance("", "");
+                ProfileFragment profileFragment = ProfileFragment.newInstance();
                 openFragment(profileFragment);
                 return true;
             case R.id.navigation_view_notifications:
-
+                MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
+                openFragment(notificationFragment);
                 return true;
             case R.id.navigation_view_options:
                 MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
@@ -90,4 +91,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         return this;
     }
 
+    @Override
+    public void returnToHomeFragment() {
+        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("","");
+        openFragment(mainHomeFragment);
+    }
 }

@@ -1,6 +1,6 @@
 package com.cosmicode.roomie.domain;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import com.cosmicode.roomie.domain.enumeration.Gender;
@@ -14,7 +14,7 @@ public class Roomie {
     private Long id;
     @SerializedName("birthDate")
     @Expose
-    private LocalDate birthDate;
+    private Date birthDate;
     @SerializedName("picture")
     @Expose
     private String picture;
@@ -49,7 +49,7 @@ public class Roomie {
     public Roomie() {
     }
 
-    public Roomie(Long id, LocalDate birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
+    public Roomie(Long id, Date birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
         this.id = id;
         this.birthDate = birthDate;
         this.picture = picture;
@@ -72,11 +72,11 @@ public class Roomie {
         this.id = id;
     }
 
-    public LocalDate getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 

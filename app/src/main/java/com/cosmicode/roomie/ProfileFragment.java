@@ -1,11 +1,11 @@
 package com.cosmicode.roomie;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,61 +13,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.RoomieUser;
-import com.google.android.gms.maps.GoogleMap;
+import com.cosmicode.roomie.domain.enumeration.Gender;
+import com.cosmicode.roomie.service.RoomieService;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProfileFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener {
 
     private OnFragmentInteractionListener mListener;
 
+    private Roomie currentRoomie;
+    private RoomieService roomieService;
+
     public ProfileFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        roomieService = new RoomieService(getContext(), this);
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -97,13 +72,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if (mListener != null)
-            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
-            FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton);
-            fab.setOnClickListener(this::openEdit);
+            roomieService.getCurrentRoomie();
+        mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
+        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(this::openEdit);
     }
 
-    public void openEdit(View view){
-        EditProfile editProfile = EditProfile.newInstance("","");
+    public void openEdit(View view) {
+        EditProfile editProfile = EditProfile.newInstance("", "");
         openFragment(editProfile);
     }
 
@@ -114,26 +90,64 @@ public class ProfileFragment extends Fragment {
         transaction.commit();
     }
 
-    public void fillProfileInfo(RoomieUser roomieUser){
+    public void fillProfileInfo(RoomieUser roomieUser) {
         TextView name = getView().findViewById(R.id.nameTxt);
         name.setText(roomieUser.getFullName());
 
         TextView email = getView().findViewById(R.id.mailTxt);
         email.setText(roomieUser.getEmail());
 
-        ImageView pfp = getView().findViewById(R.id.profileImg);
-        Glide.with(getActivity().getApplicationContext()).load("https://www.flynz.co.nz/wp-content/uploads/profile-placeholder.png").centerCrop().into(pfp);    }
+    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        this.currentRoomie = roomie;
+        ImageView pfp = getView().findViewById(R.id.profileImg);
+        Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
+
+        TextView phone = getView().findViewById(R.id.phoneTxt);
+        phone.setText(getString(R.string.profile_phone, roomie.getPhone()));
+
+        TextView age = getView().findViewById(R.id.ageTxt);
+        age.setText(getString(R.string.profile_age, calculateAge(roomie.getBirthDate(), new Date())));
+
+        TextView gender = getView().findViewById(R.id.genderTxt);
+        gender.setText(getString(R.string.profile_gender, getEnumString(roomie.getGender())));
+
+        TextView bio = getView().findViewById(R.id.bioTxt);
+        bio.setText(roomie.getBiography());
+    }
+
+    public String calculateAge(Date birthDate, Date currentDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int d1 = Integer.parseInt(formatter.format(birthDate));
+        int d2 = Integer.parseInt(formatter.format(currentDate));
+        int age = (d2 - d1) / 10000;
+        return Integer.toString(age);
+    }
+
+    public String getEnumString(Gender gender) {
+        String stringId = "";
+        switch (gender) {
+            case MALE:
+                stringId = getResources().getString(R.string.enum_male);
+            break;
+            case FEMALE:
+                stringId = getResources().getString(R.string.enum_female);
+            break;
+            case OTHER:
+                stringId =getResources().getString(R.string.enum_other);
+            break;
+        }
+        return stringId;
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+        Log.e("Profile", error);
+    }
+
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
     }

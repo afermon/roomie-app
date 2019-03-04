@@ -15,13 +15,17 @@
     <string name="default_web_client_id" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
 
     <!--Profile-->
-    <string name="profile_gender">Gender:</string>
-    <string name="profile_age">Age:</string>
-    <string name="profile_phone">Phone:</string>
+    <string name="profile_gender">Gender: %1$s</string>
+    <string name="profile_age">Age: %1$s</string>
+    <string name="profile_phone">Phone: %1$s</string>
     <string name="profile_city">City:</string>
     <string name="profile_bio">About me</string>
     <string name="profile_lifestyle">Lifestyle</string>
     <string name="profile_location">Location</string>
+    <string name="enum_male">Male</string>
+    <string name="enum_female">Female</string>
+    <string name="enum_other">Other</string>
+
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
