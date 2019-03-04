@@ -21,6 +21,8 @@
                 android:layout_marginTop="230dp"
                 android:layout_marginEnd="8dp"
                 android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_profile_user_edit"
                 app:backgroundTint="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profileCard" />
@@ -70,8 +72,9 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginStart="16dp"
-                        android:layout_marginEnd="32dp"
+                        android:layout_marginEnd="24dp"
                         android:tint="@color/colorPrimary"
+                        android:src="@drawable/ic_profile_user_bio"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/verticalLineAbout"
                         app:layout_constraintStart_toStartOf="parent"
@@ -218,11 +221,10 @@
                         android:layout_height="0dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="24dp"
-                        android:src="@drawable/ic_maps_and_flags"
+                        android:src="@drawable/ic_profile_user_location"
                         android:tint="@color/primary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/verticalLine3"
-                        app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -236,8 +238,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.google.android.gms.maps.MapView
-                        android:id="@+id/mapView"
+                    <fragment
+                        android:name="com.google.android.gms.maps.SupportMapFragment"                        android:id="@+id/mapView"
                         android:layout_width="0dp"
                         android:layout_height="141dp"
                         android:layout_marginStart="24dp"
@@ -316,7 +318,7 @@
                         android:layout_height="0dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="24dp"
-                        android:src="@drawable/ic_healthy"
+                        android:src="@drawable/ic_profile_user_life"
                         android:tint="@color/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/view2"
@@ -326,6 +328,7 @@
 
                     <com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/lifestyle_container"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
@@ -338,33 +341,14 @@
                         app:layout_constraintStart_toEndOf="@+id/view2"
                         app:layout_constraintTop_toBottomOf="@+id/textView11">
 
-                        <TextView
-                            style="@style/RoomieTags"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/secondary"
-                            android:text="Single" />
+                        <!--<TextView-->
+                            <!--android:id="@+id/x"-->
+                            <!--style="@style/RoomieTags"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:background="@color/secondary"-->
+                            <!--android:text="Single" />-->
 
-                        <TextView
-                            style="@style/RoomieTags"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/secondary"
-                            android:text="Smokes" />
-
-                        <TextView
-                            style="@style/RoomieTags"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/secondary"
-                            android:text="Likes to party" />
-
-                        <TextView
-                            style="@style/RoomieTags"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/secondary"
-                            android:text="Vegan" />
                     </com.google.android.flexbox.FlexboxLayout>
 
                 </android.support.constraint.ConstraintLayout>

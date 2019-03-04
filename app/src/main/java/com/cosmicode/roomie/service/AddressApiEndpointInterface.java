@@ -1,18 +1,16 @@
 package com.cosmicode.roomie.service;
 
-import com.cosmicode.roomie.domain.Authorization;
-import com.cosmicode.roomie.domain.Notification;
+import com.cosmicode.roomie.domain.Address;
 
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
+import retrofit2.http.Path;
 
-public interface NotificationApiEndpointInterface {
+public interface AddressApiEndpointInterface {
 
-    @GET("notifications")
-    Call<List<Notification>> getNotifications();
+    @GET("addresses/{id}")
+    Call<Address> getAddressById(@Path("id") Long id);
 
 }

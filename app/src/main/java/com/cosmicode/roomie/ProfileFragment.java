@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +15,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.domain.enumeration.Gender;
 import com.cosmicode.roomie.service.RoomieService;
-
-import org.w3c.dom.Text;
+import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
-public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener {
+public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnMapReadyCallback {
 
     private OnFragmentInteractionListener mListener;
-
+    private GoogleMap gMap;
     private Roomie currentRoomie;
     private RoomieService roomieService;
+    private FlexboxLayout lifeStyleContainer;
 
     public ProfileFragment() {
     }
@@ -41,15 +52,21 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        roomieService = new RoomieService(getContext(), this);
         super.onCreate(savedInstanceState);
+        roomieService = new RoomieService(getContext(), this);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, null, false);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                .findFragmentById(R.id.mapView);
+        mapFragment.getMapAsync(this);
+
+        return view;
     }
 
     @Override
@@ -71,11 +88,16 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (mListener != null)
+        if (mListener != null) {
+            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
+            lifeStyleContainer = getView().findViewById(R.id.lifestyle_container);
+            FloatingActionButton fab = getView().findViewById(R.id.floatingActionButton);
+            fab.setOnClickListener(this::openEdit);
+            SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                    .findFragmentById(R.id.mapView);
+            mapFragment.getMapAsync(this);
             roomieService.getCurrentRoomie();
-        mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
-        FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(this::openEdit);
+        }
     }
 
     public void openEdit(View view) {
@@ -102,20 +124,43 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
         this.currentRoomie = roomie;
+        fillRoomieInfo();
+    }
+
+    public void fillRoomieInfo() {
         ImageView pfp = getView().findViewById(R.id.profileImg);
         Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
 
         TextView phone = getView().findViewById(R.id.phoneTxt);
-        phone.setText(getString(R.string.profile_phone, roomie.getPhone()));
+        phone.setText(getString(R.string.profile_phone, currentRoomie.getPhone()));
 
         TextView age = getView().findViewById(R.id.ageTxt);
-        age.setText(getString(R.string.profile_age, calculateAge(roomie.getBirthDate(), new Date())));
+        age.setText(getString(R.string.profile_age, calculateAge(currentRoomie.getBirthDate(), new Date())));
 
         TextView gender = getView().findViewById(R.id.genderTxt);
-        gender.setText(getString(R.string.profile_gender, getEnumString(roomie.getGender())));
+        gender.setText(getString(R.string.profile_gender, getEnumString(currentRoomie.getGender())));
 
         TextView bio = getView().findViewById(R.id.bioTxt);
-        bio.setText(roomie.getBiography());
+        bio.setText(currentRoomie.getBiography());
+
+        fillLifeStyleInfo();
+    }
+
+    public void fillLifeStyleInfo() {
+        List<RoomFeature> lifeStyles = currentRoomie.getLifestyles();
+        Iterator iterator = lifeStyles.iterator();
+        TextView tag;
+        while (iterator.hasNext()) {
+            RoomFeature element = (RoomFeature) iterator.next();
+            tag = new TextView(new ContextThemeWrapper(getContext(), R.style.RoomieTags), null, 0);
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams
+                    (FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(5, 5, 5, 5);
+            tag.setText(element.getName());
+            tag.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.secondary));
+            tag.setLayoutParams(params);
+            lifeStyleContainer.addView(tag);
+        }
     }
 
     public String calculateAge(Date birthDate, Date currentDate) {
@@ -131,13 +176,13 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
         switch (gender) {
             case MALE:
                 stringId = getResources().getString(R.string.enum_male);
-            break;
+                break;
             case FEMALE:
                 stringId = getResources().getString(R.string.enum_female);
-            break;
+                break;
             case OTHER:
-                stringId =getResources().getString(R.string.enum_other);
-            break;
+                stringId = getResources().getString(R.string.enum_other);
+                break;
         }
         return stringId;
     }
@@ -145,6 +190,14 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     @Override
     public void onGetCurrentRoomieError(String error) {
         Log.e("Profile", error);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        gMap = map;
+        LatLng location = new LatLng(9.9878557 ,-84.0977742);
+        gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
+        gMap.moveCamera(CameraUpdateFactory.newLatLng(location));
     }
 
 

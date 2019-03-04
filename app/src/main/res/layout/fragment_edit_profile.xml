@@ -62,7 +62,8 @@
                 android:layout_marginTop="95dp"
                 android:layout_marginEnd="164dp"
                 android:background="@drawable/circle_button"
-                android:src="@drawable/ic_clear_black_24dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_profile_user_edit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -171,7 +172,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="28dp"
                 android:background="@null"
-                android:src="@android:drawable/ic_menu_mylocation"
+                android:src="@drawable/ic_profile_user_target"
                 android:tint="@color/primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textInputLayout7" />
