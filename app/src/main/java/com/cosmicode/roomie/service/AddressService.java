@@ -25,7 +25,7 @@ public class AddressService {
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
     }
 
-    public Address getCurrentRoomie(Long id){
+    public Address getAddresById (Long id){
 
         AddressApiEndpointInterface apiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
 

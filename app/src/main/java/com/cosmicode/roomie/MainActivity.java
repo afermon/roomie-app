@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import com.cosmicode.roomie.view.MainHomeFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -71,7 +70,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     public final void performLogout() {
         try {
-            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id)).requestEmail().build();
+            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
         } catch (Exception e) {
             //Ignore TODO: LOG

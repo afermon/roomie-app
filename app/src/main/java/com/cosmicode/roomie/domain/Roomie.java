@@ -1,5 +1,8 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -7,7 +10,7 @@ import com.cosmicode.roomie.domain.enumeration.Gender;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Roomie {
+public class Roomie implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -158,6 +161,16 @@ public class Roomie {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }
 

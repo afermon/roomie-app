@@ -1,5 +1,7 @@
 package com.cosmicode.roomie;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,13 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.domain.enumeration.Gender;
+import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,13 +40,20 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnMapReadyCallback {
+public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener {
 
     private OnFragmentInteractionListener mListener;
     private GoogleMap gMap;
     private Roomie currentRoomie;
     private RoomieService roomieService;
+    private AddressService addressService;
     private FlexboxLayout lifeStyleContainer;
+    private TextView name, email, phone, age, gender, bio;
+    private ImageView pfp;
+    private SupportMapFragment mapFragment;
+    private Address userAddress;
+    private ProgressBar progress;
+    private ScrollView scrollView;
 
     public ProfileFragment() {
     }
@@ -54,19 +67,14 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         roomieService = new RoomieService(getContext(), this);
+        addressService = new AddressService(getContext(), this);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, null, false);
-
-        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                .findFragmentById(R.id.mapView);
-        mapFragment.getMapAsync(this);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_profile, null, false);
     }
 
     @Override
@@ -88,20 +96,29 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (mListener != null) {
-            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
-            lifeStyleContainer = getView().findViewById(R.id.lifestyle_container);
-            FloatingActionButton fab = getView().findViewById(R.id.floatingActionButton);
-            fab.setOnClickListener(this::openEdit);
-            SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                    .findFragmentById(R.id.mapView);
-            mapFragment.getMapAsync(this);
-            roomieService.getCurrentRoomie();
-        }
+        lifeStyleContainer = getView().findViewById(R.id.lifestyle_container);
+        FloatingActionButton fab = getView().findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(this::openEdit);
+        mapFragment = (SupportMapFragment) this.getChildFragmentManager()
+                .findFragmentById(R.id.mapView);
+        name = getView().findViewById(R.id.nameTxt);
+        email = getView().findViewById(R.id.mailTxt);
+        pfp = getView().findViewById(R.id.profile_image);
+        phone = getView().findViewById(R.id.phoneTxt);
+        age = getView().findViewById(R.id.ageTxt);
+        gender = getView().findViewById(R.id.genderTxt);
+        bio = getView().findViewById(R.id.bioTxt);
+        progress = getView().findViewById(R.id.progress);
+        scrollView = getView().findViewById(R.id.profile_scroll);
+        showProgress(true);
+
+        mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
+        roomieService.getCurrentRoomie();
+
     }
 
     public void openEdit(View view) {
-        EditProfile editProfile = EditProfile.newInstance("", "");
+        EditProfile editProfile = EditProfile.newInstance(currentRoomie);
         openFragment(editProfile);
     }
 
@@ -113,36 +130,23 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     }
 
     public void fillProfileInfo(RoomieUser roomieUser) {
-        TextView name = getView().findViewById(R.id.nameTxt);
         name.setText(roomieUser.getFullName());
-
-        TextView email = getView().findViewById(R.id.mailTxt);
         email.setText(roomieUser.getEmail());
-
     }
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
         this.currentRoomie = roomie;
+        addressService.getAddresById(roomie.getAddressId());
         fillRoomieInfo();
     }
 
     public void fillRoomieInfo() {
-        ImageView pfp = getView().findViewById(R.id.profileImg);
         Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
-
-        TextView phone = getView().findViewById(R.id.phoneTxt);
         phone.setText(getString(R.string.profile_phone, currentRoomie.getPhone()));
-
-        TextView age = getView().findViewById(R.id.ageTxt);
         age.setText(getString(R.string.profile_age, calculateAge(currentRoomie.getBirthDate(), new Date())));
-
-        TextView gender = getView().findViewById(R.id.genderTxt);
         gender.setText(getString(R.string.profile_gender, getEnumString(currentRoomie.getGender())));
-
-        TextView bio = getView().findViewById(R.id.bioTxt);
         bio.setText(currentRoomie.getBiography());
-
         fillLifeStyleInfo();
     }
 
@@ -161,6 +165,7 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
             tag.setLayoutParams(params);
             lifeStyleContainer.addView(tag);
         }
+        showProgress(false);
     }
 
     public String calculateAge(Date birthDate, Date currentDate) {
@@ -195,13 +200,53 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     @Override
     public void onMapReady(GoogleMap map) {
         gMap = map;
-        LatLng location = new LatLng(9.9878557 ,-84.0977742);
+        LatLng location = new LatLng(userAddress.getLatitude().doubleValue(), userAddress.getLongitude().doubleValue());
         gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
-        gMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,17));
+        gMap.animateCamera(CameraUpdateFactory.zoomIn());
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+    }
+
+    @Override
+    public void onGetAddressByIdSuccess(Address address) {
+        this.userAddress = address;
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onGetAddressByIdError(String error) {
+
     }
 
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 }

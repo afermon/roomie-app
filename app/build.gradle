@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        debug {
+        debug{
             keyAlias 'debug'
             storeFile file('../keystore-cosmicode-debug.jks')
             keyPassword 'cosmicode'
             storePassword 'cosmicode'
         }
     }
-    compileSdkVersion 28
+        compileSdkVersion 28
     defaultConfig {
         applicationId "com.cosmicode.roomie"
         minSdkVersion 24
@@ -23,7 +23,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
+        debug{
             signingConfig signingConfigs.debug
         }
     }
@@ -54,4 +54,10 @@ dependencies {
     implementation 'com.google.android:flexbox:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
 }
+
+apply plugin: 'com.google.gms.google-services'
