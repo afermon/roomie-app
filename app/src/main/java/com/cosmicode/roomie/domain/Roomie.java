@@ -3,6 +3,7 @@ package com.cosmicode.roomie.domain;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Roomie implements Parcelable {
     private Long id;
     @SerializedName("birthDate")
     @Expose
-    private Date birthDate;
+    private String birthDate;
     @SerializedName("picture")
     @Expose
     private String picture;
@@ -52,7 +53,7 @@ public class Roomie implements Parcelable {
     public Roomie() {
     }
 
-    public Roomie(Long id, Date birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
+    public Roomie(Long id, String birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
         this.id = id;
         this.birthDate = birthDate;
         this.picture = picture;
@@ -75,11 +76,11 @@ public class Roomie implements Parcelable {
         this.id = id;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -171,6 +172,10 @@ public class Roomie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+
+    public Date toDate() throws java.text.ParseException{
+        return new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
     }
 }
 

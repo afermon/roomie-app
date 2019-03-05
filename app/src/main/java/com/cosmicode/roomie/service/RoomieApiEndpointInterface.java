@@ -14,4 +14,7 @@ public interface RoomieApiEndpointInterface {
 
     @GET("currentRoomie")
     Call<Roomie> getCurrentRoomie();
+
+    @PUT("roomies")
+    Call<Roomie> updateRoomie(@Body Roomie roomie);
 }

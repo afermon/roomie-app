@@ -26,5 +26,9 @@
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
     </style>
+    
+    <style name="InputLayoutText" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
 
 </resources>

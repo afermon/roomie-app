@@ -168,12 +168,14 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
         showProgress(false);
     }
 
-    public String calculateAge(Date birthDate, Date currentDate) {
+    public String calculateAge(String birthDate, Date currentDate) {
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        int d1 = Integer.parseInt(formatter.format(birthDate));
+        String[] dateSplit = birthDate.split("-");
+        String concatDate = dateSplit[0] + dateSplit[1] + dateSplit[2];
+        int d1 = Integer.parseInt(concatDate);
         int d2 = Integer.parseInt(formatter.format(currentDate));
-        int age = (d2 - d1) / 10000;
-        return Integer.toString(age);
+        String longAge = Integer.toString(d2 - d1);
+        return longAge.substring(0, longAge.length() - 4);
     }
 
     public String getEnumString(Gender gender) {
@@ -198,6 +200,11 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     }
 
     @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
+    }
+
+    @Override
     public void onMapReady(GoogleMap map) {
         gMap = map;
         LatLng location = new LatLng(userAddress.getLatitude().doubleValue(), userAddress.getLongitude().doubleValue());
@@ -215,6 +222,11 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onGetAddressByIdError(String error) {
+
+    }
+
+    @Override
+    public void onUpdateSuccess(Address address) {
 
     }
 

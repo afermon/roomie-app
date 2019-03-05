@@ -52,8 +52,38 @@ public class RoomieService {
         });
         return null;
     }
+
+    public Roomie updateRoomie(Roomie roomie){
+
+        RoomieApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomieApiEndpointInterface.class, authToken);
+
+        Call<Roomie> call = apiService.updateRoomie(roomie);
+
+        call.enqueue(new Callback<Roomie>() {
+            @Override
+            public void onResponse(Call<Roomie> call, Response<Roomie> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.onGetCurrentRoomieError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Roomie> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.onGetCurrentRoomieError("Something went wrong!");
+            }
+        });
+        return null;
+    }
+
     public interface OnGetCurrentRoomieListener {
         void onGetCurrentRoomieSuccess(Roomie roomie);
         void onGetCurrentRoomieError(String error);
+        void OnUpdateSuccess(Roomie roomie);
     }
 }

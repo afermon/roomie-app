@@ -52,8 +52,38 @@ public class AddressService {
         });
         return null;
     }
+
+    public Address updateAddress (Address address){
+
+        AddressApiEndpointInterface apiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
+
+        Call<Address> call = apiService.updateAddress(address);
+
+        call.enqueue(new Callback<Address>() {
+            @Override
+            public void onResponse(Call<Address> call, Response<Address> response) {
+                if (response.code() == 200) { // OK
+                    listener.onUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.onGetAddressByIdError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Address> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.onGetAddressByIdError("Something went wrong!");
+            }
+        });
+        return null;
+    }
+
     public interface OnGetAdrressByIdListener {
         void onGetAddressByIdSuccess(Address address);
         void onGetAddressByIdError(String error);
+        void onUpdateSuccess(Address address);
     }
 }
