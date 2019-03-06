@@ -1,20 +1,24 @@
 package com.cosmicode.roomie.domain;
 
-import java.time.LocalDate;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.cosmicode.roomie.domain.enumeration.Gender;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Roomie {
+public class Roomie implements Parcelable {
 
     @SerializedName("id")
     @Expose
     private Long id;
     @SerializedName("birthDate")
     @Expose
-    private LocalDate birthDate;
+    private String birthDate;
     @SerializedName("picture")
     @Expose
     private String picture;
@@ -49,7 +53,7 @@ public class Roomie {
     public Roomie() {
     }
 
-    public Roomie(Long id, LocalDate birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
+    public Roomie(Long id, String birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
         this.id = id;
         this.birthDate = birthDate;
         this.picture = picture;
@@ -72,11 +76,11 @@ public class Roomie {
         this.id = id;
     }
 
-    public LocalDate getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -158,6 +162,20 @@ public class Roomie {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
+
+    public Date toDate() throws java.text.ParseException{
+        return new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
     }
 }
 

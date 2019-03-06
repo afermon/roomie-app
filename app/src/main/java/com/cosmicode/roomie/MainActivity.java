@@ -15,9 +15,8 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
 
-    // Variables
     private BottomNavigationView navigationView;
 
     public static final Intent clearTopIntent(Context from) {
@@ -44,7 +43,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 openFragment(homeFragment);
                 return true;
             case R.id.navigation_view_account:
-                performLogout();
+                ProfileFragment profileFragment = ProfileFragment.newInstance();
+                openFragment(profileFragment);
                 return true;
             case R.id.navigation_view_notifications:
                 MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     public final void performLogout() {
         try {
-            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id)).requestEmail().build();
+            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
         } catch (Exception e) {
             //Ignore TODO: LOG
