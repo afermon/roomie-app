@@ -61,7 +61,7 @@ public class RoomieService {
 
         call.enqueue(new Callback<Roomie>() {
             @Override
-            public void onResponse(Call<Roomie> call, Response<Roomie> response) {
+            public void onResponse(Call<Roomie> call, Response<Roomie> response)  {
                 if (response.code() == 200) { // OK
                     listener.OnUpdateSuccess(response.body());
 
