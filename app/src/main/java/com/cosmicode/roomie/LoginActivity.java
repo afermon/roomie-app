@@ -147,7 +147,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks, OnLo
     }
 
     private void googleSignInSetup() {
-        GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id)).requestEmail().build();
+        GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 

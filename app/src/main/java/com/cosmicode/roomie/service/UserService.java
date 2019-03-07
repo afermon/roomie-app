@@ -379,6 +379,7 @@ public class UserService implements UserInterface {
 
             @Override
             public void onFailure(Call<Authorization> call, Throwable t) {
+                Log.e("Core", ""+ t.getMessage());
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
             }

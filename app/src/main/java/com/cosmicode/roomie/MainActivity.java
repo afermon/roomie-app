@@ -8,16 +8,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
 
+import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainHomeFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
+import com.cosmicode.roomie.view.MainProfileFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
 
-    // Variables
     private BottomNavigationView navigationView;
 
     public static final Intent clearTopIntent(Context from) {
@@ -44,7 +45,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 openFragment(homeFragment);
                 return true;
             case R.id.navigation_view_account:
-                performLogout();
+                MainProfileFragment mainProfileFragment = MainProfileFragment.newInstance();
+                openFragment(mainProfileFragment);
                 return true;
             case R.id.navigation_view_notifications:
                 MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
@@ -70,7 +72,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
     public final void performLogout() {
         try {
-            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id)).requestEmail().build();
+            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
         } catch (Exception e) {
             //Ignore TODO: LOG
