@@ -25,7 +25,7 @@
     <color name="light">#ADB5BD</color>
     <color name="dark">#212529</color>
     <color name="darker">#151719</color>
-
+    <color name="toast_success">#62A465</color>
     <color name="facebook">#3b5999</color>
     <color name="twitter">#1da1f2</color>
     <color name="google_plus">#DD4B39</color>

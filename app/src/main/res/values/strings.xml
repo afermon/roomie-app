@@ -25,6 +25,21 @@
     <string name="enum_male">Male</string>
     <string name="enum_female">Female</string>
     <string name="enum_other">Other</string>
+    <string name="edit_profile_title">Change your information</string>
+    <string name="phone">Phone</string>
+    <string name="button_save">Save</string>
+    <string name="edit_picture">Edit picture</string>
+    <string name="back_button">Back button</string>
+    <string name="validate_text_long">The text is too long</string>
+    <string name="validate_text_short">The text is too short</string>
+    <string name="validate_empty">This field can\'t be empty</string>
+    <string name="validate_number_long">The number is too long</string>
+    <string name="validate_number_short">The number is too long</string>
+    <string name="update_success">Update success</string>
+    <string name="profile_image">Profile image</string>
+
+
+
 
 
     <string name="prompt_email">Email</string>

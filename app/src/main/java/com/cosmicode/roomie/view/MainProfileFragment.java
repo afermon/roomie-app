@@ -1,4 +1,4 @@
-package com.cosmicode.roomie;
+package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,8 +17,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
@@ -39,11 +42,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
-public class ProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener {
+public class MainProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener {
 
     private OnFragmentInteractionListener mListener;
-    private GoogleMap gMap;
     private Roomie currentRoomie;
     private RoomieService roomieService;
     private AddressService addressService;
@@ -54,12 +57,13 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     private Address userAddress;
     private ProgressBar progress;
     private ScrollView scrollView;
+    private final String TAG = "Profile";
 
-    public ProfileFragment() {
+    public MainProfileFragment() {
     }
 
-    public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
+    public static MainProfileFragment newInstance() {
+        MainProfileFragment fragment = new MainProfileFragment();
         return fragment;
     }
 
@@ -97,17 +101,17 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         lifeStyleContainer = getView().findViewById(R.id.lifestyle_container);
-        FloatingActionButton fab = getView().findViewById(R.id.floatingActionButton);
+        FloatingActionButton fab = getView().findViewById(R.id.edit_button);
         fab.setOnClickListener(this::openEdit);
         mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                .findFragmentById(R.id.mapView);
-        name = getView().findViewById(R.id.nameTxt);
-        email = getView().findViewById(R.id.mailTxt);
+                .findFragmentById(R.id.map);
+        name = getView().findViewById(R.id.name_text);
+        email = getView().findViewById(R.id.mail_text);
         pfp = getView().findViewById(R.id.profile_image);
-        phone = getView().findViewById(R.id.phoneTxt);
-        age = getView().findViewById(R.id.ageTxt);
-        gender = getView().findViewById(R.id.genderTxt);
-        bio = getView().findViewById(R.id.bioTxt);
+        phone = getView().findViewById(R.id.phone_text);
+        age = getView().findViewById(R.id.age_text);
+        gender = getView().findViewById(R.id.gender_text);
+        bio = getView().findViewById(R.id.bio_text);
         progress = getView().findViewById(R.id.progress);
         scrollView = getView().findViewById(R.id.profile_scroll);
         showProgress(true);
@@ -118,8 +122,8 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     }
 
     public void openEdit(View view) {
-        EditProfile editProfile = EditProfile.newInstance(currentRoomie);
-        openFragment(editProfile);
+        MainEditProfileFragment mainEditProfileFragment = MainEditProfileFragment.newInstance(currentRoomie);
+        openFragment(mainEditProfileFragment);
     }
 
     private void openFragment(Fragment fragment) {
@@ -169,7 +173,7 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
     }
 
     public String calculateAge(String birthDate, Date currentDate) {
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.US);
         String[] dateSplit = birthDate.split("-");
         String concatDate = dateSplit[0] + dateSplit[1] + dateSplit[2];
         int d1 = Integer.parseInt(concatDate);
@@ -196,7 +200,8 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Log.e("Profile", error);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, error);
     }
 
     @Override
@@ -206,10 +211,10 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onMapReady(GoogleMap map) {
-        gMap = map;
+        GoogleMap gMap = map;
         LatLng location = new LatLng(userAddress.getLatitude().doubleValue(), userAddress.getLongitude().doubleValue());
         gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,17));
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
         gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
     }
@@ -222,7 +227,8 @@ public class ProfileFragment extends Fragment implements RoomieService.OnGetCurr
 
     @Override
     public void onGetAddressByIdError(String error) {
-
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, error);
     }
 
     @Override

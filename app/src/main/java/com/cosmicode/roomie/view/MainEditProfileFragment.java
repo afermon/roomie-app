@@ -1,10 +1,10 @@
-package com.cosmicode.roomie;
+package com.cosmicode.roomie.view;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.ChooseLocationActivity;
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.AddressService;
@@ -47,38 +50,41 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import org.w3c.dom.Text;
+
 import java.math.BigDecimal;
 
 import static android.app.Activity.RESULT_OK;
 
 
-public class EditProfile extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener {
+public class MainEditProfileFragment extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener {
 
     private static final String ROOMIE_KEY = "current_roomie";
     private Roomie currentRoomie;
     private OnFragmentInteractionListener mListener;
     private ImageView pfp;
-    private ImageButton editButton, geoButton;
     private TextInputEditText phone, bio;
     private TextView phoneError, bioError;
+    private ImageButton editButton, geoButton;
     private Button saveButton;
     private UploadPictureService uploadPictureService;
     private RoomieService roomieService;
     private Address address;
-    private final int LOCATION_PERMISSION = 1;
     AddressService addressService;
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final int REQUEST_MAP_CODE = 1;
-    private GoogleMap gMap;
     private SupportMapFragment mapFragment;
+    private GoogleMap gMap;
+    private final int LOCATION_PERMISSION = 1;
+    private final String TAG = "Edit profile";
 
 
-    public EditProfile() {
+    public MainEditProfileFragment() {
         // Required empty public constructor
     }
 
-    public static EditProfile newInstance(Roomie roomie) {
-        EditProfile fragment = new EditProfile();
+    public static MainEditProfileFragment newInstance(Roomie roomie) {
+        MainEditProfileFragment fragment = new MainEditProfileFragment();
         Bundle args = new Bundle();
         args.putParcelable(ROOMIE_KEY, roomie);
         fragment.setArguments(args);
@@ -90,7 +96,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             currentRoomie = getArguments().getParcelable(ROOMIE_KEY);
-            uploadPictureService = new UploadPictureService(getContext(), this);
+            uploadPictureService = new UploadPictureService(getContext(),this);
             addressService = new AddressService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
         }
@@ -106,7 +112,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mapFragment = (SupportMapFragment) this.getChildFragmentManager()
-                .findFragmentById(R.id.mapView);
+                .findFragmentById(R.id.map);
         pfp = getView().findViewById(R.id.profile_image);
         editButton = getView().findViewById(R.id.edit_picture_button);
         editButton.setOnClickListener(this::onClickEditPhoto);
@@ -155,9 +161,9 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setCropShape(CropImageView.CropShape.OVAL)
                 .setMinCropResultSize(200, 200)
-                .setMaxCropResultSize(1000,1000)
+                .setMaxCropResultSize(1000, 1000)
                 .setBorderLineColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
-                .start(getContext(),this);
+                .start(getContext(), this);
     }
 
     public boolean validateBio(String bioText) {
@@ -165,11 +171,11 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         boolean isValid = true;
 
         if (bioText.length() > 750) {
-            phoneError.setText("The text is too long");
+            phoneError.setText(R.string.validate_text_long);
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
         } else if (bioText.length() < 4 && bioText.length() > 0) {
-            phoneError.setText("The text is too short");
+            phoneError.setText(R.string.validate_text_short);
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
         }
@@ -181,15 +187,15 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         boolean isValid = true;
 
         if (phoneText.length() > 25) {
-            phoneError.setText("The number is too long");
+            phoneError.setText(R.string.validate_number_long);
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
         } else if (phoneText.length() < 4 && phoneText.length() > 0) {
-            phoneError.setText("The number is too short");
+            phoneError.setText(R.string.validate_number_short);
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
         } else if (phoneText.length() == 0) {
-            phoneError.setText("The number can't be empty");
+            phoneError.setText(R.string.validate_empty);
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
         }
@@ -204,8 +210,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
         } else {
             client.getLastLocation()
                     .addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
@@ -240,7 +245,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
 
-                    Log.e("Edit profile", result.getError().toString());
+                    Log.e(TAG, result.getError().toString());
 
                 }
             } else {
@@ -249,10 +254,6 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         }
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -278,7 +279,8 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
     @Override
     public void onUploadError(String error) {
-        Log.e("Edit Profile", error);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, error);
     }
 
     @Override
@@ -290,13 +292,18 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
     @Override
     public void onGetAddressByIdError(String error) {
-        Log.e("Edit Profile", error);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, error);
     }
 
     @Override
     public void onUpdateSuccess(Address address) {
         this.address = address;
-        Toast.makeText(getContext(), "Update success", Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT);
+        View view = toast.getView();
+
+        view.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.toast_success), PorterDuff.Mode.SRC_IN);
+        toast.show();
     }
 
     @Override
@@ -306,21 +313,21 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Log.e("Edit profile", error);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        Log.e(TAG, error);
     }
 
     @Override
     public void OnUpdateSuccess(Roomie roomie) {
         currentRoomie = roomie;
         addressService.updateAddress(address);
-
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         gMap = map;
         LatLng location = new LatLng(address.getLatitude().doubleValue(), address.getLongitude().doubleValue());
-        gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
+        gMap.addMarker(new MarkerOptions().position(location));
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
         gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
