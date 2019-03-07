@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Roomie;
@@ -39,6 +40,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
@@ -46,15 +49,17 @@ import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.math.BigDecimal;
 
+import static android.app.Activity.RESULT_OK;
 
-public class EditProfile extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener  {
+
+public class EditProfile extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener {
 
     private static final String ROOMIE_KEY = "current_roomie";
     private Roomie currentRoomie;
     private OnFragmentInteractionListener mListener;
     private ImageView pfp;
     private ImageButton editButton, geoButton;
-    private TextInputEditText phone,bio;
+    private TextInputEditText phone, bio;
     private TextView phoneError, bioError;
     private Button saveButton;
     private UploadPictureService uploadPictureService;
@@ -117,7 +122,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
     }
 
     public void fillEditInfo() {
-        Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
+        Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).into(pfp);
         phone.setText(currentRoomie.getPhone());
         bio.setText(currentRoomie.getBiography());
     }
@@ -127,34 +132,43 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         PickImageDialog.build(new PickSetup())
                 .show(getActivity())
                 .setOnPickResult(new IPickResult() {
-            @Override
-            public void onPickResult(PickResult r) {
-                pfp.setImageBitmap(r.getBitmap());
-                uploadPictureService.uploadFile(r.getBitmap(), currentRoomie.getId(), UploadPictureService.PictureType.PROFILE);
-            }
-        });
+                    @Override
+                    public void onPickResult(PickResult r) {
+                        cropImage(r.getUri());
+                    }
+                });
     }
 
 
     public void onClickSave(View view) {
         phoneError.setVisibility(View.INVISIBLE);
         bioError.setVisibility(View.INVISIBLE);
-        if(validatePhone(phone.getText().toString()) && validateBio(bio.getText().toString())){
+        if (validatePhone(phone.getText().toString()) && validateBio(bio.getText().toString())) {
             currentRoomie.setPhone(phone.getText().toString());
             currentRoomie.setBiography(bio.getText().toString());
             roomieService.updateRoomie(currentRoomie);
         }
     }
 
-    public boolean validateBio(String bioText){
+    public void cropImage(Uri uri) {
+        CropImage.activity(uri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .setMinCropResultSize(200, 200)
+                .setMaxCropResultSize(1000,1000)
+                .setBorderLineColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
+                .start(getContext(),this);
+    }
+
+    public boolean validateBio(String bioText) {
 
         boolean isValid = true;
 
-        if(bioText.length() > 750){
+        if (bioText.length() > 750) {
             phoneError.setText("The text is too long");
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
-        }else if(bioText.length() < 4 && bioText.length() > 0){
+        } else if (bioText.length() < 4 && bioText.length() > 0) {
             phoneError.setText("The text is too short");
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
@@ -163,18 +177,18 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         return isValid;
     }
 
-    public boolean validatePhone(String phoneText){
+    public boolean validatePhone(String phoneText) {
         boolean isValid = true;
 
-        if(phoneText.length() > 25){
+        if (phoneText.length() > 25) {
             phoneError.setText("The number is too long");
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
-        }else if(phoneText.length() < 4 && phoneText.length() > 0){
+        } else if (phoneText.length() < 4 && phoneText.length() > 0) {
             phoneError.setText("The number is too short");
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
-        }else if(phoneText.length() == 0){
+        } else if (phoneText.length() == 0) {
             phoneError.setText("The number can't be empty");
             phoneError.setVisibility(View.VISIBLE);
             isValid = false;
@@ -182,7 +196,6 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
         return isValid;
     }
-
 
 
     public void onClickGeo(View view) {
@@ -210,14 +223,29 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(REQUEST_MAP_CODE == requestCode){
-            if(Activity.RESULT_OK == resultCode){
+        if (REQUEST_MAP_CODE == requestCode) {
+            if (RESULT_OK == resultCode) {
                 address.setLatitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[0]));
                 address.setLongitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[1]));
                 mapFragment.getMapAsync(this);
             }
-        }else {
-            super.onActivityResult(requestCode, resultCode, data);
+        } else {
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+                if (resultCode == RESULT_OK) {
+
+                    pfp.setImageURI(result.getUri());
+                    uploadPictureService.uploadFile(result.getUri(), currentRoomie.getId(), UploadPictureService.PictureType.PROFILE);
+
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+
+                    Log.e("Edit profile", result.getError().toString());
+
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 
@@ -293,7 +321,7 @@ public class EditProfile extends Fragment implements UploadPictureService.OnUplo
         gMap = map;
         LatLng location = new LatLng(address.getLatitude().doubleValue(), address.getLongitude().doubleValue());
         gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,17));
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
         gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
     }
