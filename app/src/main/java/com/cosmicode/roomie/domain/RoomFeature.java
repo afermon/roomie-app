@@ -27,20 +27,20 @@ public class RoomFeature {
     @Expose
     private String icon;
 
-    @SerializedName("desciription")
+    @SerializedName("description")
     @Expose
-    private String desciription;
+    private String description;
 
     public RoomFeature() {
     }
 
-    public RoomFeature(Long id, Lang lang, FeatureType type, String name, String icon, String desciription) {
+    public RoomFeature(Long id, Lang lang, FeatureType type, String name, String icon, String description) {
         this.id = id;
         this.lang = lang;
         this.type = type;
         this.name = name;
         this.icon = icon;
-        this.desciription = desciription;
+        this.description = description;
     }
 
     public Long getId() {
@@ -84,11 +84,11 @@ public class RoomFeature {
     }
 
     public String getDesciription() {
-        return desciription;
+        return description;
     }
 
-    public void setDesciription(String desciription) {
-        this.desciription = desciription;
+    public void setDesciription(String description) {
+        this.description = description;
     }
 
 }

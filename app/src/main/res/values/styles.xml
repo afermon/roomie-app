@@ -19,4 +19,16 @@
         <item name="android:backgroundTint">@color/secondary</item>
     </style>
 
+    <style name="RoomieTags" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+    </style>
+    
+    <style name="InputLayoutText" parent="ThemeOverlay.AppCompat.Light">
+
+    </style>
+
 </resources>

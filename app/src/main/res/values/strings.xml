@@ -12,7 +12,35 @@
     <string name="facebook_app_id" translatable="false">235433017402895</string>
 
     <!-- Google login -->
-    <string name="default_web_client_id" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
+    <string name="default_web_client_id2" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
+
+    <!--Profile-->
+    <string name="profile_gender">Gender: %1$s</string>
+    <string name="profile_age">Age: %1$s</string>
+    <string name="profile_phone">Phone: %1$s</string>
+    <string name="profile_city">City:</string>
+    <string name="profile_bio">About me</string>
+    <string name="profile_lifestyle">Lifestyle</string>
+    <string name="profile_location">Location</string>
+    <string name="enum_male">Male</string>
+    <string name="enum_female">Female</string>
+    <string name="enum_other">Other</string>
+    <string name="edit_profile_title">Change your information</string>
+    <string name="phone">Phone</string>
+    <string name="button_save">Save</string>
+    <string name="edit_picture">Edit picture</string>
+    <string name="back_button">Back button</string>
+    <string name="validate_text_long">The text is too long</string>
+    <string name="validate_text_short">The text is too short</string>
+    <string name="validate_empty">This field can\'t be empty</string>
+    <string name="validate_number_long">The number is too long</string>
+    <string name="validate_number_short">The number is too long</string>
+    <string name="update_success">Update success</string>
+    <string name="profile_image">Profile image</string>
+
+
+
+
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -81,4 +109,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_choose_location">Map</string>
 </resources>
