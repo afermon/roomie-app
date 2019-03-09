@@ -3,6 +3,7 @@ package com.cosmicode.roomie.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ public class MainOptionsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Button button;
     private OnFragmentInteractionListener mListener;
 
     public MainOptionsFragment() {
@@ -68,6 +69,8 @@ public class MainOptionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        button = getView().findViewById(R.id.button4);
+        button.setOnClickListener(this::openTasks);
         return inflater.inflate(R.layout.fragment_main_options, container, false);
     }
 
@@ -90,6 +93,18 @@ public class MainOptionsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    public void openTasks(View view){
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
+        openFragment(todoFragment);
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
