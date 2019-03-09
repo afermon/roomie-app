@@ -53,6 +53,20 @@ public class Roomie implements Parcelable {
     public Roomie() {
     }
 
+    public Roomie(String birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
+        this.birthDate = birthDate;
+        this.picture = picture;
+        this.gender = gender;
+        this.phone = phone;
+        this.biography = biography;
+        this.mobileDeviceID = mobileDeviceID;
+        this.userId = userId;
+        this.stateId = stateId;
+        this.addressId = addressId;
+        this.configurationId = configurationId;
+        this.lifestyles = lifestyles;
+    }
+
     public Roomie(Long id, String birthDate, String picture, Gender gender, String phone, String biography, String mobileDeviceID, Long userId, Long stateId, Long addressId, Long configurationId, List<RoomFeature> lifestyles) {
         this.id = id;
         this.birthDate = birthDate;
