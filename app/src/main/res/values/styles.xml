@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,6 +17,20 @@
     <style name="RoomieButtonStyle" parent="android:Widget.Material.Button">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:backgroundTint">@color/secondary</item>
+    </style>
+
+    <style name="RoomieTags" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+    </style>
+
+    <style name="DatePickerSpinner">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
     </style>
 
 </resources>

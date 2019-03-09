@@ -14,11 +14,11 @@ public class ApiServiceGenerator {
     private static final String ROOMIE_API_PROD = "https://prod-roomie-web.herokuapp.com/api/";
     private static final String ROOMIE_API_STAGING = "https://staging-roomie-web.herokuapp.com/api/";
     private static final String ROOMIE_API_DEV = "https://dev-roomie-web.herokuapp.com/api/";
-    private static final String ROOMIE_API_LOCAL = "http://10.0.2.1:8080/api/";
+    private static final String ROOMIE_API_LOCAL = "http://10.0.2.2:8080/api/";
 
 
     private static String getServerURL() {
-        return BuildConfig.DEBUG ? ROOMIE_API_DEV : ROOMIE_API_PROD;
+        return BuildConfig.DEBUG ? ROOMIE_API_LOCAL : ROOMIE_API_PROD;
     }
 
     private static Gson gson = new GsonBuilder()
