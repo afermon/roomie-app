@@ -25,8 +25,12 @@
     <color name="light">#ADB5BD</color>
     <color name="dark">#212529</color>
     <color name="darker">#151719</color>
-
+    <color name="toast_success">#62A465</color>
     <color name="facebook">#3b5999</color>
     <color name="twitter">#1da1f2</color>
     <color name="google_plus">#DD4B39</color>
+    <color name="orange_trans80">#CCfb6340</color>
+    <color name="danger_trans80">#CCf5365c</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

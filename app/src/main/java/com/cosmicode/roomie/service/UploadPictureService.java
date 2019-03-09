@@ -21,26 +21,22 @@ public class UploadPictureService {
 
     private static final String TAG = "UploadService";
 
-    private Context context;
     private OnUploadPictureListener listener;
+    private Context context;
 
     public UploadPictureService(Context context, OnUploadPictureListener listener) {
         this.context = context;
         this.listener = listener;
     }
 
-    public String uploadFile(Bitmap bitmap, Long id, PictureType type ){
+    public String uploadFile(Uri uri, Long id, PictureType type ){
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        String path = "";
-        path = type.equals(PictureType.PROFILE) ? "profile" : "room";
+        String path = type.equals(PictureType.PROFILE) ? "profile" : "room";
         StorageReference ref = storageRef.child(path+"/roomieId"+id);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bdata = baos.toByteArray();
 
-        UploadTask uploadTask = ref.putBytes(bdata);
+        UploadTask uploadTask = ref.putFile(uri);
 
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -49,7 +45,6 @@ public class UploadPictureService {
                     throw task.getException();
                 }
 
-                // Continue with the task to get the download URL
                 return ref.getDownloadUrl();
             }
         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -58,11 +53,11 @@ public class UploadPictureService {
                 if (task.isSuccessful()) {
                     listener.onUploaddSuccess(task.getResult().toString());
                 } else {
-                   listener.onUploadError(task.getException().getMessage());
+                    listener.onUploadError(task.getException().getMessage());
                 }
             }
-        });
 
+        });
         return null;
     }
 

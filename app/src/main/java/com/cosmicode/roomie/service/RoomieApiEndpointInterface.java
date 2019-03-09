@@ -17,4 +17,7 @@ public interface RoomieApiEndpointInterface {
 
     @PUT("roomies")
     Call<Roomie> updateRoomie(@Body Roomie roomie);
+
+    @POST("roomies")
+    Call<Roomie> createRoomie(@Body Roomie roomie);
 }
