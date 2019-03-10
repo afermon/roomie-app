@@ -5,13 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.cosmicode.roomie.service.RoomTaskService;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -162,12 +160,13 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         if(day <= 9){
             dayS = "0"+day;
         }
-        String deadline = date +"T"+ time;
-        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00");
+        String deadline = date +"T"+ time+ ":00Z";
+        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
         Long id = new Long(1);
         RoomTask task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
 //        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
         roomTaskService.createTask(task);
+        showProgress(true);
      }
 
     @Override
@@ -193,8 +192,11 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
     @Override
     public void OnCreateTask(RoomTask roomTask) {
-        showProgress(true);
+        showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
+        openFragment(todoFragment);
     }
 
     @Override
@@ -211,7 +213,10 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         BaseActivity getBaseActivity();
     }
 
-
-
-
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 }
