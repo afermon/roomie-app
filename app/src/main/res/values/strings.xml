@@ -38,7 +38,9 @@
     <string name="update_success">Update success</string>
     <string name="profile_image">Profile image</string>
     <string name="email_profile">Email: %1$s</string>
-
+    <string name="no_bio">This user has no biography :(</string>
+    <string name="no_life">This user has no lifestyles assigned</string>
+    <string name="email_in_use">Email already in use</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

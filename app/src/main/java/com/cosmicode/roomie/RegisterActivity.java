@@ -24,19 +24,42 @@ import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnCreateRoomieListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnRegisterListener;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
+import com.mobsandgeeks.saripaar.annotation.Email;
+import com.mobsandgeeks.saripaar.annotation.Length;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Password;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
-public class RegisterActivity extends BaseActivity implements OnRegisterListener, OnGetUserEmailListener, OnCreateRoomieListener {
+import java.util.List;
 
+public class RegisterActivity extends BaseActivity implements OnRegisterListener, OnGetUserEmailListener, OnCreateRoomieListener, Validator.ValidationListener {
     private Gender gender;
     private Button maleButton, femaleButton;
     private ImageButton datePicker;
     private TextView dateText;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private EditText password, confirmPassword, email, name, lastName;
+    private Validator validator;
+
+    @Password(min = 8, scheme = Password.Scheme.ANY)
+    private EditText password;
+    @ConfirmPassword
+    private EditText confirmPassword;
+    @NotEmpty
+    @Email
+    private EditText email;
+    @NotEmpty
+    @Length(min = 4, max = 50)
+    private EditText name;
+    @NotEmpty
+    @Length(min = 4, max = 50)
+    private EditText lastName;
+
     private Button register;
     private RoomieService roomieService;
     private String date;
@@ -50,6 +73,8 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        validator = new Validator(this);
+        validator.setValidationListener(this);
         setContentView(R.layout.activity_register);
         maleButton = findViewById(R.id.male_button);
         femaleButton = findViewById(R.id.female_button);
@@ -90,7 +115,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
 
     public void onClickRegister(View view) {
         showProgress(true);
-        getJhiUsers().register(email.getText().toString(), name.getText().toString(), lastName.getText().toString(), password.getText().toString(), this);
+        validator.validate();
     }
 
     public void onClickDate(View view) {
@@ -176,5 +201,26 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
                         progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
                     }
                 });
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        getJhiUsers().register(email.getText().toString(), name.getText().toString(), lastName.getText().toString(), password.getText().toString(), this);
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        showProgress(false);
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
