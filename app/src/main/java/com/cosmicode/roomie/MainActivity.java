@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainHomeFragment.newInstance("", ""));
+        openFragment(MainHomeFragment.newInstance("", ""), "up");
     }
 
     @Override
@@ -44,34 +44,42 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
                 MainHomeFragment homeFragment = MainHomeFragment.newInstance("", "");
-                openFragment(homeFragment);
+                openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
                 MainProfileFragment mainProfileFragment = MainProfileFragment.newInstance();
-                openFragment(mainProfileFragment);
+                openFragment(mainProfileFragment, "right");
                 return true;
             case R.id.navigation_view_notifications:
                 MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
-                openFragment(notificationFragment);
+                openFragment(notificationFragment, "left");
                 return true;
             case R.id.navigation_view_options:
                 MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
-                openFragment(optionsFragment);
+                openFragment(optionsFragment,"left");
                 return true;
             default:
                 MainHomeFragment defaultFragment = MainHomeFragment.newInstance("", "");
-                openFragment(defaultFragment);
+                openFragment(defaultFragment, "right");
                 return super.onOptionsItemSelected(menuItem);
         }
     }
 
-    private void openFragment(Fragment fragment) {
+    private void openFragment(Fragment fragment, String start) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (start){
+            case "left":
+                transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, 0, 0);
+                break;
+            case "right":
+                transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
+                break;
+            case "up":
+        }
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
     public final void performLogout() {
         try {
             GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
@@ -97,6 +105,6 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     @Override
     public void returnToHomeFragment() {
         MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("","");
-        openFragment(mainHomeFragment);
+        openFragment(mainHomeFragment, "up");
     }
 }
