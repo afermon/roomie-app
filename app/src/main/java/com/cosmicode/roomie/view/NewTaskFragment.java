@@ -195,7 +195,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
 
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(1);
         openFragment(todoFragment);
     }
 

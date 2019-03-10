@@ -97,7 +97,8 @@ public class MainOptionsFragment extends Fragment {
     }
 
     public void openTasks(View view){
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
+
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(1);
         openFragment(todoFragment);
     }
 

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/cardTitle"
+                android:id="@+id/card_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -30,12 +30,12 @@
                 android:text="Cuidar al gato"
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/cardTime"
+                app:layout_constraintEnd_toStartOf="@+id/card_time"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cardTime"
+                android:id="@+id/card_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -47,7 +47,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cardDescription"
+                android:id="@+id/card_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -59,7 +59,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardTitle"
+                app:layout_constraintTop_toBottomOf="@+id/card_title"
                 app:layout_constraintVertical_bias="1.0" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -75,7 +75,7 @@
                 android:tint="@color/secondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cardDescription"
+                app:layout_constraintStart_toEndOf="@+id/card_description"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
