@@ -10,9 +10,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/register_container"
-        android:background="@color/secondary"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/secondary"
+        tools:layout_editor_absoluteX="33dp"
+        tools:layout_editor_absoluteY="0dp">
 
 
         <ProgressBar
@@ -97,9 +99,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/input__no_stroke"
             android:ems="10"
-            android:maxLength="254"
             android:hint="Email"
             android:inputType="textEmailAddress"
+            android:maxLength="254"
             android:paddingLeft="16dp"
             android:paddingTop="10dp"
             android:paddingRight="10dp"
@@ -293,12 +295,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/input__no_stroke"
             android:ems="10"
+            android:hint="Confirm password"
+            android:inputType="text"
             android:paddingLeft="16dp"
             android:paddingTop="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="10dp"
-            android:hint="Confirm password"
-            android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
