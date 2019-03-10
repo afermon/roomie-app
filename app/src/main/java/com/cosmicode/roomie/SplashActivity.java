@@ -1,7 +1,7 @@
 package com.cosmicode.roomie;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.service.UserInterface;

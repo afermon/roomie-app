@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.Instant;
-
 public class RoomTask {
 
     @SerializedName("id")
@@ -14,7 +12,7 @@ public class RoomTask {
 
     @SerializedName("created")
     @Expose
-    private Instant created;
+    private String created;
 
     @SerializedName("title")
     @Expose
@@ -26,7 +24,7 @@ public class RoomTask {
 
     @SerializedName("deadline")
     @Expose
-    private Instant deadline;
+    private String deadline;
 
     @SerializedName("state")
     @Expose
@@ -39,8 +37,17 @@ public class RoomTask {
     public RoomTask() {
     }
 
-    public RoomTask(Long id, Instant created, String title, String description, Instant deadline, RoomTaskState state, Long roomId) {
+    public RoomTask(Long id, String created, String title, String description, String deadline, RoomTaskState state, Long roomId) {
         this.id = id;
+        this.created = created;
+        this.title = title;
+        this.description = description;
+        this.deadline = deadline;
+        this.state = state;
+        this.roomId = roomId;
+    }
+
+    public RoomTask(String created, String title, String description, String deadline, RoomTaskState state, Long roomId) {
         this.created = created;
         this.title = title;
         this.description = description;
@@ -57,11 +64,11 @@ public class RoomTask {
         this.id = id;
     }
 
-    public Instant getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(Instant created) {
+    public void setCreated(String created) {
         this.created = created;
     }
 
@@ -81,11 +88,11 @@ public class RoomTask {
         this.description = description;
     }
 
-    public Instant getDeadline() {
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Instant deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
     }
 
@@ -105,4 +112,16 @@ public class RoomTask {
         this.roomId = roomId;
     }
 
+    @Override
+    public String toString() {
+        return "RoomTask{" +
+                "id=" + id +
+                ", created='" + created + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", deadline='" + deadline + '\'' +
+                ", state=" + state +
+                ", roomId=" + roomId +
+                '}';
+    }
 }
