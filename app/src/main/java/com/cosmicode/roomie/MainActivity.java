@@ -3,10 +3,15 @@ package com.cosmicode.roomie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.service.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainHomeFragment;
@@ -19,9 +24,10 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends BaseActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener {
 
     private BottomNavigationView navigationView;
+    private RoomieService roomieService;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -33,7 +39,8 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        roomieService = new RoomieService(this, this);
+        roomieService.getCurrentRoomie();
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
         openFragment(MainHomeFragment.newInstance("", ""));
@@ -98,5 +105,20 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     public void returnToHomeFragment() {
         MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("","");
         openFragment(mainHomeFragment);
+    }
+
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        Toast.makeText(this, roomie.toString(),Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
     }
 }

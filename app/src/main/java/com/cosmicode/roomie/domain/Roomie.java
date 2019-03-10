@@ -188,8 +188,22 @@ public class Roomie implements Parcelable {
 
     }
 
-    public Date toDate() throws java.text.ParseException{
-        return new SimpleDateFormat("yyyy-MM-dd").parse(birthDate);
+    @Override
+    public String toString() {
+        return "Roomie{" +
+                "id=" + id +
+                ", birthDate='" + birthDate + '\'' +
+                ", picture='" + picture + '\'' +
+                ", gender=" + gender +
+                ", phone='" + phone + '\'' +
+                ", biography='" + biography + '\'' +
+                ", mobileDeviceID='" + mobileDeviceID + '\'' +
+                ", userId=" + userId +
+                ", stateId=" + stateId +
+                ", addressId=" + addressId +
+                ", configurationId=" + configurationId +
+                ", lifestyles=" + lifestyles +
+                '}';
     }
 }
 

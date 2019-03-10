@@ -15,7 +15,7 @@ import retrofit2.http.Path;
 
 public interface RoomTasksApiEndpointInterface {
 
-    @GET("taskByRoom/{id}")
+    @GET("tasksByRoom/{id}")
     Call<List<RoomTask>>getTaskByRoom(@Path("id") Long id);
 
     @POST("room-tasks")
