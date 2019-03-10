@@ -18,7 +18,7 @@
     <color name="default_color">#172b4d</color>
     <color name="primary">#fb6340</color>
     <color name="secondary">#F4F5F7</color>
-    <color name="success">#2dce89</color>
+    <color name="success">#2DCE89</color>
     <color name="info">#11CDEF</color>
     <color name="warning">#fb6340</color>
     <color name="danger">#F5365C</color>
@@ -29,4 +29,8 @@
     <color name="facebook">#3b5999</color>
     <color name="twitter">#1da1f2</color>
     <color name="google_plus">#DD4B39</color>
+    <color name="orange_trans80">#CCfb6340</color>
+    <color name="danger_trans80">#CCf5365c</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

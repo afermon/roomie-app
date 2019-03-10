@@ -2,6 +2,7 @@ package com.cosmicode.roomie.service;
 
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
+import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
 import com.cosmicode.roomie.util.listeners.OnRecoverPasswordRequestListener;
@@ -22,6 +23,8 @@ public interface UserInterface {
     void login(String login, String password, OnLoginListener listener);
 
     void register(String email, String firstName, String lastName, String password, OnRegisterListener listener);
+
+    void findByEmail(String email, OnGetUserEmailListener listener);
 
     void logout();
 

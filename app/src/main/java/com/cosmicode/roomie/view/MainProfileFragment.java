@@ -13,6 +13,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -51,7 +52,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     private RoomieService roomieService;
     private AddressService addressService;
     private FlexboxLayout lifeStyleContainer;
-    private TextView name, email, phone, age, gender, bio;
+    private TextView name, email, phone, genderAge, bio;
     private ImageView pfp;
     private SupportMapFragment mapFragment;
     private Address userAddress;
@@ -101,16 +102,15 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         lifeStyleContainer = getView().findViewById(R.id.lifestyle_container);
-        FloatingActionButton fab = getView().findViewById(R.id.edit_button);
-        fab.setOnClickListener(this::openEdit);
+        ImageButton settings = getView().findViewById(R.id.settings_button);
+        settings.setOnClickListener(this::openEdit);
         mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         name = getView().findViewById(R.id.name_text);
         email = getView().findViewById(R.id.mail_text);
         pfp = getView().findViewById(R.id.profile_image);
         phone = getView().findViewById(R.id.phone_text);
-        age = getView().findViewById(R.id.age_text);
-        gender = getView().findViewById(R.id.gender_text);
+        genderAge = getView().findViewById(R.id.gender_age_text);
         bio = getView().findViewById(R.id.bio_text);
         progress = getView().findViewById(R.id.progress);
         scrollView = getView().findViewById(R.id.profile_scroll);
@@ -135,7 +135,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     public void fillProfileInfo(RoomieUser roomieUser) {
         name.setText(roomieUser.getFullName());
-        email.setText(roomieUser.getEmail());
+        email.setText(getString(R.string.email_profile, roomieUser.getEmail()));
     }
 
     @Override
@@ -148,8 +148,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     public void fillRoomieInfo() {
         Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
         phone.setText(getString(R.string.profile_phone, currentRoomie.getPhone()));
-        age.setText(getString(R.string.profile_age, calculateAge(currentRoomie.getBirthDate(), new Date())));
-        gender.setText(getString(R.string.profile_gender, getEnumString(currentRoomie.getGender())));
+        genderAge.setText(getString(R.string.profile_gender_age, getEnumString(currentRoomie.getGender()), calculateAge(currentRoomie.getBirthDate(), new Date())));
         bio.setText(currentRoomie.getBiography());
         fillLifeStyleInfo();
     }

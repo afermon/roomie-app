@@ -3,6 +3,7 @@ package com.cosmicode.roomie.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ public class MainOptionsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Button button;
     private OnFragmentInteractionListener mListener;
 
     public MainOptionsFragment() {
@@ -74,8 +75,11 @@ public class MainOptionsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Button logout_button = getView().findViewById(R.id.logout_button);
+        button = getView().findViewById(R.id.button4);
+        button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
+
                 mListener.performLogout();
             }
         });
@@ -90,6 +94,18 @@ public class MainOptionsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    public void openTasks(View view){
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
+        openFragment(todoFragment);
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
