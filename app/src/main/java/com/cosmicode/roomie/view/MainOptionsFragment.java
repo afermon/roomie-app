@@ -79,6 +79,7 @@ public class MainOptionsFragment extends Fragment {
         button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
+
                 mListener.performLogout();
             }
         });

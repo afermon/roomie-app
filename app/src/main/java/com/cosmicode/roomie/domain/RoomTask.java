@@ -47,6 +47,15 @@ public class RoomTask {
         this.roomId = roomId;
     }
 
+    public RoomTask(String created, String title, String description, String deadline, RoomTaskState state, Long roomId) {
+        this.created = created;
+        this.title = title;
+        this.description = description;
+        this.deadline = deadline;
+        this.state = state;
+        this.roomId = roomId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -103,4 +112,16 @@ public class RoomTask {
         this.roomId = roomId;
     }
 
+    @Override
+    public String toString() {
+        return "RoomTask{" +
+                "id=" + id +
+                ", created='" + created + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", deadline='" + deadline + '\'' +
+                ", state=" + state +
+                ", roomId=" + roomId +
+                '}';
+    }
 }
