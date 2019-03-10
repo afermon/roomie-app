@@ -69,16 +69,17 @@ public class MainOptionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        button = getView().findViewById(R.id.button4);
-        button.setOnClickListener(this::openTasks);
         return inflater.inflate(R.layout.fragment_main_options, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Button logout_button = getView().findViewById(R.id.logout_button);
+        button = getView().findViewById(R.id.button4);
+        button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
+
                 mListener.performLogout();
             }
         });

@@ -3,8 +3,11 @@ package com.cosmicode.roomie.view;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -25,7 +28,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     private RoomTaskService roomTaskService;
     private List<RoomTask> roomTaskList;
     private FloatingActionButton confirmButton;
-
+    private FloatingActionButton newTaskButton;
     public ToDoLIstFragment() {
         // Required empty public constructor
     }
@@ -49,10 +52,17 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_to_do_list, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         roomTaskService.getAllTaskByRoom(Long.parseLong("1"));
         confirmButton = getView().findViewById(R.id.button_confirm_done);
         confirmButton.setOnClickListener(this::onClickConfirm);
-        return inflater.inflate(R.layout.fragment_to_do_list, container, false);
+        newTaskButton = getView().findViewById(R.id.button_new_task);
+        newTaskButton.setOnClickListener(this::openTasks);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -78,6 +88,11 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     }
 
     @Override
+    public void OnCreateTask(RoomTask roomTask) {
+
+    }
+
+    @Override
     public void OnGetTaskByRoomSuccess(List<RoomTask> roomTasks) {
         this.roomTaskList = roomTasks;
         Toast.makeText(getContext(), roomTaskList.get(0).toString(), Toast.LENGTH_SHORT).show();
@@ -91,5 +106,17 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    public void openTasks(View view){
+        NewTaskFragment todoFragment = NewTaskFragment.newInstance("", "");
+        openFragment(todoFragment);
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
