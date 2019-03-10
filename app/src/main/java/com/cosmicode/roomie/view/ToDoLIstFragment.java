@@ -57,7 +57,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.roomId = getArguments().getInt(ARG_ROOMID);
+            this.roomId = getArguments().getLong(ARG_ROOMID);
             roomTaskService = new RoomTaskService(getContext(), this);
         }
     }
