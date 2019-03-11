@@ -52,7 +52,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     private RoomieService roomieService;
     private AddressService addressService;
     private FlexboxLayout lifeStyleContainer;
-    private TextView name, email, phone, genderAge, bio;
+    private TextView name, email, phone, genderAge, bio, noLife;
     private ImageView pfp;
     private SupportMapFragment mapFragment;
     private Address userAddress;
@@ -114,6 +114,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
         bio = getView().findViewById(R.id.bio_text);
         progress = getView().findViewById(R.id.progress);
         scrollView = getView().findViewById(R.id.profile_scroll);
+        noLife = getView().findViewById(R.id.text_no_life);
         showProgress(true);
 
         mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> fillProfileInfo(user));
@@ -147,26 +148,41 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     public void fillRoomieInfo() {
         Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).centerCrop().into(pfp);
-        phone.setText(getString(R.string.profile_phone, currentRoomie.getPhone()));
+        if(currentRoomie.getPhone() == null){
+            phone.setVisibility(View.GONE);
+        }else{
+            phone.setText(getString(R.string.profile_phone, currentRoomie.getPhone()));
+            phone.setVisibility(View.VISIBLE);
+        }
         genderAge.setText(getString(R.string.profile_gender_age, getEnumString(currentRoomie.getGender()), calculateAge(currentRoomie.getBirthDate(), new Date())));
-        bio.setText(currentRoomie.getBiography());
+        if(currentRoomie.getBiography() == null){
+            bio.setText(R.string.no_bio);
+        }else{
+            bio.setText(currentRoomie.getBiography());
+        }
         fillLifeStyleInfo();
     }
 
     public void fillLifeStyleInfo() {
         List<RoomFeature> lifeStyles = currentRoomie.getLifestyles();
-        Iterator iterator = lifeStyles.iterator();
-        TextView tag;
-        while (iterator.hasNext()) {
-            RoomFeature element = (RoomFeature) iterator.next();
-            tag = new TextView(new ContextThemeWrapper(getContext(), R.style.RoomieTags), null, 0);
-            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams
-                    (FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(5, 5, 5, 5);
-            tag.setText(element.getName());
-            tag.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.secondary));
-            tag.setLayoutParams(params);
-            lifeStyleContainer.addView(tag);
+        if(lifeStyles.isEmpty()){
+            noLife.setVisibility(View.VISIBLE);
+        }else{
+            Iterator iterator = lifeStyles.iterator();
+            TextView tag;
+            noLife.setVisibility(View.GONE);
+            while (iterator.hasNext()) {
+                RoomFeature element = (RoomFeature) iterator.next();
+                tag = new TextView(new ContextThemeWrapper(getContext(), R.style.RoomieTags), null, 0);
+                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams
+                        (FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(5, 5, 5, 5);
+                tag.setText(element.getName());
+                tag.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.secondary));
+                tag.setLayoutParams(params);
+                lifeStyleContainer.addView(tag);
+
+            }
         }
         showProgress(false);
     }
