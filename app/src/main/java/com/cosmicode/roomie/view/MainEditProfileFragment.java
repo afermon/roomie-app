@@ -133,7 +133,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
         saveButton.setOnClickListener(this::onClickSave);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
-        addressService.getAddresById(currentRoomie.getId());
+        addressService.getAddresById(currentRoomie.getAddressId());
     }
 
     public void fillEditInfo() {

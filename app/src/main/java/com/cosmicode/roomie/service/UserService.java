@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Authorization;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
@@ -176,7 +177,7 @@ public class UserService implements UserInterface {
 
                 } else {
                     Log.e(TAG, "Register error");
-                    listener.onRegisterError(response.message());
+                    listener.onRegisterError(context.getResources().getString(R.string.email_in_use));
                 }
             }
 
