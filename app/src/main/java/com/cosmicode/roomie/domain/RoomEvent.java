@@ -3,8 +3,6 @@ package com.cosmicode.roomie.domain;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.Instant;
-
 public class RoomEvent {
 
     @SerializedName("id")
@@ -25,11 +23,11 @@ public class RoomEvent {
 
     @SerializedName("startTime")
     @Expose
-    private Instant startTime;
+    private String startTime;
 
     @SerializedName("endTime")
     @Expose
-    private Instant endTime;
+    private String endTime;
 
     @SerializedName("roomId")
     @Expose
@@ -42,7 +40,7 @@ public class RoomEvent {
     public RoomEvent() {
     }
 
-    public RoomEvent(Long id, String title, String description, Boolean isPrivate, Instant startTime, Instant endTime, Long roomId, Long organizerId) {
+    public RoomEvent(Long id, String title, String description, Boolean isPrivate, String startTime, String endTime, Long roomId, Long organizerId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -85,19 +83,19 @@ public class RoomEvent {
         isPrivate = aPrivate;
     }
 
-    public Instant getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Instant startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Instant getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Instant endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 

@@ -6,17 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".view.MainHomeFragment">
 
-    <TextView
-        android:id="@+id/home_test_textview"
-        android:layout_width="0dp"
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/hello_blank_fragment"
-        android:textAlignment="center"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/room_list"
+        android:name="com.cosmicode.mypass.view.MainNotificationFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".view.MainNotificationFragment"
+        tools:listitem="@layout/home_room_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>

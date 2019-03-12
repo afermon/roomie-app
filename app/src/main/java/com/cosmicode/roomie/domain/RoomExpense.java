@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDate;
-
 public class RoomExpense {
 
     @SerializedName("id")
@@ -38,11 +36,11 @@ public class RoomExpense {
 
     @SerializedName("startDate")
     @Expose
-    private LocalDate startDate;
+    private String startDate;
 
     @SerializedName("finishDate")
     @Expose
-    private LocalDate finishDate;
+    private String finishDate;
 
     @SerializedName("roomId")
     @Expose
@@ -51,7 +49,7 @@ public class RoomExpense {
     public RoomExpense() {
     }
 
-    public RoomExpense(Long id, String name, String description, CurrencyType currency, Double amount, Integer periodicity, Integer monthDay, LocalDate startDate, LocalDate finishDate, Long roomId) {
+    public RoomExpense(Long id, String name, String description, CurrencyType currency, Double amount, Integer periodicity, Integer monthDay, String startDate, String finishDate, Long roomId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -120,19 +118,19 @@ public class RoomExpense {
         this.monthDay = monthDay;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getFinishDate() {
+    public String getFinishDate() {
         return finishDate;
     }
 
-    public void setFinishDate(LocalDate finishDate) {
+    public void setFinishDate(String finishDate) {
         this.finishDate = finishDate;
     }
 
