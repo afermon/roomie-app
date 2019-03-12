@@ -3,6 +3,8 @@ package com.cosmicode.roomie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.cosmicode.roomie.domain.Room;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -36,14 +38,14 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
 
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainHomeFragment.newInstance("", ""), "up");
+        openFragment(MainOptionsFragment.newInstance("", ""), "up");
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
-                MainHomeFragment homeFragment = MainHomeFragment.newInstance("", "");
+                MainHomeFragment homeFragment = MainHomeFragment.newInstance("");
                 openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
@@ -59,7 +61,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
                 openFragment(optionsFragment,"left");
                 return true;
             default:
-                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("", "");
+                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("");
                 openFragment(defaultFragment, "right");
                 return super.onOptionsItemSelected(menuItem);
         }
@@ -103,8 +105,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationView.O
     }
 
     @Override
+    public void onSearchFragmentInteraction(Room item) {
+
+    }
+
+    @Override
     public void returnToHomeFragment() {
-        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("","");
+        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("");
         openFragment(mainHomeFragment, "up");
     }
 }

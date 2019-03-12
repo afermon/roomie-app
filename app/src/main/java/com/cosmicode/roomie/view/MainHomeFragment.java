@@ -3,6 +3,10 @@ package com.cosmicode.roomie.view;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +14,15 @@ import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomieState;
 import com.cosmicode.roomie.domain.RoomieUser;
+import com.cosmicode.roomie.service.RoomService;
+import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 
 /**
@@ -21,17 +33,15 @@ import com.cosmicode.roomie.domain.RoomieUser;
  * Use the {@link MainHomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainHomeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class MainHomeFragment extends Fragment implements RoomService.RoomServiceListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_SEARCH_QUERY = "search-query";
+    private String searchQuery;
+
+    @BindView(R.id.room_list) RecyclerView roomListRecyclerView;
 
     private OnFragmentInteractionListener mListener;
+    private RoomService roomService;
 
     public MainHomeFragment() {
         // Required empty public constructor
@@ -41,16 +51,14 @@ public class MainHomeFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param searchQuery Parameter 1.
      * @return A new instance of fragment MainHomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainHomeFragment newInstance(String param1, String param2) {
+    public static MainHomeFragment newInstance(String searchQuery) {
         MainHomeFragment fragment = new MainHomeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_SEARCH_QUERY, searchQuery);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,16 +66,15 @@ public class MainHomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        roomService = new RoomService(getContext(), this);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_home, container, false);
     }
 
@@ -90,26 +97,28 @@ public class MainHomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (mListener != null)
-            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> updateUserTestInfo(user));
+        roomService.getAllRooms();
     }
 
     public void updateUserTestInfo(RoomieUser roomieUser) {
-        TextView textView = getView().findViewById(R.id.home_test_textview);
-        textView.setText(roomieUser.toString());
+        /*TextView textView = getView().findViewById(R.id.home_test_textview);
+        textView.setText(roomieUser.toString());*/
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+        Context context = getView().getContext();
+        roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+        void onSearchFragmentInteraction(Room item);
     }
 }
