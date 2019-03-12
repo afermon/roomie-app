@@ -1,13 +1,10 @@
 package com.cosmicode.roomie.domain;
 
 
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.math.BigDecimal;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.math.BigDecimal;
 
 public class Address {
 
