@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
-import com.cosmicode.roomie.view.MainHomeFragment.OnFragmentInteractionListener;
+import com.cosmicode.roomie.view.MainSearchFragment.OnFragmentInteractionListener;
 
 
 import java.util.List;
