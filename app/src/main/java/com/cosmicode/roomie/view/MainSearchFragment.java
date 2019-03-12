@@ -3,7 +3,11 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +17,11 @@ import butterknife.ButterKnife;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
@@ -32,13 +40,16 @@ import java.util.List;
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener {
+public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener, SearchView.OnCloseListener {
 
+    private static final String TAG = "SearchFragment";
     private static final String ARG_SEARCH_QUERY = "search-query";
     private String searchQuery;
 
     @BindView(R.id.room_list) RecyclerView roomListRecyclerView;
     @BindView(R.id.progress_bar) ProgressBar progressBar;
+    @BindView(R.id.search_view) SearchView searchView;
+    @BindView(R.id.search_layout) ConstraintLayout searchLayout;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
@@ -98,7 +109,37 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        searchView.setIconified(false);
+        searchView.setOnCloseListener(this);
+        searchView.setQueryHint("Search....");
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        if (searchPlate!=null) {
+            searchPlate.setBackgroundColor(Color.WHITE);
+            int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            TextView searchText = searchPlate.findViewById(searchTextId);
+            if (searchText!=null) {
+                searchText.setTextColor(getActivity().getResources().getColor(R.color.light));
+                searchText.setHintTextColor(getActivity().getResources().getColor(R.color.light));
+            }
+        }
+
         showProgress(true);
+
+        roomListRecyclerView.addOnScrollListener(new MyRecyclerScroll() {
+            @Override
+            public void show() {
+                searchLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                searchLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void hide() {
+                searchLayout.animate().translationY(searchLayout.getHeight() - 8).setInterpolator(new AccelerateInterpolator(2)).start();
+                searchLayout.setVisibility(View.GONE);
+            }
+        });
+
         roomService.getAllRooms();
     }
 
@@ -129,6 +170,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 });
     }
 
+
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
         Context context = getView().getContext();
@@ -142,8 +184,43 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     }
 
+    @Override //Search view close
+    public boolean onClose() {
+        return true;
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void onSearchFragmentInteraction(Room item);
+    }
+
+
+    public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
+        static final float MINIMUM = 100;
+        int scrollDist = 0;
+        boolean isVisible = true;
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if (isVisible && scrollDist > MINIMUM) {
+                hide();
+                scrollDist = 0;
+                isVisible = false;
+            }
+            else if (!isVisible && scrollDist < -MINIMUM) {
+                show();
+                scrollDist = 0;
+                isVisible = true;
+            }
+
+            if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
+                scrollDist += dy;
+            }
+        }
+
+        public abstract void show();
+        public abstract void hide();
     }
 }
