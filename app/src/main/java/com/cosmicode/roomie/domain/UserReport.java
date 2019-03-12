@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.ReportType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-;
-
 public class UserReport {
 
     @SerializedName("id")

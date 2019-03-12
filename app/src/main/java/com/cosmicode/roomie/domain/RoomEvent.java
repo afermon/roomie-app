@@ -3,8 +3,6 @@ package com.cosmicode.roomie.domain;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-;
-
 public class RoomEvent {
 
     @SerializedName("id")

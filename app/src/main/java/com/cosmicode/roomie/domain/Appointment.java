@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-;
-
 public class Appointment {
 
     @SerializedName("id")

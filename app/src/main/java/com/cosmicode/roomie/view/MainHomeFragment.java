@@ -1,15 +1,19 @@
 package com.cosmicode.roomie.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
@@ -39,6 +43,7 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
     private String searchQuery;
 
     @BindView(R.id.room_list) RecyclerView roomListRecyclerView;
+    @BindView(R.id.progress_bar) ProgressBar progressBar;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
@@ -54,7 +59,6 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
      * @param searchQuery Parameter 1.
      * @return A new instance of fragment MainHomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MainHomeFragment newInstance(String searchQuery) {
         MainHomeFragment fragment = new MainHomeFragment();
         Bundle args = new Bundle();
@@ -75,7 +79,9 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_home, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -97,12 +103,35 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        showProgress(true);
         roomService.getAllRooms();
     }
 
-    public void updateUserTestInfo(RoomieUser roomieUser) {
-        /*TextView textView = getView().findViewById(R.id.home_test_textview);
-        textView.setText(roomieUser.toString());*/
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        roomListRecyclerView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progressBar.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 
     @Override
@@ -110,6 +139,7 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
         Context context = getView().getContext();
         roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+        showProgress(false);
     }
 
     @Override

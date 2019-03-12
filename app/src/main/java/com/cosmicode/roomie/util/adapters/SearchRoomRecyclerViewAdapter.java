@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Room} and makes a call to the
  * specified {@link OnFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRoomRecyclerViewAdapter.ViewHolder> {
 

@@ -46,8 +46,9 @@ public class RoomService {
 
             @Override
             public void onFailure(Call<List<Room>> call, Throwable t) {
-                Toast.makeText(context, "Something went wrong!",
-                        Toast.LENGTH_LONG).show();
+                Log.e(TAG, t.getMessage());
+                Toast.makeText(context, t.getMessage(),Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Something went wrong!",Toast.LENGTH_LONG).show();
                 listener.OnGetRoomsError("Something went wrong!");
             }
         });

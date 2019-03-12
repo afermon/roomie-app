@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         roomieService.getCurrentRoomie();
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainOptionsFragment.newInstance("", ""), "up");
+        openFragment(MainHomeFragment.newInstance(""), "up");
     }
 
     @Override
