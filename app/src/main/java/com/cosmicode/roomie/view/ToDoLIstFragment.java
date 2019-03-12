@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,10 +28,19 @@ import android.widget.Toast;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomTask;
+import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
 import com.cosmicode.roomie.service.RoomTaskService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener {
     private OnFragmentInteractionListener mListener;
@@ -38,9 +48,12 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     private List<RoomTask> roomTaskList;
     @BindView(R.id.task_list) RecyclerView recyclerView;
     @BindView(R.id.progress) ProgressBar progressBar;
+    private FloatingActionButton conconfirmButton;
     private SectionedRecyclerViewAdapter sectionAdapter;
     private static final String ARG_ROOMID = "room_id";
     private long roomId = 1;
+    private DateTime dateToday;
+    private DateTimeComparator comparator;
     public ToDoLIstFragment() {
         // Required empty public constructor
     }
@@ -68,6 +81,8 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_to_do_list, container, false);
         ButterKnife.bind(this, view);
+        dateToday = new DateTime();
+        comparator = DateTimeComparator.getDateOnlyInstance();
         return view;
     }
 
@@ -111,17 +126,40 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         this.roomTaskList = roomTasks;
         sectionAdapter = new SectionedRecyclerViewAdapter();
 
-//        for (Folder folder: folders) {
-            sectionAdapter.addSection(new TaskSection("all task", roomTasks));
-        //}
+        List<RoomTask> todayTasks = new ArrayList<>();
+        List<RoomTask> tomorrowTasks = new ArrayList<>();
+        List<RoomTask> laterTasks = new ArrayList<>();
+        List<RoomTask> doneTasks = new ArrayList<>();
+        List<RoomTask> pastTasks = new ArrayList<>();
+
+        for (RoomTask task: roomTasks) {
+            if(task.getState() == RoomTaskState.COMPLETED) doneTasks.add(task);
+            else {
+                int difday = comparator.compare(dateToday, formatDate(task.getDeadline()));
+                if(difday == 0){
+                    todayTasks.add(task);
+                }else if (difday == 1){
+                    tomorrowTasks.add(task);
+                }else if (difday > 1){
+                    laterTasks.add(task);
+                }else{
+                    pastTasks.add(task);
+                }
+            }
+
+        }
+
+        if(todayTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_today), todayTasks));
+        if(tomorrowTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_tomorrow), tomorrowTasks));
+        if(laterTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_upcoming), laterTasks));
+        if(doneTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_past_task), doneTasks));
+        if(doneTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_completed), doneTasks));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(sectionAdapter);
 
-        Toast.makeText(getContext(), roomTaskList.get(0).toString(), Toast.LENGTH_SHORT).show();
         showProgress(false);
     }
-
     @Override
     public void OnGetTaskByRoomError(String error) {
     }
@@ -134,7 +172,10 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         NewTaskFragment todoFragment = NewTaskFragment.newInstance("", "");
         openFragment(todoFragment);
     }
-
+    @OnClick(R.id.back_button)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
+    }
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_container, fragment);
@@ -142,7 +183,17 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         transaction.commit();
     }
 
- //---------------------------------------------------------------------
+    public DateTime formatDate(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
+    }
+
+
+    //---------------------------------------------------------------------
 
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -201,18 +252,35 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             final TaskViewHolder itemHolder = (TaskViewHolder) holder;
 
             RoomTask roomTask = this.taskList.get(position);
-
             itemHolder.cardDescription.setText(roomTask.getDescription());
             itemHolder.cardTitle.setText(roomTask.getTitle());
-            itemHolder.cardDeadline.setText(roomTask.getDeadline());
-
-            itemHolder.buttonConfirm.setOnClickListener(v -> Toast.makeText(getContext(),
-                    String.format("Clicked on position #%s of Section %s",
-                            sectionAdapter.getPositionInSection(itemHolder.getAdapterPosition()),
-                            roomTask),
-                    Toast.LENGTH_SHORT).show());
+            //if(roomTask != null){
+                itemHolder.cardDeadline.setText(formattDateString(roomTask.getDeadline()));
+            //}
+            if(roomTask.getState() == RoomTaskState.COMPLETED){
+                itemHolder.buttonConfirm.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
+                itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
+            }
+            itemHolder.buttonConfirm.setOnClickListener(v -> {
+                itemHolder.buttonConfirm.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
+                itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
+                //TODO: LLamar servicio para actualizar
+            }
+            );
         }
 
+        public String formattDateString(String pdate){
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                    .withLocale(Locale.ROOT)
+                    .withChronology(ISOChronology.getInstanceUTC());
+            DateTime date = new DateTime();
+            String dt = new String();
+            if (pdate !=null){
+                date = format.parseDateTime(pdate);
+                dt = date.getDayOfWeek() + "/" + date.getMonthOfYear() + "/" + date.getYear() + " " + date.getHourOfDay() + ":" + date.getMinuteOfHour();
+            }
+            return dt;
+        }
         @Override
         public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
             return new TaskGroupViewHolder(view);

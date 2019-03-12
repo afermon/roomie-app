@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.OnClick;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private TimePickerDialog.OnTimeSetListener mTListener;
     private String time;
     private RoomTaskService roomTaskService;
+    private ImageButton backButton;
     public NewTaskFragment() {
     }
 
@@ -89,7 +91,10 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         editTitle = getView().findViewById(R.id.edit_title);
         editDesc = getView().findViewById(R.id.edit_Description);
         createButton = getView().findViewById(R.id.button_create);
+        backButton = getView().findViewById(R.id.back_button);
+        backButton.setOnClickListener(this::onClickBack);
         createButton.setOnClickListener(this::onClickCreateTask);
+
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -195,8 +200,10 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
 
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(1);
-        openFragment(todoFragment);
+//        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(1);
+//        openFragment(todoFragment);
+
+        getFragmentManager().popBackStack();
     }
 
     @Override
@@ -206,11 +213,16 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
     @Override
     public void OnGetTaskByRoomError(String error) {
+        showProgress(false);
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    public void onClickBack(View view){
+        getFragmentManager().popBackStack();
     }
 
     private void openFragment(Fragment fragment) {
