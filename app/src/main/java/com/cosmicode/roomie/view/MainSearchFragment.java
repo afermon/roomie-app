@@ -14,30 +14,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
-import com.cosmicode.roomie.domain.RoomieState;
-import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainHomeFragment.OnFragmentInteractionListener} interface
+ * {@link MainSearchFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MainHomeFragment#newInstance} factory method to
+ * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainHomeFragment extends Fragment implements RoomService.RoomServiceListener {
+public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener {
 
     private static final String ARG_SEARCH_QUERY = "search-query";
     private String searchQuery;
@@ -48,7 +43,7 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
 
-    public MainHomeFragment() {
+    public MainSearchFragment() {
         // Required empty public constructor
     }
 
@@ -57,10 +52,10 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
      * this fragment using the provided parameters.
      *
      * @param searchQuery Parameter 1.
-     * @return A new instance of fragment MainHomeFragment.
+     * @return A new instance of fragment MainSearchFragment.
      */
-    public static MainHomeFragment newInstance(String searchQuery) {
-        MainHomeFragment fragment = new MainHomeFragment();
+    public static MainSearchFragment newInstance(String searchQuery) {
+        MainSearchFragment fragment = new MainSearchFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SEARCH_QUERY, searchQuery);
         fragment.setArguments(args);
@@ -79,7 +74,7 @@ public class MainHomeFragment extends Fragment implements RoomService.RoomServic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_search, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

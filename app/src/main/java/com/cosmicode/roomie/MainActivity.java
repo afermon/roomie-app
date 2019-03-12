@@ -12,7 +12,7 @@ import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
-import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
@@ -26,7 +26,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener, OnGetUserEmailListener {
+public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainSearchFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener, OnGetUserEmailListener {
 
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
@@ -50,14 +50,14 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         roomieService.getCurrentRoomie();
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainHomeFragment.newInstance(""), "up");
+        openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
-                MainHomeFragment homeFragment = MainHomeFragment.newInstance("");
+                MainSearchFragment homeFragment = MainSearchFragment.newInstance("");
                 openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 openFragment(optionsFragment, "left");
                 return true;
             default:
-                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("");
+                MainSearchFragment defaultFragment = MainSearchFragment.newInstance("");
                 openFragment(defaultFragment, "right");
                 return super.onOptionsItemSelected(menuItem);
         }
@@ -124,8 +124,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public void returnToHomeFragment() {
-        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("");
-        openFragment(mainHomeFragment, "up");
+        MainSearchFragment mainSearchFragment = MainSearchFragment.newInstance("");
+        openFragment(mainSearchFragment, "up");
     }
 
     @Override
