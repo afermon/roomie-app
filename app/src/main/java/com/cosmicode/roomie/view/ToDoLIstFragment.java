@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -51,10 +52,10 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     private FloatingActionButton conconfirmButton;
     private SectionedRecyclerViewAdapter sectionAdapter;
     private static final String ARG_ROOMID = "room_id";
+
     private long roomId = 1;
     private DateTime dateToday;
-    private DateTimeComparator comparator;
-    public ToDoLIstFragment() {
+    private DateTimeComparator comparator;    public ToDoLIstFragment() {
         // Required empty public constructor
     }
 
@@ -122,37 +123,72 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     }
 
     @Override
+    public void OnUpdateSuccess(RoomTask roomTask) {
+        roomTaskService.getAllTaskByRoom(roomId);
+//        reorderList();
+    }
+
+    @Override
+    public void OnDeleteSuccess() {
+
+    }
+
+//    private void reorderList() {
+//        doneTasks.clear();
+//        todayTasks.clear();
+//        laterTasks.clear();
+//        pastTasks.clear();
+//        for (RoomTask task: roomTaskList) {
+//
+//            int difday = comparator.compare( formatDate(task.getDeadline()), dateToday);
+//
+//            if(task.getState() == RoomTaskState.COMPLETED){
+//                doneTasks.add(task);
+//            }else {
+//                if(difday == 0){
+//                    todayTasks.add(task);
+//                }else if (difday > 0){
+//                    laterTasks.add(task);
+//                }else if(difday<0){
+//                    pastTasks.add(task);
+//                }
+//            }
+//        }
+//
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//        recyclerView.setAdapter(sectionAdapter);
+//
+//        showProgress(false);
+//    }
+    @Override
     public void OnGetTaskByRoomSuccess(List<RoomTask> roomTasks) {
         this.roomTaskList = roomTasks;
         sectionAdapter = new SectionedRecyclerViewAdapter();
 
-        List<RoomTask> todayTasks = new ArrayList<>();
-        List<RoomTask> tomorrowTasks = new ArrayList<>();
-        List<RoomTask> laterTasks = new ArrayList<>();
-        List<RoomTask> doneTasks = new ArrayList<>();
-        List<RoomTask> pastTasks = new ArrayList<>();
-
+         List<RoomTask> todayTasks = new ArrayList<>();
+         List<RoomTask> laterTasks = new ArrayList<>();
+         List<RoomTask> doneTasks = new ArrayList<>();
+         List<RoomTask> pastTasks = new ArrayList<>();
         for (RoomTask task: roomTasks) {
-            if(task.getState() == RoomTaskState.COMPLETED) doneTasks.add(task);
-            else {
-                int difday = comparator.compare(dateToday, formatDate(task.getDeadline()));
+
+            int difday = comparator.compare( formatDate(task.getDeadline()), dateToday);
+
+            if(task.getState() == RoomTaskState.COMPLETED){
+                doneTasks.add(task);
+            }else {
                 if(difday == 0){
                     todayTasks.add(task);
-                }else if (difday == 1){
-                    tomorrowTasks.add(task);
-                }else if (difday > 1){
+                }else if (difday > 0){
                     laterTasks.add(task);
-                }else{
+                }else if(difday<0){
                     pastTasks.add(task);
                 }
             }
-
         }
 
         if(todayTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_today), todayTasks));
-        if(tomorrowTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_tomorrow), tomorrowTasks));
         if(laterTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_upcoming), laterTasks));
-        if(doneTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_past_task), doneTasks));
+        if(pastTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_past_task), pastTasks));
         if(doneTasks.size() > 0) sectionAdapter.addSection(new TaskSection(getString(R.string.todo_completed), doneTasks));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -169,7 +205,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     }
     @OnClick(R.id.button_new_task )
     public void openTasks(View view){
-        NewTaskFragment todoFragment = NewTaskFragment.newInstance("", "");
+        NewTaskFragment todoFragment = NewTaskFragment.newInstance(null);
         openFragment(todoFragment);
     }
     @OnClick(R.id.back_button)
@@ -258,14 +294,32 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
                 itemHolder.cardDeadline.setText(formattDateString(roomTask.getDeadline()));
             //}
             if(roomTask.getState() == RoomTaskState.COMPLETED){
-                itemHolder.buttonConfirm.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
+                itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.toast_success));
                 itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
             }
+            itemHolder.container.setOnClickListener( v -> {
+                NewTaskFragment fragment = NewTaskFragment.newInstance(roomTask);
+
+                openFragment(fragment);
+
+            });
             itemHolder.buttonConfirm.setOnClickListener(v -> {
-                itemHolder.buttonConfirm.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.green));
-                itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
-                //TODO: LLamar servicio para actualizar
+
+                if(roomTask.getState() == RoomTaskState.PENDING) {
+                    itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.toast_success));
+                    itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
+                    roomTask.setState(RoomTaskState.COMPLETED);
+                    roomTaskService.updateTask(roomTask);
+                    showProgress(true);
+                }else{
+                    itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.secondary));
+                    itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_timer);
+                    roomTask.setState(RoomTaskState.PENDING);
+                    roomTaskService.updateTask(roomTask);
+                    showProgress(true);
+                }
             }
+
             );
         }
 
@@ -311,7 +365,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         private final TextView cardDescription;
         private final TextView cardDeadline;
         private final FloatingActionButton buttonConfirm;
-
+        private final CardView container;
         TaskViewHolder(View view) {
             super(view);
             rootView = view;
@@ -319,6 +373,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             cardDescription = view.findViewById(R.id.card_description);
             cardDeadline = view.findViewById(R.id.card_time);
             buttonConfirm = view.findViewById(R.id.button_confirm_done);
+            container = view.findViewById(R.id.card_item);
         }
     }
 }

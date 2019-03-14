@@ -8,8 +8,10 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 import android.view.LayoutInflater;
@@ -33,8 +35,12 @@ import com.cosmicode.roomie.service.RoomTaskService;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener {
@@ -43,22 +49,24 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ImageButton buttonDeadline;
     private ImageButton buttonTime;
-    private Button createButton;
-    private TextView txtDeadline;
-    private TextView txtTime;
+    private Button createButton, deletebtn;
+    private TextView txtDeadline, txtTime, title;
     private EditText editTitle, editDesc;
     private String date;
     private ProgressBar progressBar;
     private TimePickerDialog.OnTimeSetListener mTListener;
     private String time;
     private RoomTaskService roomTaskService;
+    private RoomTask task;
     private ImageButton backButton;
+    private static final String TASK_KEY = "task";
     public NewTaskFragment() {
     }
 
-    public static NewTaskFragment newInstance(String param1, String param2) {
+    public static NewTaskFragment newInstance(RoomTask task) {
         NewTaskFragment fragment = new NewTaskFragment();
         Bundle args = new Bundle();
+        args.putParcelable(TASK_KEY, task);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,6 +91,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         buttonDeadline = getView().findViewById(R.id.button_deadline);
         txtTime = getView().findViewById(R.id.txt_time);
+        title = getView().findViewById(R.id.Title);
         buttonDeadline.setOnClickListener(this::onClickDate);
         buttonTime = getView().findViewById(R.id.timer_button);
         buttonTime.setOnClickListener(this::onClickTime);
@@ -94,7 +103,10 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         backButton = getView().findViewById(R.id.back_button);
         backButton.setOnClickListener(this::onClickBack);
         createButton.setOnClickListener(this::onClickCreateTask);
-
+        task = getArguments().getParcelable(TASK_KEY);
+        deletebtn = getView().findViewById(R.id.deletebtn);
+        taskNotNull();
+//        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -116,10 +128,14 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 String mm = Integer.toString(minute);
+                String hh = Integer.toString(hourOfDay);
                 if (minute<10){
                     mm = "0"+minute;
                 }
-                time = hourOfDay + ":" + mm;
+                if (hourOfDay<10){
+                    hh = "0"+hourOfDay;
+                }
+                time = hh + ":" + mm;
                 txtTime.setText(time);
             }
         };
@@ -169,10 +185,43 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
         Long id = new Long(1);
         RoomTask task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
-//        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
         roomTaskService.createTask(task);
         showProgress(true);
      }
+
+    public void onClickUpdateTask(View view) {
+        DateTime today = new DateTime();
+
+        int month, day;
+        month = today.getMonthOfYear();
+        day = today.getDayOfMonth();
+        String monthS, dayS;
+        monthS = Integer.toString(month);
+        dayS = Integer.toString(day);
+
+        if(month <= 9){
+            monthS = "0"+month;
+        }
+        if(day <= 9){
+            dayS = "0"+day;
+        }
+        String deadline = date +"T"+ time+ ":00Z";
+        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
+        Long id = new Long(1);
+        this.task.setTitle(editTitle.getText().toString());
+        this.task.setDescription(editDesc.getText().toString());
+        if(date != null && time != null){
+            this.task.setDeadline(deadline);
+        }
+
+        roomTaskService.updateTask(task);
+        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
+        showProgress(true);
+    }
+    public void onClickDeleteTask(View view) {
+        roomTaskService.deleteTask(task.getId());
+        showProgress(true);
+    }
 
     @Override
     public void onDetach() {
@@ -199,11 +248,22 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public void OnCreateTask(RoomTask roomTask) {
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-
-//        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(1);
-//        openFragment(todoFragment);
-
         getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void OnUpdateSuccess(RoomTask roomTask) {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void OnDeleteSuccess() {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+
     }
 
     @Override
@@ -230,5 +290,37 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private void taskNotNull(){
+        if(task != null){
+            editTitle.setText(task.getTitle());
+            editDesc.setText(task.getDescription());
+            String date, time;
+            DateTime dt = formatDate(task.getDeadline());
+            date = dt.getDayOfMonth() + "/" + dt.getMonthOfYear()+ "/"+ dt.getYear();
+            time = dt.getHourOfDay()+":"+dt.getMinuteOfHour();
+            txtDeadline.setText(date);
+            txtTime.setText(time);
+            createButton.setText(R.string.todo_past_save);
+            title.setText(R.string.todo_edit_title);
+            deletebtn.setOnClickListener(this::onClickDeleteTask);
+            createButton.setOnClickListener(this::onClickUpdateTask);
+        }else{
+            title.setText(R.string.todo_new_title);
+            deletebtn.setVisibility(View.GONE);
+            createButton.setOnClickListener(this::onClickCreateTask);
+        }
+
+    }
+
+
+    public DateTime formatDate(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
     }
 }

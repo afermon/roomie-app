@@ -117,6 +117,9 @@
     <string name="todo_upcoming">Upcoming</string>
     <string name="todo_completed">Completed</string>>
     <string name="todo_past_task">Undone past task</string>
+    <string name="todo_past_save">Save</string>
+    <string name="todo_new_title">New task</string>
+    <string name="todo_edit_title">Edit task</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

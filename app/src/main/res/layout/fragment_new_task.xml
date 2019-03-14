@@ -20,35 +20,39 @@
         app:layout_constraintTop_toBottomOf="@+id/deadline"
         tools:visibility="gone" />
 
-    <EditText
+    <TextView
         android:id="@+id/Deadline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:text="Deadline"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_Description" />
 
-    <EditText
+    <TextView
         android:id="@+id/deadline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:text="Time"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,13 +131,12 @@
 
     <EditText
         android:id="@+id/edit_title"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
         android:hint="Title"
-        android:inputType="textEmailAddress"
+        android:inputType="text"
         android:maxLength="254"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
@@ -246,5 +249,18 @@
         android:src="@drawable/icon_chevrons_left_brand"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/deletebtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/danger"
+        android:backgroundTint="@color/danger"
+        android:text="Delete"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view14" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
