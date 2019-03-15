@@ -3,6 +3,7 @@ package com.cosmicode.roomie;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,7 @@ public class RegisterSuccess extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_success);
-
+        ButterKnife.bind(this);
         Intent intent = getIntent();
         String name = intent.getStringExtra(RegisterActivity.USER_NAME);
         Button button = findViewById(R.id.button_return);
