@@ -6,9 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
@@ -30,7 +28,6 @@ import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnCreateRoomieListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnRegisterListener;
-import com.cosmicode.roomie.view.MainHomeFragment;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
@@ -43,6 +40,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
+import java.util.Date;
 import java.util.List;
 
 public class RegisterActivity extends BaseActivity implements OnRegisterListener, OnGetUserEmailListener, OnCreateRoomieListener, Validator.ValidationListener {
@@ -60,8 +58,8 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @BindViews({R.id.view, R.id.view2, R.id.view3, R.id.view4})
     public List<View> lines;
 
-    @BindView(R.id.edit_date) EditText editDate;
-    @BindView(R.id.edit_gender) EditText editGender;
+    @BindView(R.id.edit_date) TextView editDate;
+    @BindView(R.id.edit_gender) TextView editGender;
     @BindView(R.id.personal_info)
     TextView infoPersonal;
     @BindView(R.id.title)
@@ -115,12 +113,12 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                dateText.setText(dayOfMonth + "/" + month + "/" + year);
+                dateText.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
                 if (month <= 9) {
-                    monthS = "0" + month;
+                    monthS = "0" + month + 1;
                 }
 
                 if (dayOfMonth <= 9) {
@@ -177,6 +175,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         editDate.setError(null);
         DateTime max = new DateTime().minusYears(18);
         DatePickerDialog dialog = new DatePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
+        dialog.getDatePicker().setMaxDate(max.getMillis());
         dialog.show();
     }
 
