@@ -331,7 +331,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             String dt = new String();
             if (pdate !=null){
                 date = format.parseDateTime(pdate);
-                dt = date.getDayOfWeek() + "/" + date.getMonthOfYear() + "/" + date.getYear() + " " + date.getHourOfDay() + ":" + date.getMinuteOfHour();
+                dt = date.getDayOfMonth() + "/" + date.getMonthOfYear() + "/" + date.getYear() + " " + date.getHourOfDay() + ":" + date.getMinuteOfHour();
             }
             return dt;
         }

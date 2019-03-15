@@ -47,9 +47,9 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
     private OnFragmentInteractionListener mListener;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
-    private ImageButton buttonDeadline;
+    private ImageButton buttonDeadline, deletebtn;
     private ImageButton buttonTime;
-    private Button createButton, deletebtn;
+    private Button createButton;
     private TextView txtDeadline, txtTime, title;
     private EditText editTitle, editDesc;
     private String date;
@@ -304,6 +304,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             txtTime.setText(time);
             createButton.setText(R.string.todo_past_save);
             title.setText(R.string.todo_edit_title);
+            deletebtn.setVisibility(View.VISIBLE);
             deletebtn.setOnClickListener(this::onClickDeleteTask);
             createButton.setOnClickListener(this::onClickUpdateTask);
         }else{

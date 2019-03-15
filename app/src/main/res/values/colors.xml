@@ -8,7 +8,7 @@
     <color name="indigo">#5603ad</color>
     <color name="purple">#8965e0</color>
     <color name="pink">#f3a4b5</color>
-    <color name="red">#f5365c</color>
+    <color name="red">#F5365C</color>
     <color name="orange">#FB6340</color>
     <color name="orange_trans">#5Efb6340</color>
     <color name="yellow">#ffd600</color>
@@ -16,7 +16,7 @@
     <color name="teal">#11cdef</color>
     <color name="cyan">#2bffc6</color>
     <color name="default_color">#172b4d</color>
-    <color name="primary">#fb6340</color>
+    <color name="primary">#FB6340</color>
     <color name="secondary">#F4F5F7</color>
     <color name="success">#2DCE89</color>
     <color name="info">#11CDEF</color>

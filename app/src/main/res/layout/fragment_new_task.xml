@@ -167,9 +167,9 @@
         android:id="@+id/Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="50dp"
         android:text="New task"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
@@ -250,17 +250,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/deletebtn"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/danger"
-        android:backgroundTint="@color/danger"
-        android:text="Delete"
-        android:textColor="@color/white"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/circle_button_stroke"
+        android:backgroundTint="@null"
+        android:padding="8dp"
+        android:tint="@color/red"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view14" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_todo_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
