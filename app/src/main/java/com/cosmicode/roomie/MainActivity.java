@@ -3,22 +3,16 @@ package com.cosmicode.roomie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.cosmicode.roomie.domain.JhiAccount;
-import com.cosmicode.roomie.domain.Roomie;
-import com.cosmicode.roomie.service.RoomieService;
-import com.cosmicode.roomie.service.UserService;
-import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.domain.JhiAccount;
+import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
-import com.cosmicode.roomie.view.MainHomeFragment;
+import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
@@ -27,15 +21,19 @@ import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainHomeFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener, OnGetUserEmailListener {
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainSearchFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener, OnGetUserEmailListener {
 
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
-    public static final String JHIUSER_LAST= "jhiLast";
+    public static final String JHIUSER_LAST = "jhiLast";
 
 
     public static final Intent clearTopIntent(Context from) {
@@ -52,37 +50,46 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         roomieService.getCurrentRoomie();
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainHomeFragment.newInstance("", ""));
+        openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
-                MainHomeFragment homeFragment = MainHomeFragment.newInstance("", "");
-                openFragment(homeFragment);
+                MainSearchFragment homeFragment = MainSearchFragment.newInstance("");
+                openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
                 MainProfileFragment mainProfileFragment = MainProfileFragment.newInstance();
-                openFragment(mainProfileFragment);
+                openFragment(mainProfileFragment, "right");
                 return true;
             case R.id.navigation_view_notifications:
                 MainNotificationFragment notificationFragment = MainNotificationFragment.newInstance();
-                openFragment(notificationFragment);
+                openFragment(notificationFragment, "left");
                 return true;
             case R.id.navigation_view_options:
                 MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
-                openFragment(optionsFragment);
+                openFragment(optionsFragment, "left");
                 return true;
             default:
-                MainHomeFragment defaultFragment = MainHomeFragment.newInstance("", "");
-                openFragment(defaultFragment);
+                MainSearchFragment defaultFragment = MainSearchFragment.newInstance("");
+                openFragment(defaultFragment, "right");
                 return super.onOptionsItemSelected(menuItem);
         }
     }
 
-    private void openFragment(Fragment fragment) {
+    private void openFragment(Fragment fragment, String start) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (start) {
+            case "left":
+                transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, 0, 0);
+                break;
+            case "right":
+                transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
+                break;
+            case "up":
+        }
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -111,9 +118,14 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     }
 
     @Override
+    public void onSearchFragmentInteraction(Room item) {
+
+    }
+
+    @Override
     public void returnToHomeFragment() {
-        MainHomeFragment mainHomeFragment = MainHomeFragment.newInstance("", "");
-        openFragment(mainHomeFragment);
+        MainSearchFragment mainSearchFragment = MainSearchFragment.newInstance("");
+        openFragment(mainSearchFragment, "up");
     }
 
     @Override

@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.AccountState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDate;
-
 public class RoomieState {
 
     @SerializedName("id")
@@ -18,12 +16,12 @@ public class RoomieState {
 
     @SerializedName("suspendedDate")
     @Expose
-    private LocalDate suspendedDate;
+    private String suspendedDate;
 
     public RoomieState() {
     }
 
-    public RoomieState(Long id, AccountState state, LocalDate suspendedDate) {
+    public RoomieState(Long id, AccountState state, String suspendedDate) {
         this.id = id;
         this.state = state;
         this.suspendedDate = suspendedDate;
@@ -45,14 +43,13 @@ public class RoomieState {
         this.state = state;
     }
 
-    public LocalDate getSuspendedDate() {
+    public String getSuspendedDate() {
         return suspendedDate;
     }
 
-    public void setSuspendedDate(LocalDate suspendedDate) {
+    public void setSuspendedDate(String suspendedDate) {
         this.suspendedDate = suspendedDate;
     }
-
 
 
 }

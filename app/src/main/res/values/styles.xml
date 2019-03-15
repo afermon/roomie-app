@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/RoomieTextViewStyle</item>
         <item name="android:buttonStyle">@style/RoomieButtonStyle</item>
+        <item name="android:searchViewStyle">@style/RoomieSearchViewStyle</item>
     </style>
 
     <style name="RoomieTextViewStyle" parent="android:Widget.TextView">
@@ -31,6 +32,12 @@
     <style name="DatePickerSpinner">
         <item name="android:datePickerMode">spinner</item>
         <item name="android:textColorPrimary">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="RoomieSearchViewStyle" parent="android:Widget.Material.SearchView">
+        <item name="searchIcon">@drawable/icon_search_gray</item>
+        <item name="closeIcon">@color/light</item>
     </style>
 
 </resources>

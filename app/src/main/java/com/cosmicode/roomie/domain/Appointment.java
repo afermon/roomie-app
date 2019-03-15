@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.Instant;
-
 public class Appointment {
 
     @SerializedName("id")
@@ -18,7 +16,7 @@ public class Appointment {
 
     @SerializedName("dateTime")
     @Expose
-    private Instant dateTime;
+    private String dateTime;
 
     @SerializedName("state")
     @Expose
@@ -36,7 +34,7 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Long id, String description, Instant dateTime, AppointmentState state, Long petitionerId, Long roomId) {
+    public Appointment(Long id, String description, String dateTime, AppointmentState state, Long petitionerId, Long roomId) {
         this.id = id;
         this.description = description;
         this.dateTime = dateTime;
@@ -61,11 +59,11 @@ public class Appointment {
         this.description = description;
     }
 
-    public Instant getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Instant dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -92,7 +90,6 @@ public class Appointment {
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
     }
-
 
 
 }

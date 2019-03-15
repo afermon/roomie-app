@@ -1,12 +1,11 @@
 package com.cosmicode.roomie.domain;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
-
 import com.cosmicode.roomie.domain.enumeration.RoomType;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Room {
 
@@ -15,13 +14,13 @@ public class Room {
     private Long id;
     @SerializedName("state")
     @Expose
-    private RoomieState state;
+    private RoomState state;
     @SerializedName("created")
     @Expose
-    private Instant created;
+    private String created;
     @SerializedName("published")
     @Expose
-    private Instant published;
+    private String published;
     @SerializedName("title")
     @Expose
     private String title;
@@ -42,7 +41,7 @@ public class Room {
     private Boolean lookingForRoomie;
     @SerializedName("availableFrom")
     @Expose
-    private LocalDate availableFrom;
+    private String availableFrom;
     @SerializedName("isPremium")
     @Expose
     private Boolean isPremium;
@@ -62,7 +61,7 @@ public class Room {
     public Room() {
     }
 
-    public Room(Long id, RoomieState state, Instant created, Instant published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, LocalDate availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, Long ownerId) {
+    public Room(Long id, RoomState state, String created, String published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, String availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, Long ownerId) {
         this.id = id;
         this.state = state;
         this.created = created;
@@ -89,27 +88,27 @@ public class Room {
         this.id = id;
     }
 
-    public RoomieState getState() {
+    public RoomState getState() {
         return state;
     }
 
-    public void setState(RoomieState state) {
+    public void setState(RoomState state) {
         this.state = state;
     }
 
-    public Instant getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(Instant created) {
+    public void setCreated(String created) {
         this.created = created;
     }
 
-    public Instant getPublished() {
+    public String getPublished() {
         return published;
     }
 
-    public void setPublished(Instant published) {
+    public void setPublished(String published) {
         this.published = published;
     }
 
@@ -161,11 +160,11 @@ public class Room {
         this.lookingForRoomie = lookingForRoomie;
     }
 
-    public LocalDate getAvailableFrom() {
+    public String getAvailableFrom() {
         return availableFrom;
     }
 
-    public void setAvailableFrom(LocalDate availableFrom) {
+    public void setAvailableFrom(String availableFrom) {
         this.availableFrom = availableFrom;
     }
 

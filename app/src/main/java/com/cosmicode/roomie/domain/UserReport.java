@@ -4,8 +4,6 @@ import com.cosmicode.roomie.domain.enumeration.ReportType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDate;
-
 public class UserReport {
 
     @SerializedName("id")
@@ -14,7 +12,7 @@ public class UserReport {
 
     @SerializedName("date")
     @Expose
-    private LocalDate date;
+    private String date;
 
     @SerializedName("description")
     @Expose
@@ -35,7 +33,7 @@ public class UserReport {
     public UserReport() {
     }
 
-    public UserReport(Long id, LocalDate date, String description, ReportType type, Long roomieId, Long roomId) {
+    public UserReport(Long id, String date, String description, ReportType type, Long roomieId, Long roomId) {
         this.id = id;
         this.date = date;
         this.description = description;
@@ -52,11 +50,11 @@ public class UserReport {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
