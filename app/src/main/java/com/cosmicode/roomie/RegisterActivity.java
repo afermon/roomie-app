@@ -113,12 +113,17 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                dateText.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+
+                if(month <= 9){
+                    month++;
+                }
+
+                dateText.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
                 if (month <= 9) {
-                    monthS = "0" + month + 1;
+                    monthS = "0" + month;
                 }
 
                 if (dayOfMonth <= 9) {
