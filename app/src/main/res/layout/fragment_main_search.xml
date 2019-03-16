@@ -22,7 +22,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
-            android:src="@mipmap/roomie_logo_full_white"
+            android:src="@drawable/roomie_logo_white"
             app:layout_constraintBottom_toTopOf="@+id/search_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
