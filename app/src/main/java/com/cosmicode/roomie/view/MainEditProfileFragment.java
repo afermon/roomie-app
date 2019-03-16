@@ -9,11 +9,13 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ChooseLocationActivity;
+import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Roomie;
@@ -50,6 +53,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
+import com.mobsandgeeks.saripaar.annotation.Optional;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vansuita.pickimage.bean.PickResult;
@@ -59,18 +66,24 @@ import com.vansuita.pickimage.listeners.IPickResult;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
 
-public class MainEditProfileFragment extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener {
+public class MainEditProfileFragment extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener, Validator.ValidationListener {
 
     private static final String ROOMIE_KEY = "current_roomie";
     private Roomie currentRoomie;
     private OnFragmentInteractionListener mListener;
     private ImageView pfp;
-    private EditText phone, bio;
-    private TextView phoneError, bioError;
+
+    @Length(min = 4, max = 25)
+    private EditText phone;
+
+    @Length(min = 4, max = 750)
+    private EditText bio;
+
     private ImageButton editButton, geoButton;
     private Button saveButton;
     private UploadPictureService uploadPictureService;
@@ -84,6 +97,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     private static final int LOCATION_PERMISSION = 1;
     private final String TAG = "Edit profile";
     private FusedLocationProviderClient fusedLocationClient;
+    private Validator validator;
 
 
     public MainEditProfileFragment() {
@@ -102,6 +116,8 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            validator = new Validator(this);
+            validator.setValidationListener(this);
             currentRoomie = getArguments().getParcelable(ROOMIE_KEY);
             uploadPictureService = new UploadPictureService(getContext(), this);
             addressService = new AddressService(getContext(), this);
@@ -127,8 +143,6 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
         editButton.setOnClickListener(this::onClickEditPhoto);
         phone = getView().findViewById(R.id.phone_input);
         bio = getView().findViewById(R.id.bio_input);
-        phoneError = getView().findViewById(R.id.error_phone);
-        bioError = getView().findViewById(R.id.bio_error);
         saveButton = getView().findViewById(R.id.save_button);
         saveButton.setOnClickListener(this::onClickSave);
         geoButton = getView().findViewById(R.id.geo_button);
@@ -156,13 +170,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
 
 
     public void onClickSave(View view) {
-        phoneError.setVisibility(View.INVISIBLE);
-        bioError.setVisibility(View.INVISIBLE);
-        if (validatePhone(phone.getText().toString()) && validateBio(bio.getText().toString())) {
-            currentRoomie.setPhone(phone.getText().toString());
-            currentRoomie.setBiography(bio.getText().toString());
-            roomieService.updateRoomie(currentRoomie);
-        }
+        validator.validate();
     }
 
     public void cropImage(Uri uri) {
@@ -170,51 +178,12 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setCropShape(CropImageView.CropShape.OVAL)
                 .setMinCropResultSize(200, 200)
-                .setMaxCropResultSize(1000, 1000)
+                .setMaxCropResultSize(2000, 2000)
                 .setBorderLineColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
                 .start(getContext(), this);
     }
 
-    public boolean validateBio(String bioText) {
-
-        boolean isValid = true;
-
-        if (bioText.length() > 750) {
-            phoneError.setText(R.string.validate_text_long);
-            phoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        } else if (bioText.length() < 4 && bioText.length() > 0) {
-            phoneError.setText(R.string.validate_text_short);
-            phoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    public boolean validatePhone(String phoneText) {
-        boolean isValid = true;
-
-        if (phoneText.length() > 25) {
-            phoneError.setText(R.string.validate_number_long);
-            phoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        } else if (phoneText.length() < 4 && phoneText.length() > 0) {
-            phoneError.setText(R.string.validate_number_short);
-            phoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        } else if (phoneText.length() == 0) {
-            phoneError.setText(R.string.validate_empty);
-            phoneError.setVisibility(View.VISIBLE);
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-
     public void onClickGeo(View view) {
-
 
 
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -230,7 +199,8 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
                                 double[] coordinates = {location.getLatitude(), location.getLongitude()};
                                 Intent intent = new Intent(getContext(), ChooseLocationActivity.class);
                                 intent.putExtra(CHOOSE_LOCATION_ADDRESS, coordinates);
-                                startActivityForResult(intent, REQUEST_MAP_CODE);                            }
+                                startActivityForResult(intent, REQUEST_MAP_CODE);
+                            }
                         }
                     });
 
@@ -387,7 +357,28 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
         });
 
 
+    }
 
+    @Override
+    public void onValidationSucceeded() {
+        currentRoomie.setPhone(phone.getText().toString());
+        currentRoomie.setBiography(bio.getText().toString());
+        roomieService.updateRoomie(currentRoomie);
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(getContext());
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }
