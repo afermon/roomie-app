@@ -1,5 +1,8 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.google.gson.annotations.Expose;
@@ -7,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Room {
+public class Room implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -206,5 +209,15 @@ public class Room {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

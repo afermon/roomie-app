@@ -1,6 +1,7 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.CreateListingActivity;
 import com.cosmicode.roomie.R;
 
 import org.w3c.dom.Text;
@@ -35,7 +37,7 @@ public class MainOptionsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Button button;
+    private Button button, listing;
     private OnFragmentInteractionListener mListener;
 
     public MainOptionsFragment() {
@@ -81,8 +83,12 @@ public class MainOptionsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         TextView logout_button = getView().findViewById(R.id.exit_text);
         button = getView().findViewById(R.id.button4);
+        listing = getView().findViewById(R.id.listing);
         name = getView().findViewById(R.id.options_name);
         email = getView().findViewById(R.id.options_mail);
+        listing.setOnClickListener( v -> {
+            startActivity(new Intent(getContext(), CreateListingActivity.class));
+        });
         button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
