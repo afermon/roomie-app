@@ -29,6 +29,8 @@ import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.List;
 
 
@@ -76,6 +78,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(getContext());
         roomService = new RoomService(getContext(), this);
         if (getArguments() != null) {
             searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
