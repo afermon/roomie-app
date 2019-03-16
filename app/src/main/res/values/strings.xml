@@ -129,4 +129,5 @@
     <string name="gender">Gender</string>
     <string name="male">Male</string>
     <string name="create_account_btn">Create Account</string>
+    <string name="copyright">© 2019 Cosmicode. All rights reserved.</string>
 </resources>

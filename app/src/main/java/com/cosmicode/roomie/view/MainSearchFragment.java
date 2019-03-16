@@ -143,6 +143,21 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //TODO: Submit search
+                roomService.serachRooms(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //TODO: Typeahead
+                return false;
+            }
+        });
+
         roomService.getAllRooms();
     }
 
@@ -176,6 +191,14 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
+        Context context = getView().getContext();
+        roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+        showProgress(false);
+    }
+
+    @Override
+    public void OnSearchSuccess(List<Room> rooms) {
         Context context = getView().getContext();
         roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
