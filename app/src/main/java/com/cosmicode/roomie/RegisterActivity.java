@@ -40,6 +40,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
+import java.util.Date;
 import java.util.List;
 
 public class RegisterActivity extends BaseActivity implements OnRegisterListener, OnGetUserEmailListener, OnCreateRoomieListener, Validator.ValidationListener {
@@ -57,8 +58,8 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @BindViews({R.id.view, R.id.view2, R.id.view3, R.id.view4})
     public List<View> lines;
 
-    @BindView(R.id.edit_date) EditText editDate;
-    @BindView(R.id.edit_gender) EditText editGender;
+    @BindView(R.id.edit_date) TextView editDate;
+    @BindView(R.id.edit_gender) TextView editGender;
     @BindView(R.id.personal_info)
     TextView infoPersonal;
     @BindView(R.id.title)
@@ -112,7 +113,12 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                dateText.setText(dayOfMonth + "/" + month + "/" + year);
+
+                if(month <= 9){
+                    month++;
+                }
+
+                dateText.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -174,6 +180,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         editDate.setError(null);
         DateTime max = new DateTime().minusYears(18);
         DatePickerDialog dialog = new DatePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
+        dialog.getDatePicker().setMaxDate(max.getMillis());
         dialog.show();
     }
 
