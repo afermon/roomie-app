@@ -129,13 +129,13 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         roomListRecyclerView.addOnScrollListener(new MyRecyclerScroll() {
             @Override
             public void show() {
-                searchLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                //searchLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
                 searchLayout.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void hide() {
-                searchLayout.animate().translationY(searchLayout.getHeight() - 8).setInterpolator(new AccelerateInterpolator(2)).start();
+                //searchLayout.animate().translationY(searchLayout.getHeight() - 8).setInterpolator(new AccelerateInterpolator(2)).start();
                 searchLayout.setVisibility(View.GONE);
             }
         });
