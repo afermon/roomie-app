@@ -29,6 +29,8 @@ import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.List;
 
 
@@ -50,6 +52,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @BindView(R.id.progress_bar) ProgressBar progressBar;
     @BindView(R.id.search_view) SearchView searchView;
     @BindView(R.id.search_layout) ConstraintLayout searchLayout;
+    @BindView(R.id.no_results) TextView noResults;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
@@ -76,6 +79,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        JodaTimeAndroid.init(getContext());
         roomService = new RoomService(getContext(), this);
         if (getArguments() != null) {
             searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
@@ -140,10 +144,28 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //TODO: Submit search
+                showProgress(true);
+                roomService.serachRooms(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //TODO: Typeahead
+                return false;
+            }
+        });
+
         roomService.getAllRooms();
     }
 
     private void showProgress(boolean show) {
+        if(show) noResults.setVisibility(View.INVISIBLE);
+
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
@@ -173,9 +195,13 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
-        Context context = getView().getContext();
-        roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+        if (rooms.size() > 0){
+            noResults.setVisibility(View.INVISIBLE);
+            roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+        } else
+            noResults.setVisibility(View.VISIBLE);
+
         showProgress(false);
     }
 

@@ -1,15 +1,16 @@
 image: mingc/android-build-box:latest
 
 pipelines:
-  default:
+  branches:
+    master:
     - step:
         name: Build test
         caches:
-          - gradle
-          - gradlewrapper
-          - androidavd
+        - gradle
+        - gradlewrapper
+        - androidavd
         script:
-          - bash ./gradlew assemble
+        - bash ./gradlew assemble
 definitions:
   caches:
     gradlewrapper: ~/.gradle/wrapper
