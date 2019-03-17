@@ -11,6 +11,24 @@ pipelines:
         - androidavd
         script:
         - bash ./gradlew assemble
+    staging:
+    - step:
+        name: Build test
+        caches:
+        - gradle
+        - gradlewrapper
+        - androidavd
+        script:
+        - bash ./gradlew assemble
+    dev:
+    - step:
+        name: Build test
+        caches:
+        - gradle
+        - gradlewrapper
+        - androidavd
+        script:
+        - bash ./gradlew assemble
 definitions:
   caches:
     gradlewrapper: ~/.gradle/wrapper
