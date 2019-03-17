@@ -16,34 +16,31 @@ import butterknife.OnClick;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
 
-public class ListingStep1 extends Fragment {
+public class ListingStepChooseType extends Fragment {
 
     @BindView(R.id.room_btn)
-    Button roommate;
+    TextView roommate;
 
     @BindView(R.id.rent_btn)
-    Button rent;
-
-    @BindView(R.id.next_step)
-    Button next;
+    TextView rent;
 
     private Room room;
 
     private OnFragmentInteractionListener mListener;
 
-    public ListingStep1() {
+    public ListingStepChooseType() {
         // Required empty public constructor
     }
 
 
-    public static ListingStep1 newInstance() {
-        ListingStep1 fragment = new ListingStep1();
+    public static ListingStepChooseType newInstance() {
+        ListingStepChooseType fragment = new ListingStepChooseType();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -58,7 +55,9 @@ public class ListingStep1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_listing_step1, container, false);
+        View view = inflater.inflate(R.layout.fragment_listing_step1, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -66,15 +65,12 @@ public class ListingStep1 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         room = new Room();
         room.setState(RoomState.SEARCH);
-        ButterKnife.bind(getActivity());
-        next.setEnabled(false);
     }
 
-    @OnClick(R.id.next_step)
     public void openFragment() {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingStep2.newInstance(room) );
+        transaction.replace(R.id.listing_container, ListingStepCost.newInstance(room) );
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -87,20 +83,20 @@ public class ListingStep1 extends Fragment {
 
     @OnClick(R.id.rent_btn)
     public void onClickRent(View view){
-        room.setLookingForRoomie(true);
+        room.setLookingForRoomie(false);
         activeButton(rent, roommate);
     }
 
-    public void activeButton(Button active, Button inactive) {
-        next.setEnabled(true);
+    public void activeButton(TextView active, TextView inactive) {
         active.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.primary));
         active.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
         inactiveButton(inactive);
     }
 
-    public void inactiveButton(Button inactive) {
+    public void inactiveButton(TextView inactive) {
         inactive.setBackgroundTintList(null);
         inactive.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+        openFragment();
     }
 
     @Override

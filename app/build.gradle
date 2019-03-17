@@ -72,6 +72,7 @@ dependencies {
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'net.danlew:android.joda:2.10.1.1'
     implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
+    implementation 'com.github.faranjit:currency-edittext:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

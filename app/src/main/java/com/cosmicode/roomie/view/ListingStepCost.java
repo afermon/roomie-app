@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -15,11 +16,10 @@ import butterknife.OnClick;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,57 +27,52 @@ import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
-import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
-import com.mobsandgeeks.saripaar.annotation.Select;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class ListingStep2 extends Fragment implements Validator.ValidationListener {
+public class ListingStepCost extends Fragment implements Validator.ValidationListener {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
     private Room room;
-    private String date;
+    private String date, date2;
     private OnFragmentInteractionListener mListener;
     private Validator validator;
-
-    @NotEmpty
-    @Length(min = 4, max = 100)
-    @BindView(R.id.edit_headline)
-    EditText headline;
-
-    @NotEmpty
-    @Length(min = 4, max = 2000)
-    @BindView(R.id.edit_desc)
-    EditText desc;
+    private static int selectedDate;
 
     @NotEmpty
     @BindView(R.id.edit_amount)
     EditText amount;
 
-    @Select
-    @BindView(R.id.currency_spinner)
-    Spinner currency;
+    @NotEmpty
+    @BindView(R.id.movein_date)
+    TextView dateText;
 
     @NotEmpty
-    @BindView(R.id.edit_date)
-    TextView dateText;
+    @BindView(R.id.moveout_date)
+    TextView dateText2;
 
     @BindView(R.id.date_picker)
     ImageButton datePicker;
 
 
-    public ListingStep2() {
+    @BindView(R.id.date_picker2)
+    ImageButton datePicker2;
+
+    @BindView(R.id.btn_next)
+    Button next;
+
+
+    public ListingStepCost() {
     }
 
 
-    public static ListingStep2 newInstance(Room room) {
-        ListingStep2 fragment = new ListingStep2();
+    public static ListingStepCost newInstance(Room room) {
+        ListingStepCost fragment = new ListingStepCost();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
         fragment.setArguments(args);
@@ -95,22 +90,24 @@ public class ListingStep2 extends Fragment implements Validator.ValidationListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_listing_step2, container, false);
+        View view = inflater.inflate(R.layout.fragment_listing_step2, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(getActivity());
         validator = new Validator(this);
         validator.setValidationListener(this);
+        DateTime x = new DateTime();
+        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
                 month++;
-                dateText.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -121,9 +118,25 @@ public class ListingStep2 extends Fragment implements Validator.ValidationListen
                 if (dayOfMonth <= 9) {
                     dayS = "0" + dayOfMonth;
                 }
-                date = year + "-" + monthS + "-" + dayS;
+
+                if(selectedDate == 0){
+                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date = year + "-" + monthS + "-" + dayS;
+                }else{
+                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date2 = year + "-" + monthS + "-" + dayS;
+                }
             }
         };
+    }
+
+    @OnClick(R.id.btn_next)
+    public void onClickNext(View view){
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
+        transaction.replace(R.id.listing_container, ListingChoosePictures.newInstance(room) );
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @OnClick(R.id.date_picker)
@@ -132,6 +145,17 @@ public class ListingStep2 extends Fragment implements Validator.ValidationListen
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
+        selectedDate = 0;
+        dialog.show();
+    }
+
+    @OnClick(R.id.date_picker2)
+    public void onClickDate2(View view) {
+        dateText2.setError(null);
+        DateTime max = new DateTime();
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
+        dialog.getDatePicker().setMinDate(max.getMillis());
+        selectedDate = 1;
         dialog.show();
     }
 
@@ -144,16 +168,6 @@ public class ListingStep2 extends Fragment implements Validator.ValidationListen
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    public void fillSpinner(){
-        List<String> spinnerArray =  new ArrayList<String>();
-        spinnerArray.add("CRC");
-        spinnerArray.add("USD");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getContext(), android.R.layout.simple_spinner_item, spinnerArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        currency.setAdapter(adapter);
     }
 
     @Override

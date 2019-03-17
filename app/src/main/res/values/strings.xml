@@ -132,14 +132,22 @@
     <string name="listing_title">Listings</string>
     <string name="new_listing">Create a new listing</string>
     <string name="select_listing">Select type of listing:</string>
-    <string name="add_room_info">Basic Information</string>
+    <string name="add_room_info">Cost Information</string>
     <string name="heading">Headline</string>
     <string name="headline_hint">Describe what you offer in a few words</string>
     <string name="deatailed_desc">Detailed description</string>
     <string name="room_desc_hint">Add a detailed description about the place and what you are looking for</string>
     <string name="rent">Rent amount</string>
-    <string name="amount">Monthly rate</string>
+    <string name="amount">Monthly rent</string>
     <string name="currency">Currency</string>
     <string name="move_in">Move-In Date</string>
     <string name="available_date">Available date</string>
+    <string name="room_number">Number of rooms</string>
+    <string name="room">Rooms</string>
+    <string name="room_type">Type of place</string>
+    <string name="spinner_room">Room</string>
+    <string name="spinner_apt">Apartment</string>
+    <string name="spinner_house">House</string>
+    <string name="move_out">Move-out date</string>
+    <string name="pictures">Add Pictures</string>
 </resources>
