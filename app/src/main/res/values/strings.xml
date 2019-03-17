@@ -130,4 +130,5 @@
     <string name="male">Male</string>
     <string name="create_account_btn">Create Account</string>
     <string name="copyright">© 2019 Cosmicode. All rights reserved.</string>
+    <string name="no_results">This is embarrassing! We did not found any rooms with the current search filters. Please try again.</string>
 </resources>

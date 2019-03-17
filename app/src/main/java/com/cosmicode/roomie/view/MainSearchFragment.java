@@ -52,6 +52,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @BindView(R.id.progress_bar) ProgressBar progressBar;
     @BindView(R.id.search_view) SearchView searchView;
     @BindView(R.id.search_layout) ConstraintLayout searchLayout;
+    @BindView(R.id.no_results) TextView noResults;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
@@ -147,6 +148,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //TODO: Submit search
+                showProgress(true);
                 roomService.serachRooms(query);
                 return false;
             }
@@ -162,6 +164,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     private void showProgress(boolean show) {
+        if(show) noResults.setVisibility(View.INVISIBLE);
+
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
@@ -191,17 +195,13 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
-        Context context = getView().getContext();
-        roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
-        showProgress(false);
-    }
+        if (rooms.size() > 0){
+            noResults.setVisibility(View.INVISIBLE);
+            roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+        } else
+            noResults.setVisibility(View.VISIBLE);
 
-    @Override
-    public void OnSearchSuccess(List<Room> rooms) {
-        Context context = getView().getContext();
-        roomListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
         showProgress(false);
     }
 

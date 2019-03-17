@@ -62,7 +62,7 @@ public class RoomService {
             @Override
             public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
                 if (response.code() == 200) { // OK
-                    listener.OnSearchSuccess(response.body());
+                    listener.OnGetRoomsSuccess(response.body());
                 } else {
                     Log.e(TAG, response.toString());
                     listener.OnGetRoomsError(Integer.toString(response.code()));
@@ -80,7 +80,6 @@ public class RoomService {
 
     public interface RoomServiceListener {
         void OnGetRoomsSuccess(List<Room> rooms);
-        void OnSearchSuccess(List<Room> rooms);
         void OnGetRoomsError(String error);
     }
 
