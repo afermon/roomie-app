@@ -3,8 +3,6 @@ package com.cosmicode.roomie.domain;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDate;
-
 public class RoomExpenseSplitRecord {
 
     @SerializedName("id")
@@ -13,7 +11,7 @@ public class RoomExpenseSplitRecord {
 
     @SerializedName("date")
     @Expose
-    private LocalDate date;
+    private String date;
 
     @SerializedName("state")
     @Expose
@@ -26,7 +24,7 @@ public class RoomExpenseSplitRecord {
     public RoomExpenseSplitRecord() {
     }
 
-    public RoomExpenseSplitRecord(Long id, LocalDate date, String state, Long splitId) {
+    public RoomExpenseSplitRecord(Long id, String date, String state, Long splitId) {
         this.id = id;
         this.date = date;
         this.state = state;
@@ -41,11 +39,11 @@ public class RoomExpenseSplitRecord {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

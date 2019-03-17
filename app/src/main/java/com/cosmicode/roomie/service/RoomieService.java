@@ -50,8 +50,6 @@ public class RoomieService {
 
             @Override
             public void onFailure(Call<Roomie> call, Throwable t) {
-                Toast.makeText(context, "Something went wrong!",
-                        Toast.LENGTH_LONG).show();
                 listener.onGetCurrentRoomieError("Something went wrong!");
             }
         });
