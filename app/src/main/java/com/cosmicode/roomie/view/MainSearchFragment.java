@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -53,7 +55,7 @@ import butterknife.ButterKnife;
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener, SearchView.OnCloseListener {
+public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener {
 
     private static final String TAG = "SearchFragment";
     private static final String ARG_SEARCH_QUERY = "search-query";
@@ -69,6 +71,10 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     ConstraintLayout searchLayout;
     @BindView(R.id.no_results)
     TextView noResults;
+    @BindView(R.id.search_filters)
+    ImageButton searchFiltersButton;
+    @BindView(R.id.main_add_button)
+    ImageButton mainAddButton;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
@@ -99,6 +105,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(getContext());
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         roomService = new RoomService(getContext(), this);
         if (getArguments() != null) {
             searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
@@ -134,8 +141,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        searchView.setIconified(false);
-        searchView.setOnCloseListener(this);
+        float density = getContext().getResources().getDisplayMetrics().density;
+
         searchView.setQueryHint("Search....");
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
@@ -148,36 +155,54 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 searchText.setHintTextColor(getActivity().getResources().getColor(R.color.light));
             }
         }
-
-        showProgress(true);
-
-        roomListRecyclerView.addOnScrollListener(new MyRecyclerScroll() {
-            @Override
-            public void show() {
-                //searchLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
-                searchLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void hide() {
-                //searchLayout.animate().translationY(searchLayout.getHeight() - 8).setInterpolator(new AccelerateInterpolator(2)).start();
-                searchLayout.setVisibility(View.GONE);
-            }
-        });
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //TODO: Submit search
                 showProgress(true);
+                searchQuery = query;
                 roomService.serachRooms(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //TODO: Typeahead
+                //TODO: type ahead
                 return false;
+            }
+        });
+        searchView.setOnSearchClickListener(v -> {
+            Log.d(TAG, "search expanded");
+            searchView.setQuery(searchQuery, false);
+            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) searchView.getLayoutParams();
+            layoutParams.setMargins(layoutParams.leftMargin,  (int)(57 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
+            layoutParams.horizontalBias = (float)0.5;
+            searchView.setLayoutParams(layoutParams);
+            searchFiltersButton.setVisibility(View.VISIBLE);
+        });
+
+        searchView.setOnCloseListener(() -> {
+            Log.d(TAG, "search closed");
+            searchFiltersButton.setVisibility(View.INVISIBLE);
+            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) searchView.getLayoutParams();
+            layoutParams.setMargins(layoutParams.leftMargin, (int)(13 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
+            layoutParams.horizontalBias = (float)1;
+            searchView.setLayoutParams(layoutParams);
+            searchFiltersButton.setVisibility(View.INVISIBLE);
+            return false;
+        });
+
+        showProgress(true);
+
+        roomListRecyclerView.addOnScrollListener(new MyRecyclerScroll() {
+            @Override
+            public void show() {
+                searchView.setIconified(false);
+            }
+
+            @Override
+            public void hide() {
+                searchView.setIconified(true);
+                if(!searchView.isIconified()) searchView.setIconified(true);
             }
         });
 
@@ -186,7 +211,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
         } else {
-            Log.e(TAG, "Asking for location");
+            Log.d(TAG, "Asking for location");
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(getActivity(), location -> {
                         if (location != null) {
@@ -203,7 +228,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+        roomListRecyclerView.setVisibility(((show) ? View.INVISIBLE : View.VISIBLE));
 
         roomListRecyclerView.animate()
                 .setDuration(shortAnimTime)
@@ -211,7 +236,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        roomListRecyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                        roomListRecyclerView.setVisibility(((show) ? View.INVISIBLE : View.VISIBLE));
                     }
                 });
 
@@ -229,8 +254,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
+        Log.d(TAG, "Success getting rooms");
         if (rooms.size() > 0){
-            noResults.setVisibility(View.INVISIBLE);
+            noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, currentUserLocation, mListener, getContext()));
         } else
@@ -242,11 +268,6 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void OnGetRoomsError(String error) {
 
-    }
-
-    @Override //Search view close
-    public boolean onClose() {
-        return true;
     }
 
     public interface OnFragmentInteractionListener {
