@@ -14,12 +14,12 @@ public class Address {
     @SerializedName("id")
     @Expose
     private Long id;
-    @SerializedName("latitude")
+    @SerializedName("lat")
     @Expose
-    private BigDecimal latitude;
-    @SerializedName("longitude")
+    private BigDecimal lat;
+    @SerializedName("lon")
     @Expose
-    private BigDecimal longitude;
+    private BigDecimal lon;
     @SerializedName("city")
     @Expose
     private String city;
@@ -33,10 +33,10 @@ public class Address {
     public Address() {
     }
 
-    public Address(Long id, BigDecimal latitude, BigDecimal longitude, String city, String state, String description) {
+    public Address(Long id, BigDecimal lat, BigDecimal lon, String city, String state, String description) {
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.lat = lat;
+        this.lon = lon;
         this.city = city;
         this.state = state;
         this.description = description;
@@ -50,20 +50,20 @@ public class Address {
         this.id = id;
     }
 
-    public BigDecimal getLatitude() {
-        return latitude;
+    public BigDecimal getLat() {
+        return lat;
     }
 
-    public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude;
+    public void setLat(BigDecimal lat) {
+        this.lat = lat;
     }
 
-    public BigDecimal getLongitude() {
-        return longitude;
+    public BigDecimal getLon() {
+        return lon;
     }
 
-    public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude;
+    public void setLon(BigDecimal lon) {
+        this.lon = lon;
     }
 
     public String getCity() {
@@ -93,8 +93,8 @@ public class Address {
     public Location getLocation() {
         Location location = new Location(LocationManager.GPS_PROVIDER);
         location.setAltitude(0);
-        location.setLatitude(latitude.doubleValue());
-        location.setLongitude(longitude.doubleValue());
+        location.setLatitude(lat.doubleValue());
+        location.setLongitude(lon.doubleValue());
         return location;
     }
 

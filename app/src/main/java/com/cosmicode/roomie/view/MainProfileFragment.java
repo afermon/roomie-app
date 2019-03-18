@@ -227,7 +227,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     @Override
     public void onMapReady(GoogleMap map) {
         GoogleMap gMap = map;
-        LatLng location = new LatLng(userAddress.getLatitude().doubleValue(), userAddress.getLongitude().doubleValue());
+        LatLng location = new LatLng(userAddress.getLat().doubleValue(), userAddress.getLon().doubleValue());
         gMap.addMarker(new MarkerOptions().position(location).title("Your location"));
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
