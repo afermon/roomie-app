@@ -2,6 +2,7 @@ package com.cosmicode.roomie.util.adapters;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
     private final OnFragmentInteractionListener mListener;
     private Location mCurrentUserLocation;
     private Context mContext;
+    private static final String TAG = "SearchRoomRecyclerViewAdapter";
 
     public SearchRoomRecyclerViewAdapter(List<Room> items, Location currentUserLocation, OnFragmentInteractionListener listener, Context context) {
         mValues = items;
@@ -62,31 +64,39 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         holder.roomTitle.setText(mValues.get(position).getTitle());
         holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
 
-        //Picture
-        RoomPicture picture = mValues.get(position).getMainPicture();
-        if(picture != null)
-            Glide.with(mContext).load(picture.getUrl()).centerCrop().into(holder.roomPinture);
-
         holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
-        Address address = mValues.get(position).getAddress();
-        holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
 
-        //Price
-        RoomExpense price = mValues.get(position).getPrice();
-        Double priceUser = price.getAmount() / mValues.get(position).getRooms(); // Price per user
-        if(price.getCurrency() == CurrencyType.DOLLAR){
-            holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
-        } else {
-            holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
+        try {
+
+            //Picture
+            RoomPicture picture = mValues.get(position).getMainPicture();
+            if (picture != null)
+                Glide.with(mContext).load(picture.getUrl()).centerCrop().into(holder.roomPinture);
+            else
+                Log.e(TAG, "no picture found > " + mValues.get(position).getPictures().size());
+
+            Address address = mValues.get(position).getAddress();
+            holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
+
+            //Price
+            RoomExpense price = mValues.get(position).getPrice();
+            Double priceUser = price.getAmount() / mValues.get(position).getRooms(); // Price per user
+            if (price.getCurrency() == CurrencyType.DOLLAR) {
+                holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
+            } else {
+                holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
+            }
+
+            float distance = mCurrentUserLocation.distanceTo(address.getLocation());
+            DecimalFormat distanceFormat = new DecimalFormat("#0.00");
+            if (distance > 1000) {
+                distance = distance / 1000; //To Km
+                holder.roomDistance.setText(String.format("%s Km", distanceFormat.format(distance)));
+            } else
+                holder.roomDistance.setText(String.format("%s m", distanceFormat.format(distance)));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
-
-        float distance = mCurrentUserLocation.distanceTo(address.getLocation());
-        DecimalFormat distanceFormat = new DecimalFormat("#0.00");
-        if (distance > 1000) {
-            distance= distance / 1000; //To Km
-            holder.roomDistance.setText(String.format("%s Km", distanceFormat.format(distance)));
-        } else
-            holder.roomDistance.setText(String.format("%s m", distanceFormat.format(distance)));
 
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
