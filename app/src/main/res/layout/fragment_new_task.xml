@@ -259,7 +259,7 @@
         android:background="@drawable/circle_button_stroke"
         android:backgroundTint="@null"
         android:padding="8dp"
-        android:tint="@color/red"
+        android:tint="@color/white"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

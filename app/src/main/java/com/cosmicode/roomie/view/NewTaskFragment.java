@@ -52,7 +52,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private Button createButton;
     private TextView txtDeadline, txtTime, title;
     private EditText editTitle, editDesc;
-    private String date;
+    private String date, description;
     private ProgressBar progressBar;
     private TimePickerDialog.OnTimeSetListener mTListener;
     private String time;
@@ -89,6 +89,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        description = " ";
         buttonDeadline = getView().findViewById(R.id.button_deadline);
         txtTime = getView().findViewById(R.id.txt_time);
         title = getView().findViewById(R.id.Title);
@@ -110,18 +111,21 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                txtDeadline.setText(dayOfMonth + "/" + month + "/" + year);
+
+                month++;
+
+                txtDeadline.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
-                if(month <= 9){
-                    monthS = "0"+month;
+                if (month <= 9) {
+                    monthS = "0" + month;
                 }
 
-                if(dayOfMonth <= 9){
-                    dayS = "0"+dayOfMonth;
+                if (dayOfMonth <= 9) {
+                    dayS = "0" + dayOfMonth;
                 }
-                date = year+"-"+monthS+"-"+dayS;
+                date = year + "-" + monthS + "-" + dayS;
             }
         };
         mTListener = new TimePickerDialog.OnTimeSetListener() {
@@ -174,7 +178,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         String monthS, dayS;
         monthS = Integer.toString(month);
         dayS = Integer.toString(day);
-
+        RoomTask task;
         if(month <= 9){
             monthS = "0"+month;
         }
@@ -184,8 +188,12 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         String deadline = date +"T"+ time+ ":00Z";
         String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
         Long id = new Long(1);
-        RoomTask task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
+
+        task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
+
         roomTaskService.createTask(task);
+
+
         showProgress(true);
      }
 
