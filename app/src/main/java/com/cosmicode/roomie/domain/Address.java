@@ -1,6 +1,9 @@
 package com.cosmicode.roomie.domain;
 
 
+import android.location.Location;
+import android.location.LocationManager;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -85,6 +88,14 @@ public class Address {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Location getLocation() {
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setAltitude(0);
+        location.setLatitude(latitude.doubleValue());
+        location.setLongitude(longitude.doubleValue());
+        return location;
     }
 
 }

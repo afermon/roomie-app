@@ -1,17 +1,21 @@
 package com.cosmicode.roomie.util.adapters;
 
+import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.RoomPicture;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.view.MainSearchFragment.OnFragmentInteractionListener;
-
-
-import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -20,6 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,10 +39,14 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
 
     private final List<Room> mValues;
     private final OnFragmentInteractionListener mListener;
+    private Location mCurrentUserLocation;
+    private Context mContext;
 
-    public SearchRoomRecyclerViewAdapter(List<Room> items, OnFragmentInteractionListener listener) {
+    public SearchRoomRecyclerViewAdapter(List<Room> items, Location currentUserLocation, OnFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        mCurrentUserLocation = currentUserLocation;
+        mContext = context;
     }
 
     @Override
@@ -51,9 +60,34 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.roomTitle.setText(mValues.get(position).getTitle());
-        holder.roomCount.setText("x" + mValues.get(position).getRooms());
+        holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
+
+        //Picture
+        RoomPicture picture = mValues.get(position).getMainPicture();
+        if(picture != null)
+            Glide.with(mContext).load(picture.getUrl()).centerCrop().into(holder.roomPinture);
 
         holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
+        Address address = mValues.get(position).getAddress();
+        holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
+
+        //Price
+        RoomExpense price = mValues.get(position).getPrice();
+        Double priceUser = price.getAmount() / mValues.get(position).getRooms(); // Price per user
+        if(price.getCurrency() != CurrencyType.DOLLAR){
+            holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
+        } else {
+            holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
+        }
+
+        float distance = mCurrentUserLocation.distanceTo(address.getLocation());
+        DecimalFormat distanceFormat = new DecimalFormat("#0.00");
+        if (distance > 1000) {
+            distance= distance / 1000; //To Km
+            holder.roomDistance.setText(String.format("%s Km", distanceFormat.format(distance)));
+        } else
+            holder.roomDistance.setText(String.format("%s m", distanceFormat.format(distance)));
+
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
         DateTime published = dateTimeFormatter.parseDateTime(mValues.get(position).getPublished());
