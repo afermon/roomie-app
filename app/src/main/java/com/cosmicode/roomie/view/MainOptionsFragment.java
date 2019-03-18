@@ -37,6 +37,7 @@ public class MainOptionsFragment extends Fragment {
     private String mParam2;
     private Button button;
     private OnFragmentInteractionListener mListener;
+    private ImageButton configuration;
 
     public MainOptionsFragment() {
         // Required empty public constructor
@@ -83,6 +84,8 @@ public class MainOptionsFragment extends Fragment {
         button = getView().findViewById(R.id.button4);
         name = getView().findViewById(R.id.options_name);
         email = getView().findViewById(R.id.options_mail);
+        configuration = getView().findViewById(R.id.configuration);
+        configuration.setOnClickListener(this::openConfiguration);
         button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
@@ -110,6 +113,12 @@ public class MainOptionsFragment extends Fragment {
     public void openTasks(View view){
         ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
         openFragment(todoFragment);
+    }
+
+
+    public void openConfiguration(View view){
+        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
+        openFragment(mainConfigurationFragment);
     }
 
     private void openFragment(Fragment fragment) {

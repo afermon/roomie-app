@@ -39,20 +39,43 @@ public class RoomService {
                     listener.OnGetRoomsSuccess(response.body());
 
                 } else {
-                    Log.e(TAG, Integer.toString(response.code()));
-                    listener.OnGetRoomsError("ERROR getting resources");
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
                 }
             }
 
             @Override
             public void onFailure(Call<List<Room>> call, Throwable t) {
-                Log.e(TAG, t.getMessage());
-                Toast.makeText(context, t.getMessage(),Toast.LENGTH_LONG).show();
-                //Toast.makeText(context, "Something went wrong!",Toast.LENGTH_LONG).show();
-                listener.OnGetRoomsError("Something went wrong!");
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
             }
         });
         return null;
+    }
+
+    public void serachRooms(String query){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<List<Room>> call = apiService.serachRooms(query);
+
+        call.enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnGetRoomsSuccess(response.body());
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+
     }
 
     public interface RoomServiceListener {
