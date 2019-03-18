@@ -1,24 +1,18 @@
 package com.cosmicode.roomie.view;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -28,10 +22,27 @@ import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.List;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -48,14 +59,22 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     private static final String ARG_SEARCH_QUERY = "search-query";
     private String searchQuery;
 
-    @BindView(R.id.room_list) RecyclerView roomListRecyclerView;
-    @BindView(R.id.progress_bar) ProgressBar progressBar;
-    @BindView(R.id.search_view) SearchView searchView;
-    @BindView(R.id.search_layout) ConstraintLayout searchLayout;
-    @BindView(R.id.no_results) TextView noResults;
+    @BindView(R.id.room_list)
+    RecyclerView roomListRecyclerView;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView(R.id.search_view)
+    SearchView searchView;
+    @BindView(R.id.search_layout)
+    ConstraintLayout searchLayout;
+    @BindView(R.id.no_results)
+    TextView noResults;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
+    private Location currentUserLocation;
+    private static final int LOCATION_PERMISSION = 1;
+    private FusedLocationProviderClient fusedLocationClient;
 
     public MainSearchFragment() {
         // Required empty public constructor
@@ -84,6 +103,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         if (getArguments() != null) {
             searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        createLocationRequest();
     }
 
     @Override
@@ -160,7 +181,21 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             }
         });
 
-        roomService.getAllRooms();
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "Location access not granted");
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+        } else {
+            Log.e(TAG, "Asking for location");
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), location -> {
+                        if (location != null) {
+                            currentUserLocation = location;
+                            Log.i(TAG, "Current user location: " + currentUserLocation.toString());
+                            roomService.getAllRooms();
+                        }
+                    });
+        }
     }
 
     private void showProgress(boolean show) {
@@ -192,13 +227,12 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 });
     }
 
-
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
         if (rooms.size() > 0){
             noResults.setVisibility(View.INVISIBLE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, mListener));
+            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, currentUserLocation, mListener, getContext()));
         } else
             noResults.setVisibility(View.VISIBLE);
 
@@ -248,5 +282,32 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
         public abstract void show();
         public abstract void hide();
+    }
+
+
+    protected void createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(getContext());
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(getActivity(), locationSettingsResponse -> Log.i(TAG, locationSettingsResponse.toString()));
+        task.addOnFailureListener(getActivity(), e -> {
+            if (e instanceof ResolvableApiException) {
+                try {
+                    ResolvableApiException resolvable = (ResolvableApiException) e;
+                    resolvable.startResolutionForResult(getActivity(),
+                            1);
+                } catch (IntentSender.SendIntentException sendEx) {
+                    Log.e(TAG, sendEx.getMessage());
+                }
+            }
+        });
     }
 }
