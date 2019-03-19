@@ -60,6 +60,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     private static final String TAG = "SearchFragment";
     private static final String ARG_SEARCH_QUERY = "search-query";
     private String searchQuery;
+    private float density = (float) 1;
 
     @BindView(R.id.room_list)
     RecyclerView roomListRecyclerView;
@@ -141,7 +142,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        float density = getContext().getResources().getDisplayMetrics().density;
+        density = getContext().getResources().getDisplayMetrics().density;
 
         searchView.setQueryHint("Search....");
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -259,9 +260,10 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, currentUserLocation, mListener, getContext()));
-        } else
+        } else {
+            roomListRecyclerView.setAdapter(null);
             noResults.setVisibility(View.VISIBLE);
-
+        }
         showProgress(false);
     }
 
@@ -277,7 +279,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
 
     public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
-        static final float MINIMUM = 100;
+        final float MINIMUM = 100 * density;
         int scrollDist = 0;
         boolean isVisible = true;
 
