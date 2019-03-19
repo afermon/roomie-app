@@ -121,6 +121,9 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         deletebtn = getView().findViewById(R.id.deletebtn);
         editTitle = getView().findViewById(R.id.edit_title);
         editDesc = getView().findViewById(R.id.edit_Description);
+
+        txtDeadline.setText(getDeadlineLimit());
+        txtTime.setText(getTimeLimit());
         taskNotNull();
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -159,6 +162,27 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         };
         JodaTimeAndroid.init(getContext());
         super.onViewCreated(view, savedInstanceState);
+    }
+    public String getDeadlineLimit(){
+        String txtDead, month, days;
+        DateTime max = new DateTime();
+        if(max.getMonthOfYear()+1<10){
+            month = 0+String.valueOf(max.getMonthOfYear());
+        }else{
+            month = String.valueOf(max.getMonthOfYear());
+        }
+        if (max.getDayOfMonth()<10) {
+            days = 0+ String.valueOf(max.getDayOfMonth());
+        }else{
+            days = String.valueOf(max.getDayOfMonth());
+        }
+        txtDead = days + "/" + month + "/" + max.getYear();
+        date = max.getYear() + "-" + month + "-" + days;
+        return txtDead;
+    }
+    public String getTimeLimit(){
+        time = "23:59";
+        return "23:59";
     }
 
     public void onClickDate(View view) {
@@ -230,7 +254,6 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         }
 
         roomTaskService.updateTask(task);
-        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
         showProgress(true);
     }
     public void onClickDeleteTask(View view) {
