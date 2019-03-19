@@ -39,7 +39,7 @@ public class MainOptionsFragment extends Fragment {
     private String mParam2;
     private Button button, listing;
     private OnFragmentInteractionListener mListener;
-    private ImageButton configuration;
+    private ImageButton configuration, rooms;
 
     public MainOptionsFragment() {
         // Required empty public constructor
@@ -84,10 +84,10 @@ public class MainOptionsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         TextView logout_button = getView().findViewById(R.id.exit_text);
         button = getView().findViewById(R.id.button4);
-        listing = getView().findViewById(R.id.listing);
         name = getView().findViewById(R.id.options_name);
         email = getView().findViewById(R.id.options_mail);
-        listing.setOnClickListener( v -> {
+        rooms = getView().findViewById(R.id.rooms);
+        rooms.setOnClickListener( v -> {
             startActivity(new Intent(getContext(), CreateListingActivity.class));
         });
         configuration = getView().findViewById(R.id.configuration);

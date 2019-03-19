@@ -26,8 +26,10 @@ import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -40,7 +42,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
     private static final String ROOM = "room";
     private static final String ROOM_EXPENSE = "expense";
 
-    private Room room;
+    private RoomCreate room;
     private RoomExpense expense;
     private BSImagePicker multiSelectionPicker;
 
@@ -57,7 +59,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         // Required empty public constructor
     }
 
-    public static ListingChoosePictures newInstance(Room room, RoomExpense roomExpense) {
+    public static ListingChoosePictures newInstance(RoomCreate room, RoomExpense roomExpense) {
         ListingChoosePictures fragment = new ListingChoosePictures();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
@@ -71,6 +73,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            room.setPicturesUris(new ArrayList<>());
             expense = getArguments().getParcelable(ROOM_EXPENSE);
              multiSelectionPicker = new BSImagePicker.Builder("com.cosmicode.fileprovider")
                     .isMultiSelect() //Set this if you want to use multi selection mode.
@@ -136,9 +139,9 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         }
         for (Uri uri : uriList) {
             pics.get(i).setImageURI(uri);
-            room.setPicturesUris(uriList);
             i++;
         }
+        room.setPicturesUris(uriList);
     }
 
     public interface OnFragmentInteractionListener {

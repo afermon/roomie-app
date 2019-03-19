@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.mobsandgeeks.saripaar.ValidationError;
@@ -42,7 +43,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
-    private Room room;
+    private RoomCreate room;
     private String date, date2;
     private OnFragmentInteractionListener mListener;
     private Validator validator;
@@ -79,7 +80,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     }
 
 
-    public static ListingStepCost newInstance(Room room) {
+    public static ListingStepCost newInstance(RoomCreate room) {
         ListingStepCost fragment = new ListingStepCost();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
@@ -114,6 +115,17 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         validator.setValidationListener(this);
         DateTime x = new DateTime();
         dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
+        String monthS, dayS;
+        monthS = Integer.toString(x.getMonthOfYear());
+        dayS = Integer.toString(x.getDayOfMonth());
+        if (x.getMonthOfYear() <= 9) {
+            monthS = "0" + x.getMonthOfYear();
+        }
+
+        if (x.getDayOfMonth() <= 9) {
+            dayS = "0" + x.getDayOfMonth();
+        }
+        date = x.getYear() + "-" + monthS + "-" + dayS;
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {

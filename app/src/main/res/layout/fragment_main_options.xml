@@ -30,7 +30,7 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        android:text="Rooms"
+        android:text="New listing"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -338,13 +338,5 @@
         app:layout_constraintBottom_toTopOf="@+id/view16"
         app:layout_constraintEnd_toEndOf="@+id/edit_email2"
         app:layout_constraintTop_toTopOf="@+id/edit_email2" />
-
-    <Button
-        android:id="@+id/listing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Listing"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="560dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

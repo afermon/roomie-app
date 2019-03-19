@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
@@ -28,7 +29,7 @@ public class RoomService {
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
     }
 
-    public void createRoom(Room room, Address address, RoomExpense roomExpense){
+    public void createRoom(RoomCreate room, Address address, RoomExpense roomExpense){
 
         AddressApiEndpointInterface AddressApiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
         Call<Address> callA = AddressApiService .createAddress(address);
@@ -37,7 +38,7 @@ public class RoomService {
         Call<RoomExpense> callE = ExpenseApiService.createExpense(roomExpense);
 
         RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
-        Call<Void> callR = RoomApiService.createRoom(room);
+        Call<Room> callR = RoomApiService.createRoom(room);
 
         callA.enqueue(new Callback<Address>() {
             @Override
@@ -46,12 +47,12 @@ public class RoomService {
                 callE.enqueue(new Callback<RoomExpense>() {
                     @Override
                     public void onResponse(Call<RoomExpense> call, Response<RoomExpense> response) {
-//                        room.setPriceId(response.body().getId());
-                        callR.enqueue(new Callback<Void>() {
+                        room.setPriceId(response.body().getId());
+                        callR.enqueue(new Callback<Room>() {
                             @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
+                            public void onResponse(Call<Room> call, Response<Room> response) {
                                 if (response.code() == 201) { // OK
-                                    listener.OnCreateSuccess();
+                                    listener.OnCreateSuccess(response.body());
 
                                 } else {
                                     Log.e(TAG, response.toString());
@@ -60,7 +61,7 @@ public class RoomService {
                             }
 
                             @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
+                            public void onFailure(Call<Room> call, Throwable t) {
                                 Log.e(TAG, t.toString());
                                 listener.OnGetRoomsError(t.getMessage());
                             }
@@ -111,6 +112,32 @@ public class RoomService {
         return null;
     }
 
+    public void updateRoom (Room room){
+
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<Room> call = apiService.updateRoom(room);
+
+        call.enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+    }
+
     public void serachRooms(String query){
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
@@ -137,9 +164,10 @@ public class RoomService {
     }
 
     public interface RoomServiceListener {
-        void OnCreateSuccess();
+        void OnCreateSuccess(Room room);
         void OnGetRoomsSuccess(List<Room> rooms);
         void OnGetRoomsError(String error);
+        void OnUpdateSuccess(Room room);
     }
 
 }

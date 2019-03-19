@@ -33,11 +33,13 @@ import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.cosmicode.roomie.service.AddressService;
+import com.cosmicode.roomie.service.RoomPictureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.service.UploadPictureService;
@@ -68,12 +70,12 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 
-public class ListingChooseLocation extends Fragment implements RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
+public class ListingChooseLocation extends Fragment implements RoomPictureService.OnCreatePictureListener, RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
 
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
-    private Room room;
+    private RoomCreate room;
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final int REQUEST_MAP_CODE = 1;
     private SupportMapFragment mapFragment;
@@ -86,6 +88,8 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
     private UploadPictureService uploadPictureService;
     private RoomService roomService;
     private RoomieService roomieService;
+    private RoomPictureService roomPictureService;
+    private static int picAmount;
 
 
     @BindView(R.id.progress)
@@ -105,7 +109,7 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
     }
 
 
-    public static ListingChooseLocation newInstance(Room room) {
+    public static ListingChooseLocation newInstance(RoomCreate room) {
         ListingChooseLocation fragment = new ListingChooseLocation();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
@@ -124,6 +128,8 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
+            roomPictureService = new RoomPictureService(getContext(), this);
+            picAmount = room.getPicturesUris().size();
             createLocationRequest();
         }
     }
@@ -291,7 +297,19 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
 
     @Override
     public void onUploaddSuccess(String url) {
+        if (picAmount != 0) {
+            RoomPicture roomPicture = new RoomPicture();
+            if (picAmount == room.getPicturesUris().size()) {
+                roomPicture.setIsMain(true);
+            }else{
+                roomPicture.setIsMain(false);
+            }
+            roomPicture.setUrl(url);
+            roomPicture.setRoomId(room.getId());
+            roomPictureService.createPic(roomPicture);
+        }
 
+        picAmount--;
     }
 
     @Override
@@ -300,10 +318,15 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
     }
 
     @Override
-    public void OnCreateSuccess() {
-        showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-
+    public void OnCreateSuccess(Room room) {
+        this.room.setId(room.getId());
+        int i = 1;
+        String id;
+        for (Uri picturesUris : this.room.getPicturesUris()) {
+            id = room.getId() + "-" + i;
+            uploadPictureService.uploadFileRoom(picturesUris, id, UploadPictureService.PictureType.PROFILE);
+            i++;
+        }
     }
 
     @Override
@@ -315,6 +338,13 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
     public void OnGetRoomsError(String error) {
         showProgress(false);
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -333,16 +363,16 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
         monthS = Integer.toString(month);
         dayS = Integer.toString(day);
 
-        if(month <= 9){
-            monthS = "0"+month;
+        if (month <= 9) {
+            monthS = "0" + month;
         }
-        if(day <= 9){
-            dayS = "0"+day;
+        if (day <= 9) {
+            dayS = "0" + day;
         }
-        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
+        String created = (today.getYear() + "-" + monthS + "-" + dayS + "T00:00:00Z");
         room.setPublished(created);
         room.setCreated(created);
-        room.setOwnerId(roomie.getUserId());
+        room.setOwnerId(roomie.getId());
         roomService.createRoom(room, address, room.getMonthly());
     }
 
@@ -355,6 +385,21 @@ public class ListingChooseLocation extends Fragment implements RoomieService.OnG
     @Override
     public void OnUpdateSuccess(Roomie roomie) {
 
+    }
+
+    @Override
+    public void onCreatePicSuccess() {
+        if(picAmount == 0){
+            showProgress(false);
+            Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getContext(), MainActivity.class));
+        }
+    }
+
+    @Override
+    public void onPictureError(String error) {
+        showProgress(false);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     public interface OnFragmentInteractionListener {

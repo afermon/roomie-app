@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
 
 public class ListingStepChooseType extends Fragment {
@@ -31,7 +32,7 @@ public class ListingStepChooseType extends Fragment {
     @BindView(R.id.rent_btn)
     TextView rent;
 
-    private Room room;
+    private RoomCreate room;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +65,7 @@ public class ListingStepChooseType extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        room = new Room();
+        room = new RoomCreate();
         room.setState(RoomState.SEARCH);
     }
 

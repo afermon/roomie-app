@@ -26,6 +26,7 @@ import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomFeatureService;
@@ -42,7 +43,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
-    private Room room;
+    private RoomCreate room;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mAdapter2;
     private RoomFeatureService roomFeatureService;
@@ -63,7 +64,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         // Required empty public constructor
     }
 
-    public static ListingBasicInformation newInstance(Room room) {
+    public static ListingBasicInformation newInstance(RoomCreate room) {
         ListingBasicInformation fragment = new ListingBasicInformation();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
