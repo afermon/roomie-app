@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
@@ -37,6 +38,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -45,6 +47,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
@@ -82,6 +85,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     private Location currentUserLocation;
     private static final int LOCATION_PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
+
+    //Search filters
+    private int searchDistance = 20;  // 20Km
 
     public MainSearchFragment() {
         // Required empty public constructor
@@ -222,6 +228,39 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                         }
                     });
         }
+    }
+
+    @OnClick(R.id.search_filters)
+    public void searchWithFilters(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.search_filter_title);
+        builder.setMessage(R.string.serch_filter_desc);
+        final SeekBar distanceSeekBar = new SeekBar(getContext());
+        distanceSeekBar.setProgress(searchDistance);
+        distanceSeekBar.setMax(200);
+        distanceSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                searchDistance = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        builder.setView(distanceSeekBar);
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                roomService.searchRoomsGeo(currentUserLocation.getLatitude(), currentUserLocation.getLongitude(), searchDistance);
+                showProgress(true);
+        });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+        builder.show();
     }
 
     private void showProgress(boolean show) {

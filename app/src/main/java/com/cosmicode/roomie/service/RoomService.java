@@ -78,6 +78,31 @@ public class RoomService {
 
     }
 
+    public void searchRoomsGeo(Double latitude, Double longitude, int distance){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<List<Room>> call = apiService.serachRoomsGeo(latitude, longitude, distance);
+
+        call.enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnGetRoomsSuccess(response.body());
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+
+    }
+
     public interface RoomServiceListener {
         void OnGetRoomsSuccess(List<Room> rooms);
         void OnGetRoomsError(String error);
