@@ -88,13 +88,13 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.com.vansuita.pickimage.provider"
+            android:authorities="com.cosmicode.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"
             tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/picker_provider_paths" />
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

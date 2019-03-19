@@ -40,56 +40,68 @@
     <ImageView
         android:id="@+id/img1"
         android:layout_width="0dp"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:src="@drawable/placeholder"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/img2"
         android:layout_width="160dp"
-        android:layout_height="132dp"
+        android:layout_height="100dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/placeholder"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img1" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/img4"
         android:layout_width="160dp"
-        android:layout_height="132dp"
+        android:layout_height="100dp"
         android:layout_marginStart="32dp"
-        android:src="@drawable/placeholder"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView7" />
+        app:layout_constraintTop_toBottomOf="@+id/img2" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/img5"
         android:layout_width="160dp"
-        android:layout_height="132dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:src="@drawable/placeholder"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+        app:layout_constraintTop_toBottomOf="@+id/img3" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/img3"
         android:layout_width="160dp"
-        android:layout_height="132dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:src="@drawable/placeholder"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ph"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img1" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/btn_next"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/primary"
@@ -100,5 +112,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Show pictures of your place, you can select up to 5 images. The largest image will be the main picture we show on search results!"
+        android:textAlignment="center"
+        android:textColor="@color/primary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

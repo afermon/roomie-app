@@ -59,10 +59,6 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.Optional;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import com.vansuita.pickimage.bean.PickResult;
-import com.vansuita.pickimage.bundle.PickSetup;
-import com.vansuita.pickimage.dialog.PickImageDialog;
-import com.vansuita.pickimage.listeners.IPickResult;
 
 
 import java.math.BigDecimal;
@@ -158,14 +154,14 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
 
     public void onClickEditPhoto(View view) {
 
-        PickImageDialog.build(new PickSetup())
-                .show(getActivity())
-                .setOnPickResult(new IPickResult() {
-                    @Override
-                    public void onPickResult(PickResult r) {
-                        cropImage(r.getUri());
-                    }
-                });
+//        PickImageDialog.build(new PickSetup())
+//                .show(getActivity())
+//                .setOnPickResult(new IPickResult() {
+//                    @Override
+//                    public void onPickResult(PickResult r) {
+//                        cropImage(r.getUri());
+//                    }
+//                });
     }
 
 

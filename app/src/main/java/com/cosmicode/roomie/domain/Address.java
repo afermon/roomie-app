@@ -1,12 +1,15 @@
 package com.cosmicode.roomie.domain;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
 
-public class Address {
+public class Address implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -87,4 +90,13 @@ public class Address {
         this.description = description;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

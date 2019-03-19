@@ -70,7 +70,7 @@ public class ListingStepChooseType extends Fragment {
     public void openFragment() {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingStepCost.newInstance(room) );
+        transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room) );
         transaction.addToBackStack(null);
         transaction.commit();
     }

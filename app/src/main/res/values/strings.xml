@@ -149,5 +149,11 @@
     <string name="spinner_apt">Apartment</string>
     <string name="spinner_house">House</string>
     <string name="move_out">Move-out date</string>
-    <string name="pictures">Add Pictures</string>
+    <string name="pictures">Pictures</string>
+    <string name="basic_info">Basic Information</string>
+    <string name="amenities">Amenities</string>
+    <string name="restrictions">Restrictions</string>
+    <string name="address_desc">Additional address description</string>
+    <string name="address_desc_hint">Detail additional information for your address like signs, streets, house number, etc.</string>
+    <string name="choose_location">Choose Location</string>
 </resources>
