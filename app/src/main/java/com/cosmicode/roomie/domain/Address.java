@@ -14,13 +14,11 @@ public class Address {
     @SerializedName("id")
     @Expose
     private Long id;
-    @SerializedName("lat")
+
+    @SerializedName("location")
     @Expose
-    private BigDecimal lat;
-    @SerializedName("lon")
-    @Expose
-    private BigDecimal lon;
-    @SerializedName("city")
+    private String location;
+
     @Expose
     private String city;
     @SerializedName("state")
@@ -33,10 +31,9 @@ public class Address {
     public Address() {
     }
 
-    public Address(Long id, BigDecimal lat, BigDecimal lon, String city, String state, String description) {
+    public Address(Long id, String location, String city, String state, String description) {
         this.id = id;
-        this.lat = lat;
-        this.lon = lon;
+        this.location = location;
         this.city = city;
         this.state = state;
         this.description = description;
@@ -50,20 +47,8 @@ public class Address {
         this.id = id;
     }
 
-    public BigDecimal getLat() {
-        return lat;
-    }
-
-    public void setLat(BigDecimal lat) {
-        this.lat = lat;
-    }
-
-    public BigDecimal getLon() {
-        return lon;
-    }
-
-    public void setLon(BigDecimal lon) {
-        this.lon = lon;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getCity() {
@@ -90,11 +75,19 @@ public class Address {
         this.description = description;
     }
 
+    public Double getLatitude() {
+        return  Double.valueOf(location.split(",")[0]);
+    }
+
+    public Double getLongitude() {
+        return Double.valueOf(location.split(",")[1]);
+    }
+
     public Location getLocation() {
         Location location = new Location(LocationManager.GPS_PROVIDER);
         location.setAltitude(0);
-        location.setLatitude(lat.doubleValue());
-        location.setLongitude(lon.doubleValue());
+        location.setLatitude(getLatitude());
+        location.setLongitude(getLongitude());
         return location;
     }
 
