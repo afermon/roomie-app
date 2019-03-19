@@ -260,9 +260,10 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, currentUserLocation, mListener, getContext()));
-        } else
+        } else {
+            roomListRecyclerView.setAdapter(null);
             noResults.setVisibility(View.VISIBLE);
-
+        }
         showProgress(false);
     }
 
