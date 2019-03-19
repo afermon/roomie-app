@@ -22,25 +22,36 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.service.RoomFeatureService;
 
 import android.graphics.PorterDuff.Mode;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
-public class ListingBasicInformation extends Fragment {
+public class ListingBasicInformation extends Fragment implements RoomFeatureService.OnGetFeaturesListener {
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
     private Room room;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mAdapter2;
+    private RoomFeatureService roomFeatureService;
+
+    @BindView(R.id.headline_text)
+    TextView headline;
+
+    @BindView(R.id.desc_text)
+    TextView desc;
 
     @BindView(R.id.list_amenities)
     RecyclerView amenities;
@@ -65,6 +76,8 @@ public class ListingBasicInformation extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            room.setFeatures(new ArrayList<>());
+            roomFeatureService = new RoomFeatureService(getContext(), this);
         }
     }
 
@@ -73,46 +86,7 @@ public class ListingBasicInformation extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_basic_information, container, false);
         ButterKnife.bind(this, view);
-        RoomFeature feature1 = new RoomFeature();
-        feature1.setName("WiFi");
-        feature1.setIcon("http://aux2.iconspalace.com/uploads/wifi-icon-256-60417624.png");
-        feature1.setType(FeatureType.AMENITIES);
-        RoomFeature feature2 = new RoomFeature();
-        feature2.setName("Furnished");
-        feature2.setType(FeatureType.AMENITIES);
-        feature2.setIcon("http://millshealth.com/wp-content/uploads/2018/08/icon-bed.png");
-        List<RoomFeature> features = new ArrayList<>();
-        features.add(feature1);
-        features.add(feature2);
-        features.add(feature2);
-        features.add(feature2);
-        features.add(feature2);
-        features.add(feature2);
-        features.add(feature2);
-        List<RoomFeature> lAmenities = new ArrayList<>();
-        List<RoomFeature> lRestrictions = new ArrayList<>();
-
-        RoomFeature feature3 = new RoomFeature();
-        feature3.setName("No smoking");
-        feature3.setType(FeatureType.RESTRICTIONS);
-        feature3.setIcon("https://cdn4.iconfinder.com/data/icons/dot/256/smoking_not_allowed.png");
-        features.add(feature3);
-        features.add(feature3);
-        features.add(feature3);
-        features.add(feature3);
-
-        for (RoomFeature feature : features) {
-            if(feature.getType() == FeatureType.AMENITIES){
-                lAmenities.add(feature);
-            }else{
-                lRestrictions.add(feature);
-            }
-        }
-
-        mAdapter = new AmenitiesAdapter(lAmenities);
-        amenities.setAdapter(mAdapter);
-        mAdapter2 = new RestrictionsAdapter(lRestrictions);
-        restrictions.setAdapter(mAdapter2);
+        roomFeatureService.getAll();
         return view;
     }
 
@@ -134,6 +108,29 @@ public class ListingBasicInformation extends Fragment {
         amenities.setLayoutManager(new GridLayoutManager(getContext(), 4));
         restrictions.setLayoutManager(new GridLayoutManager(getContext(), 4));
 
+    }
+
+    @Override
+    public void onGetFeaturesSuccess(List<RoomFeature> featureList) {
+        List<RoomFeature> lAmenities = new ArrayList<>();
+        List<RoomFeature> lRestrictions = new ArrayList<>();
+        for (RoomFeature feature : featureList) {
+            if(feature.getType() == FeatureType.AMENITIES){
+                lAmenities.add(feature);
+            }else{
+                lRestrictions.add(feature);
+            }
+        }
+
+        mAdapter = new AmenitiesAdapter(lAmenities);
+        amenities.setAdapter(mAdapter);
+        mAdapter2 = new RestrictionsAdapter(lRestrictions);
+        restrictions.setAdapter(mAdapter2);
+    }
+
+    @Override
+    public void onGetFeaturesError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
@@ -179,9 +176,16 @@ public class ListingBasicInformation extends Fragment {
                 if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    room.getFeatures().add(feature);
                 }else{
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+                    Iterator<RoomFeature> itr = room.getFeatures().iterator();
+                    while (itr.hasNext()) {
+                        if (itr.next() == feature) {
+                            itr.remove();
+                        }
+                    }
                 }
             });
         }
@@ -230,9 +234,16 @@ public class ListingBasicInformation extends Fragment {
                 if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    room.getFeatures().add(feature);
                 }else{
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+                    Iterator<RoomFeature> itr = room.getFeatures().iterator();
+                    while (itr.hasNext()) {
+                        if (itr.next() == feature) {
+                            itr.remove();
+                        }
+                    }
                 }
             });
         }
@@ -240,6 +251,8 @@ public class ListingBasicInformation extends Fragment {
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view){
+        room.setTitle(headline.getText().toString());
+        room.setDescription(headline.getText().toString());
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         transaction.replace(R.id.listing_container, ListingStepCost.newInstance(room) );
@@ -267,6 +280,6 @@ public class ListingBasicInformation extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
     }
 }

@@ -28,7 +28,7 @@ public class UploadPictureService {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         String path = type.equals(PictureType.PROFILE) ? "profile" : "room";
-        StorageReference ref = storageRef.child(path+"/roomieId"+id);
+        StorageReference ref = type.equals(PictureType.PROFILE)? storageRef.child(path+"/roomieId"+id) : storageRef.child(path+"roompic");
 
         UploadTask uploadTask = ref.putFile(uri);
 

@@ -56,7 +56,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText2" />
+                app:layout_constraintTop_toBottomOf="@+id/desc_text" />
 
             <TextView
                 android:id="@+id/textView15"
@@ -90,7 +90,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/title4" />
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/headline_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
@@ -136,7 +136,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editText" />
+                app:layout_constraintTop_toBottomOf="@+id/headline_text" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -159,7 +159,7 @@
                 tools:layout_editor_absoluteY="8dp" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/desc_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"

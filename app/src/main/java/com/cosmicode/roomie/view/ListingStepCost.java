@@ -20,11 +20,15 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
@@ -43,6 +47,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     private OnFragmentInteractionListener mListener;
     private Validator validator;
     private static int selectedDate;
+    private RoomExpense roomExpense;
 
     @NotEmpty
     @BindView(R.id.edit_amount)
@@ -62,6 +67,9 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
 
     @BindView(R.id.date_picker2)
     ImageButton datePicker2;
+
+    @BindView(R.id.currency_radio)
+    RadioGroup currency;
 
     @BindView(R.id.btn_next)
     Button next;
@@ -84,6 +92,8 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            roomExpense = new RoomExpense();
+            roomExpense.setCurrency(CurrencyType.DOLLAR);
         }
     }
 
@@ -99,6 +109,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        date2 = "";
         validator = new Validator(this);
         validator.setValidationListener(this);
         DateTime x = new DateTime();
@@ -128,13 +139,37 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
                 }
             }
         };
+
+        currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radio_crc:
+                        roomExpense.setCurrency(CurrencyType.COLON);
+                        break;
+                    case R.id.radio_usd:
+                        roomExpense.setCurrency(CurrencyType.DOLLAR);
+                        break;
+                }
+            }
+        });
     }
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view){
+        roomExpense.setName("Monthly rent");
+        String newStr = amount.getText().toString().replaceAll("[,]", "");
+        roomExpense.setAmount(Double.parseDouble(newStr));
+        roomExpense.setPeriodicity(30);
+        roomExpense.setMonthDay(1);
+        roomExpense.setStartDate(date);
+        room.setAvailableFrom(date);
+        if(!date2.equals("")){
+            roomExpense.setFinishDate(date2);
+        }
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingChoosePictures.newInstance(room) );
+        transaction.replace(R.id.listing_container, ListingChoosePictures.newInstance(room, roomExpense) );
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -197,6 +232,6 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
     }
 }

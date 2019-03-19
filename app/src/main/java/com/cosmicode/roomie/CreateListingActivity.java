@@ -24,10 +24,11 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         transaction.commit();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
+    public BaseActivity getBaseActivity() {
+        return this;
     }
+
 
 
 }

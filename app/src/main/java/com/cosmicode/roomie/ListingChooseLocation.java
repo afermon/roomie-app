@@ -1,10 +1,13 @@
 package com.cosmicode.roomie;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Picture;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,10 +25,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.RoomPicture;
+import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.RoomType;
+import com.cosmicode.roomie.service.AddressService;
+import com.cosmicode.roomie.service.RoomService;
+import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.service.UploadPictureService;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -45,12 +59,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.joda.time.DateTime;
+
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
 
-public class ListingChooseLocation extends Fragment implements OnMapReadyCallback {
+public class ListingChooseLocation extends Fragment implements RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
 
 
     private OnFragmentInteractionListener mListener;
@@ -65,9 +83,22 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
     private FusedLocationProviderClient fusedLocationClient;
     private boolean locationChanged = false;
     private ImageButton geoButton;
+    private UploadPictureService uploadPictureService;
+    private RoomService roomService;
+    private RoomieService roomieService;
+
+
+    @BindView(R.id.progress)
+    ProgressBar progressBar;
+
+    @BindView(R.id.address_desc)
+    TextView desc;
 
     @BindView(R.id.back_location)
     ImageButton back;
+
+    @BindView(R.id.btn_finished)
+    Button finish;
 
     public ListingChooseLocation() {
         // Required empty public constructor
@@ -88,9 +119,11 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
             address = new Address();
-            address.setLatitude(BigDecimal.valueOf(10.3704815));
-            address.setLongitude(BigDecimal.valueOf(-83.9526349));
+            address.setLocation("10.3704815,-83.9526349");
+            uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+            roomService = new RoomService(getContext(), this);
+            roomieService = new RoomieService(getContext(), this);
             createLocationRequest();
         }
     }
@@ -108,8 +141,7 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLatitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[0]));
-                address.setLongitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[1]));
+                address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
                 locationChanged = true;
                 mapFragment.getMapAsync(this);
             }
@@ -145,7 +177,7 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
     }
 
     @OnClick(R.id.back_location)
-    public void back(View view){
+    public void back(View view) {
         getFragmentManager().popBackStackImmediate();
     }
 
@@ -179,14 +211,14 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
-        LatLng location = new LatLng(address.getLatitude().doubleValue(), address.getLongitude().doubleValue());
+        LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
 
-        if(locationChanged){
+        if (locationChanged) {
             gMap.addMarker(new MarkerOptions().position(location));
             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
             gMap.animateCamera(CameraUpdateFactory.zoomIn());
             gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
-        }else{
+        } else {
             gMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         }
@@ -242,6 +274,7 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
 
         }
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -249,7 +282,97 @@ public class ListingChooseLocation extends Fragment implements OnMapReadyCallbac
         outState.putBoolean("locchanged", locationChanged);
     }
 
+    @OnClick(R.id.btn_finished)
+    public void onClickFinish(View view) {
+        showProgress(true);
+        roomieService.getCurrentRoomie();
+    }
+
+
+    @Override
+    public void onUploaddSuccess(String url) {
+
+    }
+
+    @Override
+    public void onUploadError(String error) {
+
+    }
+
+    @Override
+    public void OnCreateSuccess() {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+        showProgress(false);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        address.setDescription(desc.getText().toString());
+        address.setCity("Default");
+        address.setState("Default");
+        room.setRooms(1);
+        room.setRoomType(RoomType.ROOM);
+        room.setPremium(false);
+        DateTime today = new DateTime();
+        int month, day;
+        month = today.getMonthOfYear();
+        day = today.getDayOfMonth();
+        String monthS, dayS;
+        monthS = Integer.toString(month);
+        dayS = Integer.toString(day);
+
+        if(month <= 9){
+            monthS = "0"+month;
+        }
+        if(day <= 9){
+            dayS = "0"+day;
+        }
+        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
+        room.setPublished(created);
+        room.setCreated(created);
+        room.setOwnerId(roomie.getUserId());
+        roomService.createRoom(room, address, room.getMonthly());
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+        showProgress(false);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
+    }
+
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progressBar.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 }

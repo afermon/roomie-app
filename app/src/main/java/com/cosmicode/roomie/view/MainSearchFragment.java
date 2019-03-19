@@ -254,6 +254,11 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     @Override
+    public void OnCreateSuccess() {
+
+    }
+
+    @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
         Log.d(TAG, "Success getting rooms");
         if (rooms.size() > 0){

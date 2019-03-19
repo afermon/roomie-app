@@ -61,7 +61,6 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -208,7 +207,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLocation(String.format("%s,%s ",data.getDoubleArrayExtra("Address")[0], data.getDoubleArrayExtra("Address")[1]));
+                address.setLocation(data.getDoubleArrayExtra("Address")[0] +","+data.getDoubleArrayExtra("Address")[1]);
                 mapFragment.getMapAsync(this);
             }
         } else {

@@ -1,5 +1,6 @@
 package com.cosmicode.roomie.domain;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.net.URI;
 import java.util.List;
 
 public class Room implements Parcelable {
@@ -72,6 +74,10 @@ public class Room implements Parcelable {
     @SerializedName("pictures")
     @Expose
     private List<RoomPicture> pictures = null;
+
+    private List<Uri> picturesUris = null;
+
+    private RoomExpense monthly = null;
 
 
     public Room() {
@@ -228,6 +234,14 @@ public class Room implements Parcelable {
         this.ownerId = ownerId;
     }
 
+    public List<Uri> getPicturesUris() {
+        return picturesUris;
+    }
+
+    public void setPicturesUris(List<Uri> picturesUris) {
+        this.picturesUris = picturesUris;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -268,6 +282,14 @@ public class Room implements Parcelable {
 
     public void setPictures(List<RoomPicture> pictures) {
         this.pictures = pictures;
+    }
+
+    public RoomExpense getMonthly() {
+        return monthly;
+    }
+
+    public void setMonthly(RoomExpense monthly) {
+        this.monthly = monthly;
     }
 
     public RoomPicture getMainPicture() {

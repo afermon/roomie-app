@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
@@ -118,6 +119,6 @@ public class ListingStepChooseType extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
     }
 }

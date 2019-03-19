@@ -22,9 +22,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.asksira.bsimagepicker.BSImagePicker;
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomExpense;
 
 import java.util.List;
 
@@ -36,7 +38,10 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
+    private static final String ROOM_EXPENSE = "expense";
+
     private Room room;
+    private RoomExpense expense;
     private BSImagePicker multiSelectionPicker;
 
 
@@ -52,10 +57,11 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         // Required empty public constructor
     }
 
-    public static ListingChoosePictures newInstance(Room room) {
+    public static ListingChoosePictures newInstance(Room room, RoomExpense roomExpense) {
         ListingChoosePictures fragment = new ListingChoosePictures();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
+        args.putParcelable(ROOM_EXPENSE, roomExpense);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,6 +71,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            expense = getArguments().getParcelable(ROOM_EXPENSE);
              multiSelectionPicker = new BSImagePicker.Builder("com.cosmicode.fileprovider")
                     .isMultiSelect() //Set this if you want to use multi selection mode.
                     .setMinimumMultiSelectCount(1) //Default: 1.
@@ -89,6 +96,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view){
+        room.setMonthly(expense);
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         transaction.replace(R.id.listing_container, ListingChooseLocation.newInstance(room) );
@@ -99,7 +107,6 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
     @OnClick(R.id.img1)
     public void choosePictures(View view){
         multiSelectionPicker.show(getChildFragmentManager(), "picker");
-
     }
 
 
@@ -129,11 +136,12 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         }
         for (Uri uri : uriList) {
             pics.get(i).setImageURI(uri);
+            room.setPicturesUris(uriList);
             i++;
         }
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        BaseActivity getBaseActivity();
     }
 }
