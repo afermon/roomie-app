@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.view.LayoutInflater;
@@ -31,6 +32,10 @@ import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomTask;
 import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
 import com.cosmicode.roomie.service.RoomTaskService;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -43,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener {
+public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener, Validator.ValidationListener{
 
     private OnFragmentInteractionListener mListener;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -51,8 +56,14 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private ImageButton buttonTime;
     private Button createButton;
     private TextView txtDeadline, txtTime, title;
-    private EditText editTitle, editDesc;
-    private String date, description;
+    @NotEmpty
+    @Length(min = 4, max = 50)
+    TextView editTitle;
+
+    @NotEmpty
+    @Length(min = 4, max = 50)
+    TextView editDesc;
+    private String date;
     private ProgressBar progressBar;
     private TimePickerDialog.OnTimeSetListener mTListener;
     private String time;
@@ -60,6 +71,8 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private RoomTask task;
     private ImageButton backButton;
     private static final String TASK_KEY = "task";
+    private Validator validator;
+    private boolean isValid = true;
     public NewTaskFragment() {
     }
 
@@ -75,6 +88,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+
             roomTaskService = new RoomTaskService(getContext(),this);
         }
     }
@@ -83,13 +97,14 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        validator = new Validator(this);
+        validator.setValidationListener(this);
 
         return inflater.inflate(R.layout.fragment_new_task, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        description = " ";
         buttonDeadline = getView().findViewById(R.id.button_deadline);
         txtTime = getView().findViewById(R.id.txt_time);
         title = getView().findViewById(R.id.Title);
@@ -98,16 +113,15 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         buttonTime.setOnClickListener(this::onClickTime);
         txtDeadline = getView().findViewById(R.id.textDeadline);
         progressBar = getView().findViewById(R.id.progress);
-        editTitle = getView().findViewById(R.id.edit_title);
-        editDesc = getView().findViewById(R.id.edit_Description);
         createButton = getView().findViewById(R.id.button_create);
         backButton = getView().findViewById(R.id.back_button);
         backButton.setOnClickListener(this::onClickBack);
         createButton.setOnClickListener(this::onClickCreateTask);
         task = getArguments().getParcelable(TASK_KEY);
         deletebtn = getView().findViewById(R.id.deletebtn);
+        editTitle = getView().findViewById(R.id.edit_title);
+        editDesc = getView().findViewById(R.id.edit_Description);
         taskNotNull();
-//        Toast.makeText(getContext(), task.toString(), Toast.LENGTH_SHORT).show();
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -149,7 +163,8 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
     public void onClickDate(View view) {
         DateTime max = new DateTime();
-        DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear()-1, max.getDayOfMonth());
+        dialog.getDatePicker().setMinDate(max.getMillis());
         dialog.show();
     }
 
@@ -170,32 +185,24 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     }
 
     public void onClickCreateTask(View view){
-        DateTime today = new DateTime();
-
-        int month, day;
-        month = today.getMonthOfYear();
-        day = today.getDayOfMonth();
-        String monthS, dayS;
-        monthS = Integer.toString(month);
-        dayS = Integer.toString(day);
-        RoomTask task;
-        if(month <= 9){
-            monthS = "0"+month;
-        }
-        if(day <= 9){
-            dayS = "0"+day;
-        }
-        String deadline = date +"T"+ time+ ":00Z";
-        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
-        Long id = new Long(1);
-
-        task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
-
-        roomTaskService.createTask(task);
-
-
         showProgress(true);
-     }
+        if(txtDeadline.toString().equals("")){
+            txtDeadline.setError("Please choose a date");
+            isValid = false;
+        }else{
+            isValid = true;
+        }
+
+
+        if(txtTime.toString().equals("")){
+            txtTime.setError("Please choose a gender");
+            isValid = false;
+        }else{
+            isValid = true;
+        }
+        validator.validate();
+    }
+
 
     public void onClickUpdateTask(View view) {
         DateTime today = new DateTime();
@@ -283,6 +290,52 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public void OnGetTaskByRoomError(String error) {
         showProgress(false);
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        if (isValid){
+
+            DateTime today = new DateTime();
+
+            int month, day;
+            month = today.getMonthOfYear();
+            day = today.getDayOfMonth();
+            String monthS, dayS;
+            monthS = Integer.toString(month);
+            dayS = Integer.toString(day);
+            RoomTask task;
+            if(month <= 9){
+                monthS = "0"+month;
+            }
+            if(day <= 9){
+                dayS = "0"+day;
+            }
+            String deadline = date +"T"+ time+ ":00Z";
+            String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
+
+            Long id = new Long(1);
+            task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
+
+            Toast.makeText(getContext(), task.toString(), Toast.LENGTH_LONG).show();
+            roomTaskService.createTask(task);
+        }
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        showProgress(false);
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(getContext());
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public interface OnFragmentInteractionListener {

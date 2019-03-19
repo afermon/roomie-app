@@ -55,6 +55,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
 
     private long roomId = 1;
     private DateTime dateToday;
+
     private DateTimeComparator comparator;    public ToDoLIstFragment() {
         // Required empty public constructor
     }
@@ -83,6 +84,8 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         View view = inflater.inflate(R.layout.fragment_to_do_list, container, false);
         ButterKnife.bind(this, view);
         dateToday = new DateTime();
+        Toast.makeText(getContext(),dateToday.toString(), Toast.LENGTH_SHORT).show();
+
         comparator = DateTimeComparator.getDateOnlyInstance();
         return view;
     }
@@ -171,7 +174,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
          List<RoomTask> pastTasks = new ArrayList<>();
         for (RoomTask task: roomTasks) {
 
-            int difday = comparator.compare( formatDate(task.getDeadline()), dateToday);
+            int difday = comparator.compare(task.getDeadline(), dateToday);
 
             if(task.getState() == RoomTaskState.COMPLETED){
                 doneTasks.add(task);
