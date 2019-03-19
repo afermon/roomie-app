@@ -3,6 +3,8 @@ package com.cosmicode.roomie.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.location.Location;
+import android.location.LocationManager;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -14,13 +16,11 @@ public class Address implements Parcelable {
     @SerializedName("id")
     @Expose
     private Long id;
-    @SerializedName("latitude")
+
+    @SerializedName("location")
     @Expose
-    private BigDecimal latitude;
-    @SerializedName("longitude")
-    @Expose
-    private BigDecimal longitude;
-    @SerializedName("city")
+    private String location;
+
     @Expose
     private String city;
     @SerializedName("state")
@@ -33,10 +33,9 @@ public class Address implements Parcelable {
     public Address() {
     }
 
-    public Address(Long id, BigDecimal latitude, BigDecimal longitude, String city, String state, String description) {
+    public Address(Long id, String location, String city, String state, String description) {
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.location = location;
         this.city = city;
         this.state = state;
         this.description = description;
@@ -50,20 +49,8 @@ public class Address implements Parcelable {
         this.id = id;
     }
 
-    public BigDecimal getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude;
-    }
-
-    public BigDecimal getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getCity() {
@@ -99,4 +86,20 @@ public class Address implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
 
     }
+    public Double getLatitude() {
+        return  Double.valueOf(location.split(",")[0]);
+    }
+
+    public Double getLongitude() {
+        return Double.valueOf(location.split(",")[1]);
+    }
+
+    public Location getLocation() {
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setAltitude(0);
+        location.setLatitude(getLatitude());
+        location.setLongitude(getLongitude());
+        return location;
+    }
+
 }

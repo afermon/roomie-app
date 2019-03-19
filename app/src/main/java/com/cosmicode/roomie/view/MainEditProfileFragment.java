@@ -208,8 +208,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLatitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[0]));
-                address.setLongitude(BigDecimal.valueOf(data.getDoubleArrayExtra("Address")[1]));
+                address.setLocation(String.format("%s,%s ",data.getDoubleArrayExtra("Address")[0], data.getDoubleArrayExtra("Address")[1]));
                 mapFragment.getMapAsync(this);
             }
         } else {
@@ -304,7 +303,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     @Override
     public void onMapReady(GoogleMap map) {
         gMap = map;
-        LatLng location = new LatLng(address.getLatitude().doubleValue(), address.getLongitude().doubleValue());
+        LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
         gMap.addMarker(new MarkerOptions().position(location));
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());

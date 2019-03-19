@@ -57,14 +57,27 @@ public class Room implements Parcelable {
     @SerializedName("features")
     @Expose
     private List<RoomFeature> features = null;
+    @SerializedName("expenses")
+    @Expose
+    private List<RoomExpense> expenses = null;
     @SerializedName("ownerId")
     @Expose
     private Long ownerId;
+    @SerializedName("address")
+    @Expose
+    private Address address;
+    @SerializedName("price")
+    @Expose
+    private RoomExpense price;
+    @SerializedName("pictures")
+    @Expose
+    private List<RoomPicture> pictures = null;
+
 
     public Room() {
     }
 
-    public Room(Long id, RoomState state, String created, String published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, String availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, Long ownerId) {
+    public Room(Long id, RoomState state, String created, String published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, String availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, List<RoomExpense> expenses, Long ownerId, Address address, RoomExpense price, List<RoomPicture> pictures) {
         this.id = id;
         this.state = state;
         this.created = created;
@@ -80,7 +93,11 @@ public class Room implements Parcelable {
         this.addressId = addressId;
         this.roomies = roomies;
         this.features = features;
+        this.expenses = expenses;
         this.ownerId = ownerId;
+        this.address = address;
+        this.price = price;
+        this.pictures = pictures;
     }
 
     public Long getId() {
@@ -219,5 +236,42 @@ public class Room implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+
+    public List<RoomExpense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<RoomExpense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public RoomExpense getPrice() {
+        return price;
+    }
+
+    public void setPrice(RoomExpense price) {
+        this.price = price;
+    }
+
+    public List<RoomPicture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<RoomPicture> pictures) {
+        this.pictures = pictures;
+    }
+
+    public RoomPicture getMainPicture() {
+        return getPictures().stream()
+                .filter(picture -> picture.isIsMain()).findFirst().orElse(null);
     }
 }

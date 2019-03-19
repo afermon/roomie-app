@@ -18,65 +18,60 @@
 
         <ImageView
             android:id="@+id/roomie_logo"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:src="@mipmap/roomie_logo_full_white"
-            app:layout_constraintBottom_toTopOf="@+id/search_view"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/roomie_logo_white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageButton
-            android:id="@+id/imageButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="4dp"
+            android:id="@+id/main_add_button"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_todo_add"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/search_view"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roomie_logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <SearchView
             android:id="@+id/search_view"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="13dp"
+            android:layout_marginBottom="13dp"
             android:background="@drawable/bg_white_rounded"
-            app:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton4"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageButton3"
-            app:layout_constraintTop_toBottomOf="@+id/roomie_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:queryBackground="@drawable/bg_white_rounded"
             app:submitBackground="@drawable/bg_white_rounded">
 
         </SearchView>
 
         <ImageButton
-            android:id="@+id/imageButton4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:id="@+id/search_filters"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="13dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:src="@drawable/icon_filter_white"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/search_view"
-            app:layout_constraintTop_toBottomOf="@+id/roomie_logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -96,6 +91,8 @@
         android:name="com.cosmicode.mypass.view.MainNotificationFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/secondary"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -103,5 +100,24 @@
         app:layout_constraintTop_toBottomOf="@+id/search_layout"
         app:layout_constraintVertical_bias="1.0"
         tools:context=".view.MainNotificationFragment"
-        tools:listitem="@layout/home_room_item" />
+        tools:listitem="@layout/home_room_item" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/no_results"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/no_results"
+        android:textAlignment="center"
+        android:textColor="@color/primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

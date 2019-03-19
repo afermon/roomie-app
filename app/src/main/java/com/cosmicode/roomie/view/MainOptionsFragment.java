@@ -39,6 +39,7 @@ public class MainOptionsFragment extends Fragment {
     private String mParam2;
     private Button button, listing;
     private OnFragmentInteractionListener mListener;
+    private ImageButton configuration;
 
     public MainOptionsFragment() {
         // Required empty public constructor
@@ -89,6 +90,8 @@ public class MainOptionsFragment extends Fragment {
         listing.setOnClickListener( v -> {
             startActivity(new Intent(getContext(), CreateListingActivity.class));
         });
+        configuration = getView().findViewById(R.id.configuration);
+        configuration.setOnClickListener(this::openConfiguration);
         button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
@@ -116,6 +119,12 @@ public class MainOptionsFragment extends Fragment {
     public void openTasks(View view){
         ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance("", "");
         openFragment(todoFragment);
+    }
+
+
+    public void openConfiguration(View view){
+        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
+        openFragment(mainConfigurationFragment);
     }
 
     private void openFragment(Fragment fragment) {

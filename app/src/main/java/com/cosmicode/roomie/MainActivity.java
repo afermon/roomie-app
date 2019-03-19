@@ -11,11 +11,12 @@ import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
+import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
-import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
+import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.NewTaskFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
@@ -26,7 +27,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener, BottomNavigationView.OnNavigationItemSelectedListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, MainSearchFragment.OnFragmentInteractionListener, MainOptionsFragment.OnFragmentInteractionListener, MainProfileFragment.OnFragmentInteractionListener, MainEditProfileFragment.OnFragmentInteractionListener, MainNotificationFragment.OnFragmentInteractionListener, OnGetUserEmailListener {
+
+public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener,
+        BottomNavigationView.OnNavigationItemSelectedListener,
+        ToDoLIstFragment.OnFragmentInteractionListener,
+        NewTaskFragment.OnFragmentInteractionListener,
+        MainOptionsFragment.OnFragmentInteractionListener,
+        MainProfileFragment.OnFragmentInteractionListener,
+        MainEditProfileFragment.OnFragmentInteractionListener,
+        MainNotificationFragment.OnFragmentInteractionListener,
+        MainConfigurationFragment.OnFragmentInteractionListener,
+        MainSearchFragment.OnFragmentInteractionListener,
+        OnGetUserEmailListener {
 
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
