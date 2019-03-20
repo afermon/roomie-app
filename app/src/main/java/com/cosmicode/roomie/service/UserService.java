@@ -6,11 +6,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Authorization;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
+import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
 import com.cosmicode.roomie.util.listeners.OnRecoverPasswordRequestListener;
@@ -170,12 +172,12 @@ public class UserService implements UserInterface {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.code() == 200) { // Login OK
+                if (response.code() == 201) { // Created
                     listener.onRegisterSuccess();
 
                 } else {
                     Log.e(TAG, "Register error");
-                    listener.onRegisterError(response.message());
+                    listener.onRegisterError(context.getResources().getString(R.string.email_in_use));
                 }
             }
 
@@ -185,6 +187,32 @@ public class UserService implements UserInterface {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void findByEmail(String email, final OnGetUserEmailListener listener) {
+        UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
+        Call<JhiAccount> call = apiService.findUserByEmail(email);
+
+        call.enqueue(new Callback<JhiAccount>() {
+            @Override
+            public void onResponse(Call<JhiAccount> call, Response<JhiAccount> response) {
+                if (response.code() == 200) { // Created
+                    listener.onGetUserSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, "Failed getting resource");
+                    listener.onGetUserError(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JhiAccount> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
@@ -379,6 +407,7 @@ public class UserService implements UserInterface {
 
             @Override
             public void onFailure(Call<Authorization> call, Throwable t) {
+                Log.e("Core", ""+ t.getMessage());
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
             }

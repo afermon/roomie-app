@@ -12,7 +12,39 @@
     <string name="facebook_app_id" translatable="false">235433017402895</string>
 
     <!-- Google login -->
-    <string name="default_web_client_id" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
+    <string name="default_web_client_id2" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
+
+    <!--Profile-->
+    <string name="profile_gender_age">Gender: %1$s\u0020\u0020\u0020\u0020Age: %2$s</string>
+    <string name="profile_phone">Phone: %1$s</string>
+    <string name="profile_city">City:</string>
+    <string name="profile_bio">Personal information</string>
+    <string name="profile_lifestyle">Lifestyle</string>
+    <string name="profile_location">Location</string>
+    <string name="enum_male">Male</string>
+    <string name="enum_female">Female</string>
+    <string name="enum_other">Other</string>
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="phone">Phone number</string>
+    <string name="button_save">Save</string>
+    <string name="edit_bio">About me</string>
+    <string name="edit_picture">Edit picture</string>
+    <string name="back_button">Back button</string>
+    <string name="validate_text_long">The text is too long</string>
+    <string name="validate_text_short">The text is too short</string>
+    <string name="validate_empty">This field can\'t be empty</string>
+    <string name="validate_number_long">The number is too long</string>
+    <string name="validate_number_short">The number is too long</string>
+    <string name="update_success">Update success</string>
+    <string name="profile_image">Profile image</string>
+    <string name="email_profile">Email: %1$s</string>
+    <string name="no_bio">This user has no biography :(</string>
+    <string name="no_life">This user has no lifestyles assigned</string>
+    <string name="email_in_use">Email already in use</string>
+    <string name="succes_register">Welcome to Roomie, %1$s!</string>
+    <string name="complete_title">Complete User Information</string>
+    <string name="complete_user_btn">Complete user</string>
+    <string name="complete_info">Welcome to Roomie! We need you to fill the following information so that we can complete your user. Thanks!</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -64,6 +96,8 @@
     <string name="error_invalid_first_name">Invalid first name</string>
     <string name="error_invalid_last_name">Invalid last name</string>
     <string name="save_success">Save success</string>
+    <string name="success_info">User Info Saved!</string>
+    <string name="success">Success</string>
     <string name="my_account">My account</string>
     <string name="unknown_error">Unknown Error</string>
     <string name="error_existing_email">This account is already registered</string>
@@ -78,7 +112,60 @@
     <string name="bottom_nav_account">Account</string>
     <string name="bottom_nav_menu">Menu</string>
     <string name="login_or">Or</string>
+    <string name="todo_today">Today</string>
+    <string name="todo_tomorrow">Tomorrow</string>
+    <string name="todo_upcoming">Upcoming</string>
+    <string name="todo_completed">Completed</string>>
+    <string name="todo_past_task">Undone past task</string>
+    <string name="todo_past_save">Save</string>
+    <string name="todo_new_title">New task</string>
+    <string name="todo_edit_title">Edit task</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_choose_location">Map</string>
+    <string name="sucess_title">Success!</string>
+    <string name="check_email">Check your email for information on how to activate your account</string>
+    <string name="return_login">Return to Login</string>
+    <string name="register_title">Register</string>
+    <string name="account_title">Account Information</string>
+    <string name="confirm_pw">Confirm password</string>
+    <string name="pw_restriction">*Password must be at least 8 characters long</string>
+    <string name="personal_title">Personal Information</string>
+    <string name="birthdate">Birthdate</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="create_account_btn">Create Account</string>
+    <string name="listing_title">Listings</string>
+    <string name="new_listing">Create a new listing</string>
+    <string name="select_listing">Select type of listing:</string>
+    <string name="add_room_info">Cost Information</string>
+    <string name="heading">Headline</string>
+    <string name="headline_hint">Describe what you offer in a few words</string>
+    <string name="deatailed_desc">Detailed description</string>
+    <string name="room_desc_hint">Add a detailed description about the place and what you are looking for</string>
+    <string name="rent">Rent amount</string>
+    <string name="amount">Monthly rent</string>
+    <string name="currency">Currency</string>
+    <string name="move_in">Move-In Date</string>
+    <string name="available_date">Available date</string>
+    <string name="room_number">Number of rooms</string>
+    <string name="room">Rooms</string>
+    <string name="room_type">Type of place</string>
+    <string name="spinner_room">Room</string>
+    <string name="spinner_apt">Apartment</string>
+    <string name="spinner_house">House</string>
+    <string name="move_out">Move-out date</string>
+    <string name="pictures">Pictures</string>
+    <string name="basic_info">Basic Information</string>
+    <string name="amenities">Amenities</string>
+    <string name="restrictions">Restrictions</string>
+    <string name="address_desc">Additional address description</string>
+    <string name="address_desc_hint">Detail additional information for your address like signs, streets, house number, etc.</string>
+    <string name="choose_location">Choose Location</string>
+    <string name="copyright">© 2019 Cosmicode. All rights reserved.</string>
+    <string name="no_results">This is embarrassing! We did not find any rooms with the current search filters. Please try again.</string>
+    <string name="search_filter_title">Search filters</string>
+    <string name="serch_filter_desc">Please select the range of values you would like to select</string>
 </resources>
