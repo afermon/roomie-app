@@ -71,7 +71,6 @@
 
     <TextView
         android:id="@+id/edit_email13"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
@@ -121,7 +120,6 @@
 
     <TextView
         android:id="@+id/edit_email11"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
@@ -139,7 +137,6 @@
 
     <TextView
         android:id="@+id/edit_email12"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
@@ -157,7 +154,6 @@
 
     <TextView
         android:id="@+id/edit_email10"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
@@ -197,7 +193,6 @@
 
     <TextView
         android:id="@+id/edit_email9"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
@@ -226,7 +221,6 @@
 
     <TextView
         android:id="@+id/edit_email8"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
