@@ -4,15 +4,14 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
+import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.net.URI;
 import java.util.List;
 
-public class Room implements Parcelable {
+public class RoomCreate implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -65,12 +64,10 @@ public class Room implements Parcelable {
     @SerializedName("ownerId")
     @Expose
     private Long ownerId;
-    @SerializedName("address")
+
+    @SerializedName("priceId")
     @Expose
-    private Address address;
-    @SerializedName("price")
-    @Expose
-    private RoomExpense price;
+    private Long priceId;
     @SerializedName("pictures")
     @Expose
     private List<RoomPicture> pictures = null;
@@ -79,11 +76,10 @@ public class Room implements Parcelable {
 
     private RoomExpense monthly = null;
 
-
-    public Room() {
+    public RoomCreate() {
     }
 
-    public Room(Long id, RoomState state, String created, String published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, String availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, List<RoomExpense> expenses, Long ownerId, Address address, RoomExpense price, List<RoomPicture> pictures) {
+    public RoomCreate(Long id, RoomState state, String created, String published, String title, String description, Integer rooms, RoomType roomType, String apoinmentsNotes, Boolean lookingForRoomie, String availableFrom, Boolean isPremium, Long addressId, List<Roomie> roomies, List<RoomFeature> features, List<RoomExpense> expenses, Long ownerId, Long priceId, List<RoomPicture> pictures, List<Uri> picturesUris, RoomExpense monthly) {
         this.id = id;
         this.state = state;
         this.created = created;
@@ -101,9 +97,10 @@ public class Room implements Parcelable {
         this.features = features;
         this.expenses = expenses;
         this.ownerId = ownerId;
-        this.address = address;
-        this.price = price;
+        this.priceId = priceId;
         this.pictures = pictures;
+        this.picturesUris = picturesUris;
+        this.monthly = monthly;
     }
 
     public Long getId() {
@@ -226,32 +223,6 @@ public class Room implements Parcelable {
         this.features = features;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public List<Uri> getPicturesUris() {
-        return picturesUris;
-    }
-
-    public void setPicturesUris(List<Uri> picturesUris) {
-        this.picturesUris = picturesUris;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
-
     public List<RoomExpense> getExpenses() {
         return expenses;
     }
@@ -260,20 +231,20 @@ public class Room implements Parcelable {
         this.expenses = expenses;
     }
 
-    public Address getAddress() {
-        return address;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public RoomExpense getPrice() {
-        return price;
+    public Long getPriceId() {
+        return priceId;
     }
 
-    public void setPrice(RoomExpense price) {
-        this.price = price;
+    public void setPriceId(Long priceId) {
+        this.priceId = priceId;
     }
 
     public List<RoomPicture> getPictures() {
@@ -284,6 +255,14 @@ public class Room implements Parcelable {
         this.pictures = pictures;
     }
 
+    public List<Uri> getPicturesUris() {
+        return picturesUris;
+    }
+
+    public void setPicturesUris(List<Uri> picturesUris) {
+        this.picturesUris = picturesUris;
+    }
+
     public RoomExpense getMonthly() {
         return monthly;
     }
@@ -292,8 +271,14 @@ public class Room implements Parcelable {
         this.monthly = monthly;
     }
 
-    public RoomPicture getMainPicture() {
-        return getPictures().stream()
-                .filter(picture -> picture.isIsMain()).findFirst().orElse(null);
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

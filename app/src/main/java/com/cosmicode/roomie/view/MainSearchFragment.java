@@ -292,6 +292,12 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 });
     }
 
+
+    @Override
+    public void OnCreateSuccess(Room room) {
+
+    }
+
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
         Log.d(TAG, "Success getting rooms");
@@ -308,6 +314,11 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsError(String error) {
+
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
 
     }
 

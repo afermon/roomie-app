@@ -340,7 +340,6 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             Long id = new Long(1);
             task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
 
-            Toast.makeText(getContext(), task.toString(), Toast.LENGTH_LONG).show();
             roomTaskService.createTask(task);
         }
     }

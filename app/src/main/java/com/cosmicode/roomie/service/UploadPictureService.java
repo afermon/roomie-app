@@ -3,6 +3,7 @@ package com.cosmicode.roomie.service;
 import android.content.Context;
 import android.net.Uri;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +24,39 @@ public class UploadPictureService {
         this.listener = listener;
     }
 
-    public String uploadFile(Uri uri, Long id, PictureType type ){
+    public String uploadFile(Uri uri, Long id, PictureType type){
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        String path = type.equals(PictureType.PROFILE) ? "profile" : "room";
+        StorageReference ref = storageRef.child(path+"/roomieId"+id);
+
+        UploadTask uploadTask = ref.putFile(uri);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    listener.onUploaddSuccess(task.getResult().toString());
+                } else {
+                    listener.onUploadError(task.getException().getMessage());
+                }
+            }
+
+        });
+        return null;
+    }
+
+    public String uploadFileRoom(Uri uri, String id, PictureType type){
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

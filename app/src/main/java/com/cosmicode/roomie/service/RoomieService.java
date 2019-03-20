@@ -97,7 +97,7 @@ public class RoomieService {
                     listener.onCreateRoomieSuccess(response.body());
 
                 } else {
-                    Log.e(TAG, Integer.toString(response.code()));
+                    Log.e(TAG, (response.errorBody().toString()));
                     listener.onCreateRoomieError("ERROR getting resources");
                 }
             }
