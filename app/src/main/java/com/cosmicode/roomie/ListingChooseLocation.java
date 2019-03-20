@@ -90,6 +90,7 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
     private RoomieService roomieService;
     private RoomPictureService roomPictureService;
     private static int picAmount;
+    private Room newRoom;
 
 
     @BindView(R.id.progress)
