@@ -112,6 +112,14 @@
     <string name="bottom_nav_account">Account</string>
     <string name="bottom_nav_menu">Menu</string>
     <string name="login_or">Or</string>
+    <string name="todo_today">Today</string>
+    <string name="todo_tomorrow">Tomorrow</string>
+    <string name="todo_upcoming">Upcoming</string>
+    <string name="todo_completed">Completed</string>>
+    <string name="todo_past_task">Undone past task</string>
+    <string name="todo_past_save">Save</string>
+    <string name="todo_new_title">New task</string>
+    <string name="todo_edit_title">Edit task</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -158,4 +166,6 @@
     <string name="choose_location">Choose Location</string>
     <string name="copyright">© 2019 Cosmicode. All rights reserved.</string>
     <string name="no_results">This is embarrassing! We did not find any rooms with the current search filters. Please try again.</string>
+    <string name="search_filter_title">Search filters</string>
+    <string name="serch_filter_desc">Please select the range of values you would like to select</string>
 </resources>

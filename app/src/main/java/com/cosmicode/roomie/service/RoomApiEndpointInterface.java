@@ -27,4 +27,7 @@ public interface RoomApiEndpointInterface {
     @PUT("rooms")
     Call<Room> updateRoom(@Body Room room);
 
+    @GET("_search/rooms/geo")
+    Call<List<Room>> serachRoomsGeo(@Query("latitude") Double latitude, @Query("longitude") Double longitude, @Query("distance") int distance);
+
 }

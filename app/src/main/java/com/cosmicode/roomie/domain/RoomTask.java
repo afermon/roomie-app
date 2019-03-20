@@ -1,10 +1,13 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RoomTask {
+public class RoomTask implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -123,5 +126,15 @@ public class RoomTask {
                 ", state=" + state +
                 ", roomId=" + roomId +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }
