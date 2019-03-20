@@ -84,7 +84,6 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
         View view = inflater.inflate(R.layout.fragment_to_do_list, container, false);
         ButterKnife.bind(this, view);
         dateToday = new DateTime();
-        Toast.makeText(getContext(),dateToday.toString(), Toast.LENGTH_SHORT).show();
 
         comparator = DateTimeComparator.getDateOnlyInstance();
         return view;
