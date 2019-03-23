@@ -167,7 +167,7 @@
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/input_stroke"
                 android:ems="10"
-                android:gravity="top|left"
+                android:gravity="top|start"
                 android:hint="@string/room_desc_hint"
                 android:inputType="textMultiLine|text"
                 android:lines="6"
