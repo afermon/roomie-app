@@ -79,10 +79,10 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
                     .isMultiSelect() //Set this if you want to use multi selection mode.
                     .setMinimumMultiSelectCount(1) //Default: 1.
                     .setMaximumMultiSelectCount(5) //Default: Integer.MAX_VALUE (i.e. User can select as many images as he/she wants)
-                    .setMultiSelectBarBgColor(android.R.color.white) //Default: #FFFFFF. You can also set it to a translucent color.
-                    .setMultiSelectTextColor(R.color.primary_text) //Default: #212121(Dark grey). This is the message in the multi-select bottom bar.
-                    .setMultiSelectDoneTextColor(R.color.colorAccent) //Default: #388e3c(Green). This is the color of the "Done" TextView.
-                    .setOverSelectTextColor(R.color.error_text) //Default: #b71c1c. This is the color of the message shown when user tries to select more than maximum select count.
+                    .setMultiSelectBarBgColor(R.color.secondary) //Default: #FFFFFF. You can also set it to a translucent color.
+                    .setMultiSelectTextColor(R.color.primary) //Default: #212121(Dark grey). This is the message in the multi-select bottom bar.
+                    .setMultiSelectDoneTextColor(R.color.primary) //Default: #388e3c(Green). This is the color of the "Done" TextView.
+                    .setOverSelectTextColor(R.color.danger) //Default: #b71c1c. This is the color of the message shown when user tries to select more than maximum select count.
                     .disableOverSelectionMessage() //You can also decide not to show this over select message.
                     .build();
         }

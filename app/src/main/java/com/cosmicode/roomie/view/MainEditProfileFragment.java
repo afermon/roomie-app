@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.asksira.bsimagepicker.BSImagePicker;
+import com.asksira.bsimagepicker.Utils;
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ChooseLocationActivity;
@@ -66,7 +68,7 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 
-public class MainEditProfileFragment extends Fragment implements UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener, Validator.ValidationListener {
+public class MainEditProfileFragment extends Fragment implements BSImagePicker.OnSingleImageSelectedListener, UploadPictureService.OnUploadPictureListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener, RoomieService.OnGetCurrentRoomieListener, Validator.ValidationListener {
 
     private static final String ROOMIE_KEY = "current_roomie";
     private Roomie currentRoomie;
@@ -84,6 +86,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     private UploadPictureService uploadPictureService;
     private RoomieService roomieService;
     private Address address;
+    private ImageButton back;
     AddressService addressService;
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final int REQUEST_MAP_CODE = 1;
@@ -93,6 +96,7 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     private final String TAG = "Edit profile";
     private FusedLocationProviderClient fusedLocationClient;
     private Validator validator;
+    private BSImagePicker singleSelectionPicker;
 
 
     public MainEditProfileFragment() {
@@ -118,6 +122,13 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
             addressService = new AddressService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+            singleSelectionPicker = new BSImagePicker.Builder("com.yourdomain.yourpackage.fileprovider")
+                    .setMaximumDisplayingImages(24) //Default: Integer.MAX_VALUE. Don't worry about performance :)
+                    .setSpanCount(3) //Default: 3. This is the number of columns
+                    .setGridSpacing(Utils.dp2px(2)) //Default: 2dp. Remember to pass in a value in pixel.
+                    .setPeekHeight(Utils.dp2px(360)) //Default: 360dp. This is the initial height of the dialog.
+                    .hideCameraTile() //Default: show. Set this if you don't want user to take photo.
+                    .build();
             createLocationRequest();
         }
     }
@@ -142,7 +153,13 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
         saveButton.setOnClickListener(this::onClickSave);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
+        back = getView().findViewById(R.id.back_button);
+        back.setOnClickListener(this::goBack);
         addressService.getAddresById(currentRoomie.getAddressId());
+    }
+
+    private void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 
     public void fillEditInfo() {
@@ -152,20 +169,54 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     }
 
     public void onClickEditPhoto(View view) {
-
-//        PickImageDialog.build(new PickSetup())
-//                .show(getActivity())
-//                .setOnPickResult(new IPickResult() {
-//                    @Override
-//                    public void onPickResult(PickResult r) {
-//                        cropImage(r.getUri());
-//                    }
-//                });
+        singleSelectionPicker.show(getChildFragmentManager(), "picker");
     }
 
 
     public void onClickSave(View view) {
-        validator.validate();
+        boolean isPhoneValid, isBioValid;
+        if(phone.getText().toString().equals("") && bio.getText().toString().equals("")){
+            currentRoomie.setBiography(null);
+            currentRoomie.setPhone(null);
+            roomieService.updateRoomie(currentRoomie);
+        }else{
+            isPhoneValid = validatePhone();
+            isBioValid = validateBio();
+            if(isBioValid && isPhoneValid){
+                currentRoomie.setPhone(phone.getText().toString());
+                currentRoomie.setBiography(bio.getText().toString());
+                roomieService.updateRoomie(currentRoomie);
+            }
+        }
+
+    }
+
+    private boolean validatePhone(){
+        if(phone.getText().toString().length() < 4){
+            phone.setError("Phone is too short");
+            return false;
+        }else{
+            if(phone.getText().toString().length() > 25){
+                phone.setError("Phone is too long");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateBio(){
+        if(bio.getText().toString().length() < 4){
+            bio.setError("Bio is too short");
+            return false;
+        }else{
+            if(bio.getText().toString().length() > 750){
+                bio.setError("Bio is too long");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void cropImage(Uri uri) {
@@ -275,11 +326,8 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
     @Override
     public void onUpdateSuccess(Address address) {
         this.address = address;
-        Toast toast = Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT);
-        View view = toast.getView();
-
-        view.getBackground().setColorFilter(ContextCompat.getColor(getContext(), R.color.toast_success), PorterDuff.Mode.SRC_IN);
-        toast.show();
+        Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
     }
 
     @Override
@@ -307,6 +355,11 @@ public class MainEditProfileFragment extends Fragment implements UploadPictureSe
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
         gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+    }
+
+    @Override
+    public void onSingleImageSelected(Uri uri, String tag) {
+        cropImage(uri);
     }
 
     public interface OnFragmentInteractionListener {
