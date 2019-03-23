@@ -20,35 +20,39 @@
         app:layout_constraintTop_toBottomOf="@+id/deadline"
         tools:visibility="gone" />
 
-    <EditText
+    <TextView
         android:id="@+id/Deadline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:text="Deadline"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_Description" />
 
-    <EditText
+    <TextView
         android:id="@+id/deadline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:text="Time"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,13 +131,12 @@
 
     <EditText
         android:id="@+id/edit_title"
-        style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
         android:hint="Title"
-        android:inputType="textEmailAddress"
+        android:inputType="text"
         android:maxLength="254"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
@@ -160,24 +163,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Title" />
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:src="@drawable/icon_chevrons_left_brand"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="50dp"
         android:text="New task"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
@@ -246,5 +238,31 @@
         app:layout_constraintEnd_toStartOf="@+id/timer_button"
         app:layout_constraintStart_toStartOf="@+id/deadline"
         app:layout_constraintTop_toTopOf="@+id/deadline" />
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:src="@drawable/icon_chevrons_left_brand"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/deletebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/circle_button_stroke"
+        android:backgroundTint="@null"
+        android:padding="8dp"
+        android:tint="@color/white"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_todo_delete" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
