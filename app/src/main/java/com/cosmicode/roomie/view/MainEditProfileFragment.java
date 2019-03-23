@@ -86,6 +86,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     private UploadPictureService uploadPictureService;
     private RoomieService roomieService;
     private Address address;
+    private ImageButton back;
     AddressService addressService;
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final int REQUEST_MAP_CODE = 1;
@@ -152,7 +153,13 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
         saveButton.setOnClickListener(this::onClickSave);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
+        back = getView().findViewById(R.id.back_button);
+        back.setOnClickListener(this::goBack);
         addressService.getAddresById(currentRoomie.getAddressId());
+    }
+
+    private void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 
     public void fillEditInfo() {
@@ -320,6 +327,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     public void onUpdateSuccess(Address address) {
         this.address = address;
         Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
     }
 
     @Override
