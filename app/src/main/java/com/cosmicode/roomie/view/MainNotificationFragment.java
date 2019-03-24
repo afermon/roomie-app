@@ -55,10 +55,11 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        notificationTextView = getView().findViewById(R.id.textview_notifications);
         progress = getView().findViewById(R.id.progress);
         showProgress(true);
         notificationService.getAllNotifications();
+
+
     }
 
     @Override
