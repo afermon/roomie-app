@@ -1,6 +1,8 @@
 package com.cosmicode.roomie.domain;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.location.Location;
 import android.location.LocationManager;
 
@@ -9,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
 
-public class Address {
+public class Address implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -75,6 +77,15 @@ public class Address {
         this.description = description;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
     public Double getLatitude() {
         return  Double.valueOf(location.split(",")[0]);
     }

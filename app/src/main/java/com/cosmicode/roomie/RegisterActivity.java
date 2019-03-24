@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
@@ -102,6 +103,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+        onClickMale(maleButton);
         validator = new Validator(this);
         validator.setValidationListener(this);
         password.setTransformationMethod(new PasswordTransformationMethod());
@@ -114,10 +116,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-                if(month <= 9){
-                    month++;
-                }
-
+                month++;
                 dateText.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
@@ -259,7 +258,9 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
 
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
-
+        String btnText;
+        register.setEnabled(!show);
+        register.setText((show) ? "" : getString(R.string.create_account_btn));
         progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
         progress.animate()
                 .setDuration(shortAnimTime)
@@ -271,6 +272,12 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
                     }
                 });
     }
+
+    @OnClick(R.id.back_button)
+    public void back(View view) {
+        finish();
+    }
+
 
     @Override
     public void onValidationSucceeded() {

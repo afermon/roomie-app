@@ -1,10 +1,13 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RoomExpense {
+public class RoomExpense implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -142,4 +145,49 @@ public class RoomExpense {
         this.roomId = roomId;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.description);
+        dest.writeInt(this.currency == null ? -1 : this.currency.ordinal());
+        dest.writeValue(this.amount);
+        dest.writeValue(this.periodicity);
+        dest.writeValue(this.monthDay);
+        dest.writeString(this.startDate);
+        dest.writeString(this.finishDate);
+        dest.writeValue(this.roomId);
+    }
+
+    protected RoomExpense(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.description = in.readString();
+        int tmpCurrency = in.readInt();
+        this.currency = tmpCurrency == -1 ? null : CurrencyType.values()[tmpCurrency];
+        this.amount = (Double) in.readValue(Double.class.getClassLoader());
+        this.periodicity = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.monthDay = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.startDate = in.readString();
+        this.finishDate = in.readString();
+        this.roomId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<RoomExpense> CREATOR = new Parcelable.Creator<RoomExpense>() {
+        @Override
+        public RoomExpense createFromParcel(Parcel source) {
+            return new RoomExpense(source);
+        }
+
+        @Override
+        public RoomExpense[] newArray(int size) {
+            return new RoomExpense[size];
+        }
+    };
 }
