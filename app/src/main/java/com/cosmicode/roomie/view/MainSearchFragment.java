@@ -4,25 +4,33 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.ChooseLocationActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.RoomFeature;
+import com.cosmicode.roomie.domain.SearchFilter;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.service.RoomFeatureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -33,11 +41,16 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
+import com.jaygoo.widget.OnRangeChangedListener;
+import com.jaygoo.widget.RangeSeekBar;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -49,6 +62,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
+import static com.cosmicode.roomie.util.GeoLocationUtil.getLocationText;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,11 +74,14 @@ import butterknife.OnClick;
  * Use the {@link MainSearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener {
+public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener, RoomFeatureService.OnGetFeaturesListener {
 
     private static final String TAG = "SearchFragment";
     private static final String ARG_SEARCH_QUERY = "search-query";
-    private String searchQuery;
+    public static final String CHOOSE_LOCATION_ADDRESS = "Address";
+    public static final String CHOOSE_LOCATION_CITY = "City";
+    public static final String CHOOSE_LOCATION_STATE = "State";
+    public static final int REQUEST_MAP_CODE = 1;
     private float density = (float) 1;
 
     @BindView(R.id.room_list)
@@ -77,17 +96,15 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     TextView noResults;
     @BindView(R.id.search_filters)
     ImageButton searchFiltersButton;
-    @BindView(R.id.main_add_button)
-    ImageButton mainAddButton;
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
-    private Location currentUserLocation;
+    private RoomFeatureService roomFeatureService;
     private static final int LOCATION_PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
-
-    //Search filters
-    private int searchDistance = 20;  // 20Km
+    private SearchFilter searchFilter;
+    List<RoomFeature> lAmenities;
+    List<RoomFeature> lRestrictions;
 
     public MainSearchFragment() {
         // Required empty public constructor
@@ -113,12 +130,16 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(getContext());
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        roomService = new RoomService(getContext(), this);
-        if (getArguments() != null) {
-            searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         createLocationRequest();
+        String searchQuery = "";
+        if (getArguments() != null)
+            searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
+
+        roomFeatureService = new RoomFeatureService(getContext(), this);
+        roomFeatureService.getAll();
+        roomService = new RoomService(getContext(), this);
+        searchFilter =  new SearchFilter(searchQuery, 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
     @Override
@@ -166,8 +187,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             @Override
             public boolean onQueryTextSubmit(String query) {
                 showProgress(true);
-                searchQuery = query;
-                roomService.serachRooms(query);
+                searchFilter.setQuery(query);
+                roomService.serachRooms(query); //TODO: replace this method
                 return false;
             }
 
@@ -179,7 +200,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         });
         searchView.setOnSearchClickListener(v -> {
             Log.d(TAG, "search expanded");
-            searchView.setQuery(searchQuery, false);
+            searchView.setQuery(searchFilter.getQuery(), false);
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) searchView.getLayoutParams();
             layoutParams.setMargins(layoutParams.leftMargin,  (int)(57 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
             layoutParams.horizontalBias = (float)0.5;
@@ -222,8 +243,12 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(getActivity(), location -> {
                         if (location != null) {
-                            currentUserLocation = location;
-                            Log.i(TAG, "Current user location: " + currentUserLocation.toString());
+                            searchFilter.setLatitude(location.getLatitude());
+                            searchFilter.setLongitude(location.getLongitude());
+                            String[] locationText = getLocationText(location, getContext());
+                            searchFilter.setCity(locationText[0]);
+                            searchFilter.setState(locationText[1]);
+                            Log.i(TAG, "Current user filters: " + searchFilter.toString());
                             roomService.getAllRooms();
                         }
                     });
@@ -232,35 +257,120 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @OnClick(R.id.search_filters)
     public void searchWithFilters(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.search_filter_title);
-        builder.setMessage(R.string.serch_filter_desc);
-        final SeekBar distanceSeekBar = new SeekBar(getContext());
-        distanceSeekBar.setProgress(searchDistance);
-        distanceSeekBar.setMax(200);
-        distanceSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        AlertDialog.Builder filtersDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog filterDialog;
+
+        filtersDialogBuilder.setTitle(R.string.search_filter_title);
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View searchFiltersView = inflater.inflate(R.layout.search_filters_layout, null);
+
+        TextView searchLocationTextView = searchFiltersView.findViewById(R.id.search_location_view);
+        searchLocationTextView.setText(String.format("%s, %s", searchFilter.getCity(), searchFilter.getState()));
+
+        RangeSeekBar distanceFilterSeekBar = searchFiltersView.findViewById(R.id.distance_filter);
+        distanceFilterSeekBar.setTypeface(Typeface.DEFAULT_BOLD);
+        distanceFilterSeekBar.getLeftSeekBar().setTypeface(Typeface.DEFAULT_BOLD);
+        distanceFilterSeekBar.setIndicatorTextDecimalFormat("0");
+        distanceFilterSeekBar.setValue(searchFilter.getDistance());
+
+        distanceFilterSeekBar.setOnRangeChangedListener(new OnRangeChangedListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                searchDistance = progress;
+            public void onRangeChanged(RangeSeekBar view, float maxDistance, float rightValue, boolean isFromUser) {
+                Log.d(TAG, "Distance: left: " + maxDistance);
+                searchFilter.setDistance((int) maxDistance);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
 
             }
         });
-        builder.setView(distanceSeekBar);
-        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
-                roomService.searchRoomsGeo(currentUserLocation.getLatitude(), currentUserLocation.getLongitude(), searchDistance);
-                showProgress(true);
+
+        Button usdButton = searchFiltersView.findViewById(R.id.filter_currency_usd);
+        Button crcButton = searchFiltersView.findViewById(R.id.filter_currency_crc);
+
+        usdButton.setOnClickListener(v -> {
+            usdButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.primary));
+            usdButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+            crcButton.setBackgroundTintList(null);
+            crcButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+            searchFilter.setCurrency(CurrencyType.DOLLAR);
         });
-        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
-        builder.show();
+
+        crcButton.setOnClickListener(v -> {
+            crcButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.primary));
+            crcButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+            usdButton.setBackgroundTintList(null);
+            usdButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+            searchFilter.setCurrency(CurrencyType.COLON);
+
+        });
+
+        if(searchFilter.getCurrency() == CurrencyType.COLON)
+            crcButton.performClick();
+
+        RangeSeekBar priceFilterSeekBar = searchFiltersView.findViewById(R.id.price_filter);
+        priceFilterSeekBar.setTypeface(Typeface.DEFAULT_BOLD);
+        priceFilterSeekBar.getLeftSeekBar().setTypeface(Typeface.DEFAULT_BOLD);
+        priceFilterSeekBar.setIndicatorTextDecimalFormat("0");
+        priceFilterSeekBar.setValue(100,500);
+
+        priceFilterSeekBar.setOnRangeChangedListener(new OnRangeChangedListener() {
+            @Override
+            public void onRangeChanged(RangeSeekBar view, float minPrice, float maxPrice, boolean isFromUser) {
+                Log.d(TAG, "Price: Min: " + minPrice + " Max: " + maxPrice);
+                searchFilter.setPriceMin((int) minPrice);
+                searchFilter.setPriceMax((int) maxPrice);
+            }
+
+            @Override
+            public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+
+            }
+        });
+
+        RecyclerView amenitiesRecyclerView = searchFiltersView.findViewById(R.id.amenities_recycler_view);
+        RecyclerView restrictionsRecyclerView = searchFiltersView.findViewById(R.id.restrictions_recycler_view);
+
+        amenitiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        restrictionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        RecyclerView.Adapter mAdapter = new AmenitiesAdapter(lAmenities);
+        amenitiesRecyclerView.setAdapter(mAdapter);
+        RecyclerView.Adapter mAdapter2 = new RestrictionsAdapter(lRestrictions);
+        restrictionsRecyclerView.setAdapter(mAdapter2);
+
+        filtersDialogBuilder.setView(searchFiltersView);
+
+        filtersDialogBuilder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            //TODO: replace method
+            //roomService.searchRoomsGeo(currentUserLocation.getLatitude(), currentUserLocation.getLongitude(), searchDistance);
+            //showProgress(true);
+        });
+        filterDialog = filtersDialogBuilder.create();
+
+        searchLocationTextView.setOnClickListener(v -> {
+            filterDialog.dismiss();
+            changeSearchGeo();
+        });
+
+        searchFiltersView.findViewById(R.id.search_change_geo_dialog).setOnClickListener(v -> {
+            filterDialog.dismiss();
+            changeSearchGeo();
+        });
+
+        filterDialog.show();
     }
 
     private void showProgress(boolean show) {
@@ -292,6 +402,27 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 });
     }
 
+    @OnClick(R.id.search_change_geo)
+    public void changeSearchGeo(){
+        Log.d(TAG, searchFilter.toString());
+        double[] coordinates = {searchFilter.getLatitude(), searchFilter.getLongitude()};
+        Intent intent = new Intent(getContext(), ChooseLocationActivity.class);
+        intent.putExtra(CHOOSE_LOCATION_ADDRESS, coordinates);
+        startActivityForResult(intent, REQUEST_MAP_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_MAP_CODE == requestCode && RESULT_OK == resultCode) {
+                searchFilter.setLatitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[0]);
+                searchFilter.setLongitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[1]);
+                searchFilter.setCity(data.getExtras().getString(CHOOSE_LOCATION_CITY));
+                searchFilter.setState(data.getExtras().getString(CHOOSE_LOCATION_STATE));
+                Log.d(TAG, searchFilter.toString());
+                //TODO: TOAST searching with new location.
+        } else
+            super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void OnCreateSuccess(Room room) {
@@ -304,7 +435,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         if (rooms.size() > 0){
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, currentUserLocation, mListener, getContext()));
+            roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, searchFilter.getLocation(), mListener, getContext()));
         } else {
             roomListRecyclerView.setAdapter(null);
             noResults.setVisibility(View.VISIBLE);
@@ -322,11 +453,28 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     }
 
+    @Override
+    public void onGetFeaturesSuccess(List<RoomFeature> featureList) {
+        lAmenities = new ArrayList<>();
+        lRestrictions = new ArrayList<>();
+        for (RoomFeature feature : featureList) {
+            if(feature.getType() == FeatureType.AMENITIES){
+                lAmenities.add(feature);
+            }else{
+                lRestrictions.add(feature);
+            }
+        }
+    }
+
+    @Override
+    public void onGetFeaturesError(String error) {
+        Log.e(TAG, error);
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void onSearchFragmentInteraction(Room item);
     }
-
 
     public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
         final float MINIMUM = 100 * density;
@@ -357,7 +505,6 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         public abstract void hide();
     }
 
-
     protected void createLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(10000);
@@ -382,5 +529,121 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                 }
             }
         });
+    }
+
+    public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
+        private List<RoomFeature> features;
+
+        public class IconViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView iconText;
+            private ImageButton icon;
+            IconViewHolder(View view) {
+                super(view);
+                iconText = view.findViewById(R.id.icon_text);
+                icon = view.findViewById(R.id.icon);
+            }
+
+        }
+
+        public AmenitiesAdapter(List<RoomFeature> features) {
+            this.features = features;
+        }
+
+        public int getItemCount() {
+            return features.size();
+        }
+
+        @NonNull
+        @Override
+        public IconViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            // create a new view
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.icon_item, viewGroup, false);
+            IconViewHolder vh = new IconViewHolder(v);
+            return vh;
+        }
+
+
+        @Override
+        public void onBindViewHolder(final IconViewHolder holder, int position) {
+
+            RoomFeature feature = this.features.get(position);
+            holder.iconText.setText(feature.getName());
+            Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
+            holder.icon.setOnClickListener( v -> {
+                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
+                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    searchFilter.getFeatures().add(feature);
+                }else{
+                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+                    Iterator<RoomFeature> itr = searchFilter.getFeatures().iterator();
+                    while (itr.hasNext()) {
+                        if (itr.next() == feature) {
+                            itr.remove();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public class RestrictionsAdapter extends RecyclerView.Adapter<RestrictionsAdapter.IconViewHolder> {
+        private List<RoomFeature> features;
+
+        public class IconViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView iconText;
+            private ImageButton icon;
+            IconViewHolder(View view) {
+                super(view);
+                iconText = view.findViewById(R.id.icon_text);
+                icon = view.findViewById(R.id.icon);
+            }
+
+        }
+
+        public RestrictionsAdapter(List<RoomFeature> features) {
+            this.features = features;
+        }
+
+        public int getItemCount() {
+            return features.size();
+        }
+
+        @NonNull
+        @Override
+        public IconViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            // create a new view
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.icon_item, viewGroup, false);
+            IconViewHolder vh = new IconViewHolder(v);
+            return vh;
+        }
+
+
+        @Override
+        public void onBindViewHolder(final IconViewHolder holder, int position) {
+
+            RoomFeature feature = this.features.get(position);
+            holder.iconText.setText(feature.getName());
+            Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
+            holder.icon.setOnClickListener( v -> {
+                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
+                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    searchFilter.getFeatures().add(feature);
+                }else{
+                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+                    Iterator<RoomFeature> itr = searchFilter.getFeatures().iterator();
+                    while (itr.hasNext()) {
+                        if (itr.next() == feature) {
+                            itr.remove();
+                        }
+                    }
+                }
+            });
+        }
     }
 }
