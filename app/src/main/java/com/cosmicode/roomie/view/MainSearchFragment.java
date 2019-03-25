@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
@@ -47,7 +48,6 @@ import com.jaygoo.widget.RangeSeekBar;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -76,14 +76,13 @@ import static com.cosmicode.roomie.util.GeoLocationUtil.getLocationText;
  */
 public class MainSearchFragment extends Fragment implements RoomService.RoomServiceListener, RoomFeatureService.OnGetFeaturesListener {
 
-    private static final String TAG = "SearchFragment";
-    private static final String ARG_SEARCH_QUERY = "search-query";
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final String CHOOSE_LOCATION_CITY = "City";
     public static final String CHOOSE_LOCATION_STATE = "State";
     public static final int REQUEST_MAP_CODE = 1;
-    private float density = (float) 1;
-
+    private static final String TAG = "SearchFragment";
+    private static final String ARG_SEARCH_QUERY = "search-query";
+    private static final int LOCATION_PERMISSION = 1;
     @BindView(R.id.room_list)
     RecyclerView roomListRecyclerView;
     @BindView(R.id.progress_bar)
@@ -96,15 +95,14 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     TextView noResults;
     @BindView(R.id.search_filters)
     ImageButton searchFiltersButton;
-
+    List<RoomFeature> lAmenities;
+    List<RoomFeature> lRestrictions;
+    private float density = (float) 1;
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
     private RoomFeatureService roomFeatureService;
-    private static final int LOCATION_PERMISSION = 1;
     private FusedLocationProviderClient fusedLocationClient;
     private SearchFilter searchFilter;
-    List<RoomFeature> lAmenities;
-    List<RoomFeature> lRestrictions;
 
     public MainSearchFragment() {
         // Required empty public constructor
@@ -139,7 +137,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         roomFeatureService = new RoomFeatureService(getContext(), this);
         roomFeatureService.getAll();
         roomService = new RoomService(getContext(), this);
-        searchFilter =  new SearchFilter(searchQuery, 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
+        searchFilter = new SearchFilter(searchQuery, 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
     @Override
@@ -174,11 +172,11 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         searchView.setQueryHint("Search....");
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
-        if (searchPlate!=null) {
+        if (searchPlate != null) {
             searchPlate.setBackgroundColor(Color.WHITE);
             int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
             TextView searchText = searchPlate.findViewById(searchTextId);
-            if (searchText!=null) {
+            if (searchText != null) {
                 searchText.setTextColor(getActivity().getResources().getColor(R.color.light));
                 searchText.setHintTextColor(getActivity().getResources().getColor(R.color.light));
             }
@@ -188,22 +186,23 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             public boolean onQueryTextSubmit(String query) {
                 showProgress(true);
                 searchFilter.setQuery(query);
-                roomService.serachRooms(query); //TODO: replace this method
+                roomService.searchRoomsAdvanced(searchFilter);
+                showProgress(true);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //TODO: type ahead
                 return false;
             }
         });
+
         searchView.setOnSearchClickListener(v -> {
             Log.d(TAG, "search expanded");
             searchView.setQuery(searchFilter.getQuery(), false);
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) searchView.getLayoutParams();
-            layoutParams.setMargins(layoutParams.leftMargin,  (int)(57 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
-            layoutParams.horizontalBias = (float)0.5;
+            layoutParams.setMargins(layoutParams.leftMargin, (int) (57 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
+            layoutParams.horizontalBias = (float) 0.5;
             searchView.setLayoutParams(layoutParams);
             searchFiltersButton.setVisibility(View.VISIBLE);
         });
@@ -212,8 +211,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             Log.d(TAG, "search closed");
             searchFiltersButton.setVisibility(View.INVISIBLE);
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) searchView.getLayoutParams();
-            layoutParams.setMargins(layoutParams.leftMargin, (int)(13 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
-            layoutParams.horizontalBias = (float)1;
+            layoutParams.setMargins(layoutParams.leftMargin, (int) (13 * density), layoutParams.rightMargin, layoutParams.bottomMargin);
+            layoutParams.horizontalBias = (float) 1;
             searchView.setLayoutParams(layoutParams);
             searchFiltersButton.setVisibility(View.INVISIBLE);
             return false;
@@ -230,7 +229,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             @Override
             public void hide() {
                 searchView.setIconified(true);
-                if(!searchView.isIconified()) searchView.setIconified(true);
+                if (!searchView.isIconified()) searchView.setIconified(true);
             }
         });
 
@@ -256,7 +255,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     @OnClick(R.id.search_filters)
-    public void searchWithFilters(){
+    public void searchWithFilters() {
         AlertDialog.Builder filtersDialogBuilder = new AlertDialog.Builder(getContext());
         AlertDialog filterDialog;
 
@@ -312,14 +311,14 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
         });
 
-        if(searchFilter.getCurrency() == CurrencyType.COLON)
+        if (searchFilter.getCurrency() == CurrencyType.COLON)
             crcButton.performClick();
 
         RangeSeekBar priceFilterSeekBar = searchFiltersView.findViewById(R.id.price_filter);
         priceFilterSeekBar.setTypeface(Typeface.DEFAULT_BOLD);
         priceFilterSeekBar.getLeftSeekBar().setTypeface(Typeface.DEFAULT_BOLD);
         priceFilterSeekBar.setIndicatorTextDecimalFormat("0");
-        priceFilterSeekBar.setValue(100,500);
+        priceFilterSeekBar.setValue(searchFilter.getPriceMin(), searchFilter.getPriceMax());
 
         priceFilterSeekBar.setOnRangeChangedListener(new OnRangeChangedListener() {
             @Override
@@ -346,17 +345,18 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         amenitiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         restrictionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        RecyclerView.Adapter mAdapter = new AmenitiesAdapter(lAmenities);
+        RecyclerView.Adapter mAdapter = new FeaturesAdapter(lAmenities);
         amenitiesRecyclerView.setAdapter(mAdapter);
-        RecyclerView.Adapter mAdapter2 = new RestrictionsAdapter(lRestrictions);
+        RecyclerView.Adapter mAdapter2 = new FeaturesAdapter(lRestrictions);
         restrictionsRecyclerView.setAdapter(mAdapter2);
 
         filtersDialogBuilder.setView(searchFiltersView);
 
         filtersDialogBuilder.setPositiveButton(R.string.ok, (dialog, which) -> {
-            //TODO: replace method
-            //roomService.searchRoomsGeo(currentUserLocation.getLatitude(), currentUserLocation.getLongitude(), searchDistance);
-            //showProgress(true);
+            roomService.searchRoomsAdvanced(searchFilter);
+            searchView.setIconified(true);
+            if (!searchView.isIconified()) searchView.setIconified(true);
+            showProgress(true);
         });
         filterDialog = filtersDialogBuilder.create();
 
@@ -374,7 +374,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     private void showProgress(boolean show) {
-        if(show) noResults.setVisibility(View.INVISIBLE);
+        if (show) noResults.setVisibility(View.INVISIBLE);
 
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -403,7 +403,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     @OnClick(R.id.search_change_geo)
-    public void changeSearchGeo(){
+    public void changeSearchGeo() {
         Log.d(TAG, searchFilter.toString());
         double[] coordinates = {searchFilter.getLatitude(), searchFilter.getLongitude()};
         Intent intent = new Intent(getContext(), ChooseLocationActivity.class);
@@ -414,12 +414,16 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode && RESULT_OK == resultCode) {
-                searchFilter.setLatitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[0]);
-                searchFilter.setLongitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[1]);
-                searchFilter.setCity(data.getExtras().getString(CHOOSE_LOCATION_CITY));
-                searchFilter.setState(data.getExtras().getString(CHOOSE_LOCATION_STATE));
-                Log.d(TAG, searchFilter.toString());
-                //TODO: TOAST searching with new location.
+            searchFilter.setLatitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[0]);
+            searchFilter.setLongitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[1]);
+            searchFilter.setCity(data.getExtras().getString(CHOOSE_LOCATION_CITY));
+            searchFilter.setState(data.getExtras().getString(CHOOSE_LOCATION_STATE));
+            Log.d(TAG, searchFilter.toString());
+            Toast.makeText(getContext(), String.format("%s, %s", searchFilter.getCity(), searchFilter.getState()), Toast.LENGTH_SHORT).show();
+            roomService.searchRoomsAdvanced(searchFilter);
+            searchView.setIconified(true);
+            if (!searchView.isIconified()) searchView.setIconified(true);
+            showProgress(true);
         } else
             super.onActivityResult(requestCode, resultCode, data);
     }
@@ -432,7 +436,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void OnGetRoomsSuccess(List<Room> rooms) {
         Log.d(TAG, "Success getting rooms");
-        if (rooms.size() > 0){
+        if (rooms.size() > 0) {
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, searchFilter.getLocation(), mListener, getContext()));
@@ -445,7 +449,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnGetRoomsError(String error) {
-
+        roomListRecyclerView.setAdapter(null);
+        noResults.setVisibility(View.VISIBLE);
+        showProgress(false);
     }
 
     @Override
@@ -458,9 +464,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         lAmenities = new ArrayList<>();
         lRestrictions = new ArrayList<>();
         for (RoomFeature feature : featureList) {
-            if(feature.getType() == FeatureType.AMENITIES){
+            if (feature.getType() == FeatureType.AMENITIES) {
                 lAmenities.add(feature);
-            }else{
+            } else {
                 lRestrictions.add(feature);
             }
         }
@@ -469,40 +475,6 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     @Override
     public void onGetFeaturesError(String error) {
         Log.e(TAG, error);
-    }
-
-    public interface OnFragmentInteractionListener {
-        BaseActivity getBaseActivity();
-        void onSearchFragmentInteraction(Room item);
-    }
-
-    public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
-        final float MINIMUM = 100 * density;
-        int scrollDist = 0;
-        boolean isVisible = true;
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if (isVisible && scrollDist > MINIMUM) {
-                hide();
-                scrollDist = 0;
-                isVisible = false;
-            }
-            else if (!isVisible && scrollDist < -MINIMUM) {
-                show();
-                scrollDist = 0;
-                isVisible = true;
-            }
-
-            if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
-                scrollDist += dy;
-            }
-        }
-
-        public abstract void show();
-        public abstract void hide();
     }
 
     protected void createLocationRequest() {
@@ -531,85 +503,55 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         });
     }
 
-    public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
-        private List<RoomFeature> features;
+    public interface OnFragmentInteractionListener {
+        BaseActivity getBaseActivity();
 
-        public class IconViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView iconText;
-            private ImageButton icon;
-            IconViewHolder(View view) {
-                super(view);
-                iconText = view.findViewById(R.id.icon_text);
-                icon = view.findViewById(R.id.icon);
-            }
-
-        }
-
-        public AmenitiesAdapter(List<RoomFeature> features) {
-            this.features = features;
-        }
-
-        public int getItemCount() {
-            return features.size();
-        }
-
-        @NonNull
-        @Override
-        public IconViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            // create a new view
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.icon_item, viewGroup, false);
-            IconViewHolder vh = new IconViewHolder(v);
-            return vh;
-        }
-
-
-        @Override
-        public void onBindViewHolder(final IconViewHolder holder, int position) {
-
-            RoomFeature feature = this.features.get(position);
-            holder.iconText.setText(feature.getName());
-            Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
-            holder.icon.setOnClickListener( v -> {
-                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
-                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    searchFilter.getFeatures().add(feature);
-                }else{
-                    holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
-                    holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-                    Iterator<RoomFeature> itr = searchFilter.getFeatures().iterator();
-                    while (itr.hasNext()) {
-                        if (itr.next() == feature) {
-                            itr.remove();
-                        }
-                    }
-                }
-            });
-        }
+        void onSearchFragmentInteraction(Room item);
     }
 
-    public class RestrictionsAdapter extends RecyclerView.Adapter<RestrictionsAdapter.IconViewHolder> {
-        private List<RoomFeature> features;
+    public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
+        final float MINIMUM = 100 * density;
+        int scrollDist = 0;
+        boolean isVisible = true;
 
-        public class IconViewHolder extends RecyclerView.ViewHolder {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
 
-            private TextView iconText;
-            private ImageButton icon;
-            IconViewHolder(View view) {
-                super(view);
-                iconText = view.findViewById(R.id.icon_text);
-                icon = view.findViewById(R.id.icon);
+            if (isVisible && scrollDist > MINIMUM) {
+                hide();
+                scrollDist = 0;
+                isVisible = false;
+            } else if (!isVisible && scrollDist < -MINIMUM) {
+                show();
+                scrollDist = 0;
+                isVisible = true;
             }
 
+            if ((isVisible && dy > 0) || (!isVisible && dy < 0)) {
+                scrollDist += dy;
+            }
         }
 
-        public RestrictionsAdapter(List<RoomFeature> features) {
+        public abstract void show();
+
+        public abstract void hide();
+    }
+
+    public class FeaturesAdapter extends RecyclerView.Adapter<FeaturesAdapter.IconViewHolder> {
+        private List<RoomFeature> features;
+
+        public FeaturesAdapter(List<RoomFeature> features) {
             this.features = features;
         }
 
         public int getItemCount() {
             return features.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         @NonNull
@@ -621,29 +563,42 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             return vh;
         }
 
-
         @Override
         public void onBindViewHolder(final IconViewHolder holder, int position) {
 
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
+
+            if (searchFilter.getFeatures().contains(feature)) {
+                holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+            }
+
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
-            holder.icon.setOnClickListener( v -> {
-                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
+            holder.icon.setOnClickListener(v -> {
+                if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    searchFilter.getFeatures().add(feature);
-                }else{
+                    searchFilter.getFeatures().remove(feature);
+                } else {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-                    Iterator<RoomFeature> itr = searchFilter.getFeatures().iterator();
-                    while (itr.hasNext()) {
-                        if (itr.next() == feature) {
-                            itr.remove();
-                        }
-                    }
+                    searchFilter.getFeatures().add(feature);
                 }
             });
+        }
+
+        public class IconViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView iconText;
+            private ImageButton icon;
+
+            IconViewHolder(View view) {
+                super(view);
+                iconText = view.findViewById(R.id.icon_text);
+                icon = view.findViewById(R.id.icon);
+            }
+
         }
     }
 }
