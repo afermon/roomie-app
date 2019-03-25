@@ -171,4 +171,8 @@
     <string name="search_filter_title">Search filters</string>
     <string name="serch_filter_desc">Please select the range of values you would like to select</string>
     <string name="notification_title">Notifications</string>
+    <string name="usd">USD</string>
+    <string name="crc">CRC</string>
+    <string name="distance">Distance</string>
+    <string name="price">Price</string>
 </resources>
