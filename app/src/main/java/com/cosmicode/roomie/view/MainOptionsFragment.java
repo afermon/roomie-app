@@ -1,15 +1,22 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.CreateListingActivity;
 import com.cosmicode.roomie.R;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -25,12 +32,14 @@ public class MainOptionsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private TextView name, email, exit;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Button button, listing;
     private OnFragmentInteractionListener mListener;
+    private ImageButton configuration, rooms;
 
     public MainOptionsFragment() {
         // Required empty public constructor
@@ -73,11 +82,26 @@ public class MainOptionsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Button logout_button = getView().findViewById(R.id.logout_button);
+        TextView logout_button = getView().findViewById(R.id.exit_text);
+        button = getView().findViewById(R.id.button4);
+        name = getView().findViewById(R.id.options_name);
+        email = getView().findViewById(R.id.options_mail);
+        rooms = getView().findViewById(R.id.rooms);
+        rooms.setOnClickListener( v -> {
+            startActivity(new Intent(getContext(), CreateListingActivity.class));
+        });
+        configuration = getView().findViewById(R.id.configuration);
+        configuration.setOnClickListener(this::openConfiguration);
+        button.setOnClickListener(this::openTasks);
         logout_button.setOnClickListener(v -> {
             if (mListener != null) {
+
                 mListener.performLogout();
             }
+        });
+        mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> {
+            name.setText(user.getFullName());
+            email.setText(user.getEmail());
         });
     }
 
@@ -90,6 +114,24 @@ public class MainOptionsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    public void openTasks(View view){
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
+        openFragment(todoFragment);
+    }
+
+
+    public void openConfiguration(View view){
+        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
+        openFragment(mainConfigurationFragment);
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

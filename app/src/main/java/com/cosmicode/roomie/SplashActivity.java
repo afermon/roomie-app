@@ -1,7 +1,7 @@
 package com.cosmicode.roomie;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.service.UserInterface;
@@ -41,7 +41,7 @@ public class SplashActivity extends BaseActivity implements OnLoginListener {
 
     private void googleSignInSetup() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestServerAuthCode(getString(R.string.default_web_client_id))
+                .requestServerAuthCode(getString(R.string.default_web_client_id2))
                 .requestEmail()
                 .build();
 
