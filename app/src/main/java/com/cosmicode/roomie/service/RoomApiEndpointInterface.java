@@ -26,7 +26,7 @@ public interface RoomApiEndpointInterface {
     Call<Room> createRoom(@Body RoomCreate room);
 
     @PUT("rooms")
-    Call<Room> updateRoom(@Body Room room);
+    Call<Room> updateRoom(@Body RoomCreate room);
 
     @POST("_search/rooms/advanced")
     Call<List<Room>> searchRoomsAdvanced(@Body SearchFilter searchFilter);

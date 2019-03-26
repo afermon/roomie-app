@@ -128,6 +128,7 @@ public class RoomTask implements Parcelable {
                 '}';
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -135,6 +136,35 @@ public class RoomTask implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeValue(this.id);
+        dest.writeString(this.created);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.deadline);
+        dest.writeInt(this.state == null ? -1 : this.state.ordinal());
+        dest.writeValue(this.roomId);
     }
+
+    protected RoomTask(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.created = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.deadline = in.readString();
+        int tmpState = in.readInt();
+        this.state = tmpState == -1 ? null : RoomTaskState.values()[tmpState];
+        this.roomId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Creator<RoomTask> CREATOR = new Creator<RoomTask>() {
+        @Override
+        public RoomTask createFromParcel(Parcel source) {
+            return new RoomTask(source);
+        }
+
+        @Override
+        public RoomTask[] newArray(int size) {
+            return new RoomTask[size];
+        }
+    };
 }

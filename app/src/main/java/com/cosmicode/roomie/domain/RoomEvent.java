@@ -1,9 +1,12 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RoomEvent {
+public class RoomEvent implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -114,4 +117,45 @@ public class RoomEvent {
     public void setOrganizerId(Long organizerId) {
         this.organizerId = organizerId;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeValue(this.isPrivate);
+        dest.writeString(this.startTime);
+        dest.writeString(this.endTime);
+        dest.writeValue(this.roomId);
+        dest.writeValue(this.organizerId);
+    }
+
+    protected RoomEvent(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.title = in.readString();
+        this.description = in.readString();
+        this.isPrivate = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.startTime = in.readString();
+        this.endTime = in.readString();
+        this.roomId = (Long) in.readValue(Long.class.getClassLoader());
+        this.organizerId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<RoomEvent> CREATOR = new Parcelable.Creator<RoomEvent>() {
+        @Override
+        public RoomEvent createFromParcel(Parcel source) {
+            return new RoomEvent(source);
+        }
+
+        @Override
+        public RoomEvent[] newArray(int size) {
+            return new RoomEvent[size];
+        }
+    };
 }

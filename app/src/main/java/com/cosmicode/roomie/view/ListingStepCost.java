@@ -2,6 +2,7 @@ package com.cosmicode.roomie.view;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -94,7 +95,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
             roomExpense = new RoomExpense();
-            roomExpense.setCurrency(CurrencyType.DOLLAR);
+            roomExpense.setCurrency(CurrencyType.COLON);
         }
     }
 
@@ -192,6 +193,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
+
         selectedDate = 0;
         dialog.show();
     }
@@ -202,6 +204,13 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dateText2.setText(getString(R.string.no_move_out));
+                date2 = "";
+            }
+        });
         selectedDate = 1;
         dialog.show();
     }

@@ -175,4 +175,8 @@
     <string name="crc">CRC</string>
     <string name="distance">Distance</string>
     <string name="price">Price</string>
+    <string name="number_roomies">Number of roommates you need</string>
+    <string name="no_move_out">No date yet</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="available_now">Available now</string>
 </resources>

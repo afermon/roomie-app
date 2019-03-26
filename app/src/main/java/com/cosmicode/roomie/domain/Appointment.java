@@ -1,10 +1,13 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Appointment {
+public class Appointment implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -92,4 +95,40 @@ public class Appointment {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.description);
+        dest.writeString(this.dateTime);
+        dest.writeInt(this.state == null ? -1 : this.state.ordinal());
+        dest.writeValue(this.petitionerId);
+        dest.writeValue(this.roomId);
+    }
+
+    protected Appointment(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.description = in.readString();
+        this.dateTime = in.readString();
+        int tmpState = in.readInt();
+        this.state = tmpState == -1 ? null : AppointmentState.values()[tmpState];
+        this.petitionerId = (Long) in.readValue(Long.class.getClassLoader());
+        this.roomId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Appointment> CREATOR = new Parcelable.Creator<Appointment>() {
+        @Override
+        public Appointment createFromParcel(Parcel source) {
+            return new Appointment(source);
+        }
+
+        @Override
+        public Appointment[] newArray(int size) {
+            return new Appointment[size];
+        }
+    };
 }
