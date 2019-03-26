@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -248,7 +249,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                             searchFilter.setCity(locationText[0]);
                             searchFilter.setState(locationText[1]);
                             Log.i(TAG, "Current user filters: " + searchFilter.toString());
-                            roomService.getAllRooms();
+                            roomService.searchRoomsAdvanced(searchFilter);
                         }
                     });
         }
@@ -267,6 +268,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         TextView searchLocationTextView = searchFiltersView.findViewById(R.id.search_location_view);
         searchLocationTextView.setText(String.format("%s, %s", searchFilter.getCity(), searchFilter.getState()));
 
+        TextView searchLocationDistanceViewTV = searchFiltersView.findViewById(R.id.search_location_distance);
+        searchLocationDistanceViewTV.setText(String.format("%s Km", searchFilter.getDistance()));
+
         RangeSeekBar distanceFilterSeekBar = searchFiltersView.findViewById(R.id.distance_filter);
         distanceFilterSeekBar.setTypeface(Typeface.DEFAULT_BOLD);
         distanceFilterSeekBar.getLeftSeekBar().setTypeface(Typeface.DEFAULT_BOLD);
@@ -278,6 +282,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             public void onRangeChanged(RangeSeekBar view, float maxDistance, float rightValue, boolean isFromUser) {
                 Log.d(TAG, "Distance: left: " + maxDistance);
                 searchFilter.setDistance((int) maxDistance);
+                searchLocationDistanceViewTV.setText(String.format("%s Km", searchFilter.getDistance()));
             }
 
             @Override
@@ -294,12 +299,15 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         Button usdButton = searchFiltersView.findViewById(R.id.filter_currency_usd);
         Button crcButton = searchFiltersView.findViewById(R.id.filter_currency_crc);
 
+        TextView priceTitleTV = searchFiltersView.findViewById(R.id.search_filter_price_title);
+
         usdButton.setOnClickListener(v -> {
             usdButton.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.primary));
             usdButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
             crcButton.setBackgroundTintList(null);
             crcButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
             searchFilter.setCurrency(CurrencyType.DOLLAR);
+            priceTitleTV.setText(R.string.price);
         });
 
         crcButton.setOnClickListener(v -> {
@@ -308,7 +316,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             usdButton.setBackgroundTintList(null);
             usdButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
             searchFilter.setCurrency(CurrencyType.COLON);
-
+            priceTitleTV.setText(String.format("%s (x1000)", getResources().getString(R.string.price)));
         });
 
         if (searchFilter.getCurrency() == CurrencyType.COLON)

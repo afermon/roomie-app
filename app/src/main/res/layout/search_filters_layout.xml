@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -45,11 +44,11 @@
             android:onClick="onClickMale"
             android:text="@string/crc"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="@+id/textView18"
+            app:layout_constraintBottom_toBottomOf="@+id/search_filter_price_title"
             app:layout_constraintEnd_toStartOf="@+id/filter_currency_usd"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/textView18"
-            app:layout_constraintTop_toTopOf="@+id/textView18" />
+            app:layout_constraintStart_toEndOf="@+id/search_filter_price_title"
+            app:layout_constraintTop_toTopOf="@+id/search_filter_price_title" />
 
         <TextView
             android:id="@+id/textView7"
@@ -74,7 +73,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@+id/search_location_view"
             app:rsb_indicator_height="40dp"
             app:rsb_indicator_padding_bottom="10dp"
             app:rsb_indicator_show_mode="showWhenTouch"
@@ -85,16 +84,16 @@
             app:rsb_progress_color="@color/colorPrimary"
             app:rsb_progress_height="4dp"
             app:rsb_thumb_drawable="@drawable/thumb_activated"
+
             app:rsb_thumb_inactivated_drawable="@drawable/thumb_inactivated"
             app:rsb_thumb_scale_ratio="1.2"
-
             app:rsb_thumb_size="40dp"
             app:rsb_tick_mark_mode="number"
             app:rsb_tick_mark_text_array="@array/distance_range"
             app:rsb_tick_mark_text_margin="32dp" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/search_filter_price_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -115,7 +114,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView18"
+            app:layout_constraintTop_toBottomOf="@+id/search_filter_price_title"
             app:rsb_indicator_height="40dp"
             app:rsb_indicator_padding_bottom="10dp"
             app:rsb_indicator_show_mode="showWhenTouch"
@@ -138,10 +137,24 @@
             android:id="@+id/search_location_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
             android:text="@string/address_desc"
             android:textColor="@color/primary"
             android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/search_location_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="20 Km"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView7" />
@@ -161,9 +174,8 @@
             android:id="@+id/amenities_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:background="@color/secondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView22">
@@ -186,9 +198,8 @@
             android:id="@+id/restrictions_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:background="@color/secondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView23" />
