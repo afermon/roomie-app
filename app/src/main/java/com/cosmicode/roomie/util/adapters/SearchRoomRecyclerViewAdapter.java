@@ -80,7 +80,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
 
             //Price
             RoomExpense price = mValues.get(position).getPrice();
-            Double priceUser = price.getAmount() / mValues.get(position).getRooms(); // Price per user
+            Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
             if (price.getCurrency() == CurrencyType.DOLLAR) {
                 holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
             } else {
