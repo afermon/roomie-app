@@ -1,7 +1,6 @@
 package com.cosmicode.roomie;
 
 import android.content.Intent;
-import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,10 +12,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import androidx.fragment.app.FragmentActivity;
+
+import static com.cosmicode.roomie.util.GeoLocationUtil.getLocationText;
+
 public class ChooseLocationActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final String TAG = "ChooseLocationActivity";
     private GoogleMap mMap;
+    private Marker marker;
     private double[] coordinates;
+    private String[] addressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +36,6 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -46,7 +51,8 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
         mMap = googleMap;
 
         LatLng location = new LatLng(coordinates[0], coordinates[1]);
-        mMap.addMarker(new MarkerOptions()
+        addressText = getLocationText(location, getApplicationContext());
+        marker = mMap.addMarker(new MarkerOptions()
                 .position(location)
                 .draggable(true));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
@@ -69,13 +75,31 @@ public class ChooseLocationActivity extends FragmentActivity implements OnMapRea
             public void onMarkerDragEnd(Marker marker) {
                 coordinates[0] = marker.getPosition().latitude;
                 coordinates[1] = marker.getPosition().longitude;
+                addressText = getLocationText(marker.getPosition(), getApplicationContext());
             }
+        });
+
+        mMap.setOnMapClickListener(latlng -> {
+
+            if (marker != null) {
+                marker.remove();
+            }
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(latlng)
+                    .draggable(true));
+
+            coordinates[0] = marker.getPosition().latitude;
+            coordinates[1] = marker.getPosition().longitude;
+
+            addressText = getLocationText(marker.getPosition(), getApplicationContext());
         });
     }
 
-    public void onConfirmLocation(View view){
-        Intent intent =  new Intent();
+    public void onConfirmLocation(View view) {
+        Intent intent = new Intent();
         intent.putExtra("Address", coordinates);
+        intent.putExtra("City", addressText[0]);
+        intent.putExtra("State", addressText[1]);
         setResult(RESULT_OK, intent);
         finish();
     }

@@ -166,6 +166,13 @@
     <string name="choose_location">Choose Location</string>
     <string name="copyright">© 2019 Cosmicode. All rights reserved.</string>
     <string name="no_results">This is embarrassing! We did not find any rooms with the current search filters. Please try again.</string>
+    <string name="hint_phone">Add a phone number</string>
+    <string name="hint_profile_desc">Add some details about yourself</string>
     <string name="search_filter_title">Search filters</string>
     <string name="serch_filter_desc">Please select the range of values you would like to select</string>
+    <string name="notification_title">Notifications</string>
+    <string name="usd">USD</string>
+    <string name="crc">CRC</string>
+    <string name="distance">Distance</string>
+    <string name="price">Price</string>
 </resources>

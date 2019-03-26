@@ -2,13 +2,13 @@ package com.cosmicode.roomie.service;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
@@ -163,10 +163,10 @@ public class RoomService {
 
     }
 
-    public void searchRoomsGeo(Double latitude, Double longitude, int distance){
+    public void searchRoomsAdvanced(SearchFilter searchFilter) {
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
-        Call<List<Room>> call = apiService.serachRoomsGeo(latitude, longitude, distance);
+        Call<List<Room>> call = apiService.searchRoomsAdvanced(searchFilter);
 
         call.enqueue(new Callback<List<Room>>() {
             @Override
@@ -178,14 +178,12 @@ public class RoomService {
                     listener.OnGetRoomsError(Integer.toString(response.code()));
                 }
             }
-
             @Override
             public void onFailure(Call<List<Room>> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 listener.OnGetRoomsError(t.getMessage());
             }
         });
-
     }
 
     public interface RoomServiceListener {
