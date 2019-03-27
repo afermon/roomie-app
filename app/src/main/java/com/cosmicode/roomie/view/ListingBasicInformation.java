@@ -337,6 +337,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         startActivity(new Intent(getContext(), MainActivity.class));
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

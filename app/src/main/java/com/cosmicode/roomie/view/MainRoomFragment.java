@@ -4,12 +4,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +22,20 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.service.UserService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
+import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
@@ -40,14 +47,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListener, OnMapReadyCallback {
+public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback {
 
     private static final String ROOM = "room";
     private Room room;
@@ -55,6 +64,7 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
     private Roomie roomie;
     private RecyclerView.Adapter mAdapterA, mAdapterR;
     private SupportMapFragment map;
+    private JhiAccount user;
 
     @BindView(R.id.room_title)
     TextView title;
@@ -168,13 +178,17 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
                 .into(profile);
         profile.bringToFront();
 
+        profile.setOnClickListener( l -> {
+            openFragment(MainProfileFragment.newInstance(roomie));
+        });
+
         amount.setText(String.format("%s", room.getRooms()));
 
         Double priceUser = room.getPrice().getAmount() / room.getRooms(); // Price per user
         if (room.getPrice().getCurrency() == CurrencyType.DOLLAR) {
-            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount)+": ", "$", priceUser.intValue(), "USD"));
+            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount) + ": ", "$", priceUser.intValue(), "USD"));
         } else {
-            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount)+": ", "₡", priceUser.intValue(), "CRC"));
+            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount) + ": ", "₡", priceUser.intValue(), "CRC"));
         }
 
         fillFeatures();
@@ -236,7 +250,7 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
     @Override
     public void OnGetRoomieByIdSuccess(Roomie roomie) {
         this.roomie = roomie;
-        fillRoomInfo();
+        mListener.getBaseActivity().getJhiUsers().findById(roomie.getUserId(), this);
     }
 
     @Override
@@ -252,6 +266,17 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
         gMap.animateCamera(CameraUpdateFactory.zoomIn());
         gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+    }
+
+    @Override
+    public void onGetUserSuccess(JhiAccount user) {
+        this.user = user;
+        fillRoomInfo();
+    }
+
+    @Override
+    public void onGetUserError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
     }
 
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
@@ -370,5 +395,12 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    private void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

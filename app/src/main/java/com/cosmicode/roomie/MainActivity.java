@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
+    private Roomie currentRoomie;
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
@@ -62,9 +63,6 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         setContentView(R.layout.activity_main);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
-        navigationView = findViewById(R.id.navigation_view);
-        navigationView.setOnNavigationItemSelectedListener(this);
-        openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
     @Override
@@ -75,7 +73,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
-                MainProfileFragment mainProfileFragment = MainProfileFragment.newInstance();
+                MainProfileFragment mainProfileFragment = MainProfileFragment.newInstance(currentRoomie);
                 openFragment(mainProfileFragment, "right");
                 return true;
             case R.id.navigation_view_notifications:
@@ -144,6 +142,10 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        this.currentRoomie = roomie;
+        navigationView = findViewById(R.id.navigation_view);
+        navigationView.setOnNavigationItemSelectedListener(this);
+        openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
     @Override

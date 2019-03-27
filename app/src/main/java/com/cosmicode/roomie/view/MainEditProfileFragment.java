@@ -158,7 +158,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
         addressService.getAddresById(currentRoomie.getAddressId());
     }
 
-    private void goBack(View view){
+    private void goBack(View view) {
         getFragmentManager().popBackStack();
     }
 
@@ -175,14 +175,14 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     public void onClickSave(View view) {
         boolean isPhoneValid, isBioValid;
-        if(phone.getText().toString().equals("") && bio.getText().toString().equals("")){
+        if (phone.getText().toString().equals("") && bio.getText().toString().equals("")) {
             currentRoomie.setBiography(null);
             currentRoomie.setPhone(null);
             roomieService.updateRoomie(currentRoomie);
-        }else{
+        } else {
             isPhoneValid = validatePhone();
             isBioValid = validateBio();
-            if(isBioValid && isPhoneValid){
+            if (isBioValid && isPhoneValid) {
                 currentRoomie.setPhone(phone.getText().toString());
                 currentRoomie.setBiography(bio.getText().toString());
                 roomieService.updateRoomie(currentRoomie);
@@ -191,12 +191,12 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     }
 
-    private boolean validatePhone(){
-        if(phone.getText().toString().length() < 4){
+    private boolean validatePhone() {
+        if (phone.getText().toString().length() < 4) {
             phone.setError("Phone is too short");
             return false;
-        }else{
-            if(phone.getText().toString().length() > 25){
+        } else {
+            if (phone.getText().toString().length() > 25) {
                 phone.setError("Phone is too long");
                 return false;
             }
@@ -205,12 +205,12 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
         return true;
     }
 
-    private boolean validateBio(){
-        if(bio.getText().toString().length() < 4){
+    private boolean validateBio() {
+        if (bio.getText().toString().length() < 4) {
             bio.setError("Bio is too short");
             return false;
-        }else{
-            if(bio.getText().toString().length() > 750){
+        } else {
+            if (bio.getText().toString().length() > 750) {
                 bio.setError("Bio is too long");
                 return false;
             }
@@ -258,7 +258,9 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLocation(data.getDoubleArrayExtra("Address")[0] +","+data.getDoubleArrayExtra("Address")[1]);
+                address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
+                address.setState(data.getStringExtra("State"));
+                address.setCity(data.getStringExtra("City"));
                 mapFragment.getMapAsync(this);
             }
         } else {

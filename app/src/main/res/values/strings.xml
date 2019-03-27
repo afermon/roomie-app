@@ -189,9 +189,10 @@
     <string name="listing_basic_desc">Fill the basic information of your place, describe what you offer and what type of people you are looking for.</string>
     <string name="listing_cost_desc">Fill the cost information for your place and the date in which people can move in.</string>
     <string name="listing_pictures_desc">Show pictures of your place, you can select up to 5 images. The largest image will be the main picture we show on search results!</string>
-    <string name="listing_location_desc">Choose the locations of your place</string>
+    <string name="listing_location_desc">Choose the location of your place</string>
     <string name="finish">Finish</string>
     <string name="appointment_notes">Appointment notes</string>
     <string name="appoinment_notes_desc">Indicate when you are available to receive visits for potential roommates</string>
     <string name="cont_btn">Continue</string>
+    <string name="no_address">This user has no address registered</string>
 </resources>

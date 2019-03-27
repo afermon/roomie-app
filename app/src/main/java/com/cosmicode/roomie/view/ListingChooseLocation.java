@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -370,8 +371,33 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         room.setRoomType(RoomType.ROOM);
         room.setPremium(false);
         room.setApoinmentsNotes(notes.getText().toString());
-        room.setPublished(new DateTime().toDateTime(DateTimeZone.UTC).toString());
-        room.setCreated(new DateTime().toDateTime(DateTimeZone.UTC).toString());
+        DateTime now = DateTime.now();
+        String month, day, hour, minutes, seconds;
+        month = Integer.toString(now.getMonthOfYear());
+        day = Integer.toString(now.getDayOfMonth());
+        hour = Integer.toString(now.getHourOfDay());
+        minutes = Integer.toString(now.getMinuteOfHour());
+        seconds = Integer.toString(now.getSecondOfMinute());
+
+        if(now.getMonthOfYear() < 10){
+            month = "0"+now.getMonthOfYear();
+        }
+        if(now.getDayOfMonth() < 10){
+            day = "0"+now.getDayOfMonth();
+        }
+        if(now.getHourOfDay() < 10){
+            hour = "0"+now.getHourOfDay();
+        }
+        if(now.getMinuteOfHour() < 10){
+            minutes = "0"+now.getMinuteOfHour();
+        }
+        if(now.getSecondOfMinute() < 10){
+            seconds = "0"+now.getSecondOfMinute();
+        }
+
+        String date = String.format("%s-%s-%sT%s:%s:%sZ", now.getYear(), month, day, hour, minutes, seconds);
+        room.setPublished(date);
+        room.setCreated(date);
         room.setOwnerId(roomie.getId());
         roomService.createRoom(room);
     }
