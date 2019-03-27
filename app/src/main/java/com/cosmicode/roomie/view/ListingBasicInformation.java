@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +28,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.ListingChooseLocation;
+import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
@@ -40,15 +37,11 @@ import com.cosmicode.roomie.service.RoomFeatureService;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
-import com.mobsandgeeks.saripaar.annotation.Max;
-import com.mobsandgeeks.saripaar.annotation.Min;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
-import android.graphics.PorterDuff.Mode;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -174,7 +167,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         room.setRooms(Integer.parseInt(amount.getText().toString()));
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingStepCost.newInstance(room));
+        transaction.replace(R.id.listing_container, ListingCost.newInstance(room));
         transaction.addToBackStack(null);
         transaction.commit();
 
@@ -340,7 +333,8 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.back_basic)
     public void back(View view) {
-        getFragmentManager().popBackStackImmediate();
+
+        startActivity(new Intent(getContext(), MainActivity.class));
     }
 
     @Override

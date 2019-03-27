@@ -1,12 +1,9 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
@@ -14,7 +11,6 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +19,12 @@ import android.widget.ImageView;
 
 import com.asksira.bsimagepicker.BSImagePicker;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 public class ListingChoosePictures extends Fragment implements BSImagePicker.OnMultiImageSelectedListener{
 
@@ -105,6 +97,11 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         transaction.replace(R.id.listing_container, ListingChooseLocation.newInstance(room) );
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @OnClick(R.id.back_button3)
+    public void back(View view) {
+        getFragmentManager().popBackStackImmediate();
     }
 
     @OnClick(R.id.img1)

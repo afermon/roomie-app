@@ -5,8 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.MainRoomFragment">
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_finished"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/room_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -35,7 +46,7 @@
                         android:background="@color/secondary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/room_address" />
+                        app:layout_constraintTop_toBottomOf="@+id/room_price" />
 
                     <View
                         android:id="@+id/view37"
@@ -68,7 +79,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="2200 Mapple street"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/pfp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +91,6 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="Title"
                         android:textAlignment="viewStart"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -103,13 +112,15 @@
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/pfp"
                         android:layout_width="86dp"
-                        android:layout_height="100dp"
-                        android:layout_marginTop="256dp"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
                         app:civ_border_color="@color/primary"
                         app:civ_border_width="5dp"
+                        app:layout_constraintBottom_toTopOf="@+id/view36"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/room_pics"
+                        app:layout_constraintTop_toBottomOf="@+id/room_pics"
                         tools:src="@tools:sample/avatars" />
 
                     <TextView
@@ -119,7 +130,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:text="move-in"
+                        android:text="@string/move_in_short"
                         android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textColor="@color/primary"
@@ -134,7 +145,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:text="move-out"
+                        android:text="@string/move_out_short"
                         android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textColor="@color/primary"
@@ -150,7 +161,6 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="16dp"
-                        android:text="Available now"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView28"
@@ -166,7 +176,6 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="16dp"
-                        android:text="No date yet"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/view39"
@@ -186,7 +195,9 @@
                         app:radius="6dp"
                         app:slideInterval="3000"
                         app:strokeColor="#FF777777"
-                        app:strokeWidth="1dp" />
+                        app:strokeWidth="1dp">
+
+                    </com.synnapps.carouselview.CarouselView>
 
                     <TextView
                         android:id="@+id/textView45"
@@ -195,8 +206,9 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:text="ROOMMATES"
+                        android:text="@string/roommates_amount"
                         android:textAlignment="center"
+                        android:textAllCaps="true"
                         android:textColor="@color/primary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView29"
@@ -210,12 +222,22 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="16dp"
-                        android:text="1"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/view39"
                         app:layout_constraintTop_toBottomOf="@+id/textView45" />
+
+                    <TextView
+                        android:id="@+id/room_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/pfp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/room_address" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -239,7 +261,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Description"
+                        android:text="@string/description_title"
                         android:textColor="@color/primary"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -252,7 +274,6 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
-                        android:text="@string/lorem_ipsum"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
@@ -263,7 +284,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="16dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -379,7 +400,6 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="16dp"
-                        android:text="@string/lorem_ipsum"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -446,7 +466,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="32dp"
-                        android:text="Appointment"
+                        android:text="@string/appointment"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/appointment_btn"
@@ -460,7 +480,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="32dp"
-                        android:text="Email"
+                        android:text="@string/prompt_email"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/mail_btn"
@@ -474,7 +494,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="32dp"
-                        android:text="Message"
+                        android:text="@string/message_contact"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/msg_btn"
                         app:layout_constraintStart_toStartOf="@+id/msg_btn"
@@ -487,7 +507,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:text="Contact for more information"
+                        android:text="@string/contact_for_more"
                         android:textAlignment="viewStart"
                         android:textColor="@color/primary"
                         app:layout_constraintEnd_toEndOf="parent"

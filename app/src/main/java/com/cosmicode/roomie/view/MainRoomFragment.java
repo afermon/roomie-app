@@ -1,35 +1,31 @@
 package com.cosmicode.roomie.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-import android.provider.Telephony;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
@@ -42,17 +38,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mobsandgeeks.saripaar.Validator;
-import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -91,6 +82,12 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
     ImageButton mail;
     @BindView(R.id.room_pics)
     CarouselView carousel;
+    @BindView(R.id.room_price)
+    TextView roomPrice;
+    @BindView(R.id.progress)
+    ProgressBar progress;
+    @BindView(R.id.room_scroll)
+    ScrollView scrollView;
 
 
     private OnFragmentInteractionListener mListener;
@@ -132,6 +129,7 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
         restrictions.setLayoutManager(layoutManager2);
         map = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
+        showProgress(true);
         loadOwner();
     }
 
@@ -172,6 +170,13 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
 
         amount.setText(String.format("%s", room.getRooms()));
 
+        Double priceUser = room.getPrice().getAmount() / room.getRooms(); // Price per user
+        if (room.getPrice().getCurrency() == CurrencyType.DOLLAR) {
+            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount)+": ", "$", priceUser.intValue(), "USD"));
+        } else {
+            roomPrice.setText(String.format("%s %s %s %s", getString(R.string.amount)+": ", "₡", priceUser.intValue(), "CRC"));
+        }
+
         fillFeatures();
     }
 
@@ -190,6 +195,7 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
         amenities.setAdapter(mAdapterA);
         mAdapterR = new RestrictionsAdapter(lRestrictions);
         restrictions.setAdapter(mAdapterR);
+        showProgress(false);
     }
 
     ImageListener imageListener = new ImageListener() {
@@ -332,6 +338,33 @@ public class MainRoomFragment extends Fragment implements OnGetRoomieByIdListene
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
         }
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 
 

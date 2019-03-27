@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
-    tools:context=".view.ListingStepCost">
+    tools:context=".view.ListingCost">
 
 
     <faranjit.currency.edittext.CurrencyEditText
@@ -317,7 +317,7 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:backgroundTint="@color/primary"
-        android:text="Continue"
+        android:text="@string/cont_btn"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -341,7 +341,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="CRC"
+            android:text="@string/crc"
             android:textSize="18sp" />
 
         <RadioButton
@@ -350,7 +350,7 @@
             android:layout_height="55dp"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="USD"
+            android:text="@string/usd"
             android:textSize="18sp" />
     </RadioGroup>
 
@@ -361,7 +361,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="Fill the cost information for your place and the date in which people can move in."
+        android:text="@string/listing_cost_desc"
         android:textAlignment="center"
         android:textColor="@color/primary"
         android:textSize="18sp"

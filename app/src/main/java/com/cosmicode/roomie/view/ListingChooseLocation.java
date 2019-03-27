@@ -1,4 +1,4 @@
-package com.cosmicode.roomie;
+package com.cosmicode.roomie.view;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Picture;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,14 +31,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.ChooseLocationActivity;
+import com.cosmicode.roomie.MainActivity;
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
-import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.RoomType;
-import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomPictureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
@@ -65,11 +65,12 @@ import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -99,21 +100,20 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     private Validator validator;
     private Room newRoom;
 
-
+    @NotEmpty
+    @Length(min = 4, max = 200)
+    @BindView(R.id.appointment_notes)
+    EditText notes;
     @BindView(R.id.progress)
     ProgressBar progress;
-
     @NotEmpty
     @Length(min = 4, max = 500)
     @BindView(R.id.address_desc)
     TextView desc;
-
     @BindView(R.id.back_location)
     ImageButton back;
-
     @BindView(R.id.btn_finished)
     Button finish;
-
     @BindView(R.id.scroll_location)
     ScrollView scrollView;
 
@@ -369,23 +369,9 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         address.setDescription(desc.getText().toString());
         room.setRoomType(RoomType.ROOM);
         room.setPremium(false);
-        DateTime today = new DateTime();
-        int month, day;
-        month = today.getMonthOfYear();
-        day = today.getDayOfMonth();
-        String monthS, dayS;
-        monthS = Integer.toString(month);
-        dayS = Integer.toString(day);
-
-        if (month <= 9) {
-            monthS = "0" + month;
-        }
-        if (day <= 9) {
-            dayS = "0" + day;
-        }
-        String created = (today.getYear() + "-" + monthS + "-" + dayS + "T00:00:00Z");
-        room.setPublished(created);
-        room.setCreated(created);
+        room.setApoinmentsNotes(notes.getText().toString());
+        room.setPublished(new DateTime().toDateTime(DateTimeZone.UTC).toString());
+        room.setCreated(new DateTime().toDateTime(DateTimeZone.UTC).toString());
         room.setOwnerId(roomie.getId());
         roomService.createRoom(room);
     }

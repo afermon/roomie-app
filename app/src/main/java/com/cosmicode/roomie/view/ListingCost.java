@@ -3,7 +3,6 @@ package com.cosmicode.roomie.view;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,12 +26,12 @@ import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
@@ -40,7 +39,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 
-public class ListingStepCost extends Fragment implements Validator.ValidationListener {
+public class ListingCost extends Fragment implements Validator.ValidationListener {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
@@ -54,35 +53,28 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     @NotEmpty
     @BindView(R.id.edit_amount)
     EditText amount;
-
     @NotEmpty
     @BindView(R.id.movein_date)
     TextView dateText;
-
     @NotEmpty
     @BindView(R.id.moveout_date)
     TextView dateText2;
-
     @BindView(R.id.date_picker)
     ImageButton datePicker;
-
-
     @BindView(R.id.date_picker2)
     ImageButton datePicker2;
-
     @BindView(R.id.currency_radio)
     RadioGroup currency;
-
     @BindView(R.id.btn_next)
     Button next;
 
 
-    public ListingStepCost() {
+    public ListingCost() {
     }
 
 
-    public static ListingStepCost newInstance(RoomCreate room) {
-        ListingStepCost fragment = new ListingStepCost();
+    public static ListingCost newInstance(RoomCreate room) {
+        ListingCost fragment = new ListingCost();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
         fragment.setArguments(args);
@@ -102,7 +94,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_listing_step2, container, false);
+        View view = inflater.inflate(R.layout.fragment_listing_cost, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
