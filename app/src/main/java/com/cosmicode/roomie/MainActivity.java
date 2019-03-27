@@ -46,6 +46,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
     public static final String JHIUSER_LAST = "jhiLast";
+    private MenuItem currentMenuItem;
 
 
     public static final Intent clearTopIntent(Context from) {
@@ -67,6 +68,10 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+        if(currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId()) return true;
+        
+        currentMenuItem = menuItem;
+
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
                 MainSearchFragment homeFragment = MainSearchFragment.newInstance("");
@@ -166,6 +171,6 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public void onGetUserError(String error) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, SnackMessageType.ERROR);
     }
 }
