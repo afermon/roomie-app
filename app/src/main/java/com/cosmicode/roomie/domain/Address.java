@@ -77,15 +77,6 @@ public class Address implements Parcelable {
         this.description = description;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
     public Double getLatitude() {
         return  Double.valueOf(location.split(",")[0]);
     }
@@ -102,4 +93,38 @@ public class Address implements Parcelable {
         return location;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.location);
+        dest.writeString(this.city);
+        dest.writeString(this.state);
+        dest.writeString(this.description);
+    }
+
+    protected Address(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.location = in.readString();
+        this.city = in.readString();
+        this.state = in.readString();
+        this.description = in.readString();
+    }
+
+    public static final Creator<Address> CREATOR = new Creator<Address>() {
+        @Override
+        public Address createFromParcel(Parcel source) {
+            return new Address(source);
+        }
+
+        @Override
+        public Address[] newArray(int size) {
+            return new Address[size];
+        }
+    };
 }

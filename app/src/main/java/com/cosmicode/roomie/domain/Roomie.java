@@ -177,16 +177,6 @@ public class Roomie implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
-
-    @Override
     public String toString() {
         return "Roomie{" +
                 "id=" + id +
@@ -203,5 +193,55 @@ public class Roomie implements Parcelable {
                 ", lifestyles=" + lifestyles +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.birthDate);
+        dest.writeString(this.picture);
+        dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
+        dest.writeString(this.phone);
+        dest.writeString(this.biography);
+        dest.writeString(this.mobileDeviceID);
+        dest.writeValue(this.userId);
+        dest.writeValue(this.stateId);
+        dest.writeValue(this.addressId);
+        dest.writeValue(this.configurationId);
+        dest.writeTypedList(this.lifestyles);
+    }
+
+    protected Roomie(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.birthDate = in.readString();
+        this.picture = in.readString();
+        int tmpGender = in.readInt();
+        this.gender = tmpGender == -1 ? null : Gender.values()[tmpGender];
+        this.phone = in.readString();
+        this.biography = in.readString();
+        this.mobileDeviceID = in.readString();
+        this.userId = (Long) in.readValue(Long.class.getClassLoader());
+        this.stateId = (Long) in.readValue(Long.class.getClassLoader());
+        this.addressId = (Long) in.readValue(Long.class.getClassLoader());
+        this.configurationId = (Long) in.readValue(Long.class.getClassLoader());
+        this.lifestyles = in.createTypedArrayList(RoomFeature.CREATOR);
+    }
+
+    public static final Creator<Roomie> CREATOR = new Creator<Roomie>() {
+        @Override
+        public Roomie createFromParcel(Parcel source) {
+            return new Roomie(source);
+        }
+
+        @Override
+        public Roomie[] newArray(int size) {
+            return new Roomie[size];
+        }
+    };
 }
 

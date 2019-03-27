@@ -175,4 +175,24 @@
     <string name="crc">CRC</string>
     <string name="distance">Distance</string>
     <string name="price">Price</string>
+    <string name="number_roomies">Number of roommates you need</string>
+    <string name="no_move_out">No date yet</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="available_now">Available now</string>
+    <string name="move_in_short">Move-In</string>
+    <string name="move_out_short">Move-Out</string>
+    <string name="roommates_amount">Roommates</string>
+    <string name="description_title">Description</string>
+    <string name="contact_for_more">Contact for more information</string>
+    <string name="appointment">Appointment</string>
+    <string name="message_contact">Message</string>
+    <string name="listing_basic_desc">Fill the basic information of your place, describe what you offer and what type of people you are looking for.</string>
+    <string name="listing_cost_desc">Fill the cost information for your place and the date in which people can move in.</string>
+    <string name="listing_pictures_desc">Show pictures of your place, you can select up to 5 images. The largest image will be the main picture we show on search results!</string>
+    <string name="listing_location_desc">Choose the location of your place</string>
+    <string name="finish">Finish</string>
+    <string name="appointment_notes">Appointment notes</string>
+    <string name="appoinment_notes_desc">Indicate when you are available to receive visits for potential roommates</string>
+    <string name="cont_btn">Continue</string>
+    <string name="no_address">This user has no address registered</string>
 </resources>

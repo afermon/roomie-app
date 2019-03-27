@@ -1,9 +1,12 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Authorization {
+public class Authorization implements Parcelable {
     @SerializedName("password")
     @Expose
     private String password;
@@ -64,4 +67,37 @@ public class Authorization {
                 ", idToken='" + idToken + '\'' +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.password);
+        dest.writeValue(this.rememberMe);
+        dest.writeString(this.username);
+        dest.writeString(this.idToken);
+    }
+
+    protected Authorization(Parcel in) {
+        this.password = in.readString();
+        this.rememberMe = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.username = in.readString();
+        this.idToken = in.readString();
+    }
+
+    public static final Parcelable.Creator<Authorization> CREATOR = new Parcelable.Creator<Authorization>() {
+        @Override
+        public Authorization createFromParcel(Parcel source) {
+            return new Authorization(source);
+        }
+
+        @Override
+        public Authorization[] newArray(int size) {
+            return new Authorization[size];
+        }
+    };
 }
