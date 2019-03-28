@@ -3,6 +3,7 @@ package com.cosmicode.roomie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -23,8 +24,13 @@ import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -45,6 +51,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
     private Roomie currentRoomie;
+    private static final String TAG = "MainActivity";
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
@@ -117,13 +124,13 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
             GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
         } catch (Exception e) {
-            //Ignore TODO: LOG
+            Log.e(TAG, e.getMessage());
         }
 
         try {
             LoginManager.getInstance().logOut();
         } catch (Exception e) {
-            //Ignore TODO: LOG
+            Log.e(TAG, e.getMessage());
         }
 
         getJhiUsers().logout();
@@ -150,6 +157,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         this.currentRoomie = roomie;
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
+        if(getJhiUsers().getMobileDeviceID().equals("") || currentRoomie.getMobileDeviceID().equals("") || !currentRoomie.getMobileDeviceID().equals(getJhiUsers().getMobileDeviceID())) registerDeviceFirebaseCloudMessaging();
         openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
@@ -176,5 +184,21 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     @Override
     public void onGetUserError(String error) {
         showUserMessage(error, SnackMessageType.ERROR);
+    }
+
+    private void registerDeviceFirebaseCloudMessaging(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "getInstanceId failed", task.getException());
+                    return;
+                }
+                // Get new Instance ID token
+                String mobileDeviceID = task.getResult().getToken();
+                Log.d(TAG, String.format("MobileDeviceID: %s", mobileDeviceID));
+                getJhiUsers().setMobileDeviceID(mobileDeviceID);
+                currentRoomie.setMobileDeviceID(mobileDeviceID);
+                roomieService.updateRoomie(currentRoomie);
+            });
     }
 }

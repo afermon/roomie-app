@@ -46,4 +46,8 @@ public interface UserInterface {
     void setOnLoginStatusListener(OnLoginStatusListener listener);
 
     void findById(Long id, OnGetUserByIdListener listener);
+
+    void setMobileDeviceID(String mobileDeviceID);
+
+    String getMobileDeviceID();
 }
