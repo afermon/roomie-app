@@ -196,4 +196,6 @@
     <string name="cont_btn">Continue</string>
     <string name="no_address">This user has no address registered</string>
     <string name="default_notification_channel_id">roomie_default_channel</string>
+    <string name="bottom_nav_add">add</string>
+    <string name="to_do_list_title">To do list</string>
 </resources>

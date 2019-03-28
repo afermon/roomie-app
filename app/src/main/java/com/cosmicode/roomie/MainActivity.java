@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
@@ -24,15 +24,14 @@ import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener,
@@ -58,6 +57,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     public static final String JHIUSER_LAST = "jhiLast";
     private MenuItem currentMenuItem;
 
+    @BindView(R.id.navigation_view) RoomieBottomNavigationView bottomNavigationView;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -69,6 +69,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
     }
@@ -200,5 +202,10 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 currentRoomie.setMobileDeviceID(mobileDeviceID);
                 roomieService.updateRoomie(currentRoomie);
             });
+    }
+
+    @OnClick(R.id.navigation_view_add_fab)
+    public void newListing(){
+        startActivity(new Intent(this, CreateListingActivity.class));
     }
 }
