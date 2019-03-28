@@ -10,6 +10,7 @@ import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
@@ -28,6 +29,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -55,6 +57,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     public static final String JHIUSER_LAST = "jhiLast";
     private MenuItem currentMenuItem;
 
+    @BindView(R.id.navigation_view) RoomieBottomNavigationView bottomNavigationView;
+
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -66,6 +70,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
     }

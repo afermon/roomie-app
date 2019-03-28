@@ -1,14 +1,26 @@
 package com.cosmicode.roomie.util;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.*;
+
+import com.cosmicode.roomie.R;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
 
 
 public class RoomieBottomNavigationView extends BottomNavigationView {
     private Path mPath;
     private Paint mPaint;
+    @LayoutRes
+    int badgeLayoutResId;
 
     /** the CURVE_CIRCLE_RADIUS represent the radius of the fab button */
     private final int CURVE_CIRCLE_RADIUS = 183 / 2;
@@ -35,6 +47,9 @@ public class RoomieBottomNavigationView extends BottomNavigationView {
     public RoomieBottomNavigationView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.roomieBottomNavigationBar);
+        badgeLayoutResId = a.getResourceId(R.styleable.roomieBottomNavigationBar_badge_layout,-1);
+        a.recycle();
     }
 
     public RoomieBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -101,5 +116,47 @@ public class RoomieBottomNavigationView extends BottomNavigationView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawPath(mPath, mPaint);
+    }
+
+    /**
+     * show the badge on the menu item view.
+     *
+     * @param menuItemIndex
+     */
+    public void showBadge(int menuItemIndex) {
+        BottomNavigationMenuView bottomNavigationView =
+                (BottomNavigationMenuView) getChildAt(0);
+        View view = bottomNavigationView.getChildAt(menuItemIndex);
+        if (view instanceof ViewGroup) {
+            //NUMBER_OF_MENU_ITEM_VIEW_CHILDERN_WITHOUT_BADGE
+            if (((ViewGroup) view).getChildCount() > 2) {
+                return;
+            }
+        }
+        BottomNavigationItemView bottomNavigationItemView = (BottomNavigationItemView) view;
+
+        LayoutInflater.from(getContext()).inflate(badgeLayoutResId != -1 ? badgeLayoutResId : R.layout.notification_badge, bottomNavigationItemView,
+                true);
+    }
+
+    /**
+     * this method to remove dot [badge view] if it's already inflated on the menu item.
+     *
+     * @param menuItemIndex  the menu item index
+     */
+    public void removeBadge(int menuItemIndex) {
+        BottomNavigationMenuView bottomNavigationMenuView = (BottomNavigationMenuView) getChildAt(0);
+        View v = bottomNavigationMenuView.getChildAt(menuItemIndex);
+        // check if the badge is already displayed on the icon.
+        if (v instanceof ViewGroup) {
+            int childCount = ((ViewGroup) v).getChildCount();
+            /* this condition to prevent the inflating the badge more than one time on the
+             menu item .. because this means that the badge is already inflated before*/
+            // 3 is the NUMBER_OF_MENU_ITEM_VIEW_CHILDERN_WITH_BADGE
+            if (childCount < 3) return;
+        }
+        BottomNavigationItemView itemView = (BottomNavigationItemView) v;
+        // remove the last child [badge view]
+        itemView.removeViewAt(itemView.getChildCount() - 1);
     }
 }
