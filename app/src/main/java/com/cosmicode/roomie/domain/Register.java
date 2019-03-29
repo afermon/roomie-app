@@ -1,9 +1,12 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Register {
+public class Register implements Parcelable {
 
     @SerializedName("login")
     @Expose
@@ -96,4 +99,41 @@ public class Register {
                 ", password='" + password + '\'' +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.login);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.email);
+        dest.writeString(this.langKey);
+        dest.writeString(this.password);
+    }
+
+    protected Register(Parcel in) {
+        this.login = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.email = in.readString();
+        this.langKey = in.readString();
+        this.password = in.readString();
+    }
+
+    public static final Parcelable.Creator<Register> CREATOR = new Parcelable.Creator<Register>() {
+        @Override
+        public Register createFromParcel(Parcel source) {
+            return new Register(source);
+        }
+
+        @Override
+        public Register[] newArray(int size) {
+            return new Register[size];
+        }
+    };
 }

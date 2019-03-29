@@ -2,13 +2,13 @@ package com.cosmicode.roomie.service;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
@@ -29,63 +29,34 @@ public class RoomService {
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
     }
 
-    public void createRoom(RoomCreate room, Address address, RoomExpense roomExpense){
-
-        AddressApiEndpointInterface AddressApiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
-        Call<Address> callA = AddressApiService .createAddress(address);
-
-        RoomExpenseApiEndpointInterface ExpenseApiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
-        Call<RoomExpense> callE = ExpenseApiService.createExpense(roomExpense);
+    public void createRoom(RoomCreate room) {
 
         RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
-        Call<Room> callR = RoomApiService.createRoom(room);
+        Call<Room> call = RoomApiService.createRoom(room);
 
-        callA.enqueue(new Callback<Address>() {
+
+        call.enqueue(new Callback<Room>() {
             @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
-                room.setAddressId(response.body().getId());
-                callE.enqueue(new Callback<RoomExpense>() {
-                    @Override
-                    public void onResponse(Call<RoomExpense> call, Response<RoomExpense> response) {
-                        room.setPriceId(response.body().getId());
-                        callR.enqueue(new Callback<Room>() {
-                            @Override
-                            public void onResponse(Call<Room> call, Response<Room> response) {
-                                if (response.code() == 201) { // OK
-                                    listener.OnCreateSuccess(response.body());
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if (response.code() == 201) { // OK
+                    listener.OnCreateSuccess(response.body());
 
-                                } else {
-                                    Log.e(TAG, response.toString());
-                                    listener.OnGetRoomsError(response.errorBody().toString());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Room> call, Throwable t) {
-                                Log.e(TAG, t.toString());
-                                listener.OnGetRoomsError(t.getMessage());
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<RoomExpense> call, Throwable t) {
-                        Log.e(TAG, t.toString());
-                        listener.OnGetRoomsError(t.getMessage());
-                    }
-                });
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(response.errorBody().toString());
+                }
             }
 
             @Override
-            public void onFailure(Call<Address> call, Throwable t) {
+            public void onFailure(Call<Room> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 listener.OnGetRoomsError(t.getMessage());
             }
         });
-
     }
 
-    public List<Room> getAllRooms(){
+
+    public List<Room> getAllRooms() {
 
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
@@ -112,33 +83,64 @@ public class RoomService {
         return null;
     }
 
-    public void updateRoom (Room room){
+    public void updateRoomIndexing(RoomCreate room, Address address, RoomExpense expense) {
 
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
-        Call<Room> call = apiService.updateRoom(room);
+        Call<Room> callR = apiService.updateRoom(room);
 
-        call.enqueue(new Callback<Room>() {
+
+        AddressApiEndpointInterface AddressApiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
+        Call<Address> callA = AddressApiService .createAddress(address);
+
+        RoomExpenseApiEndpointInterface ExpenseApiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
+        Call<RoomExpense> callE = ExpenseApiService.createExpense(expense);
+
+        callA.enqueue(new Callback<Address>() {
             @Override
-            public void onResponse(Call<Room> call, Response<Room> response) {
-                if (response.code() == 200) { // OK
-                    listener.OnUpdateSuccess(response.body());
+            public void onResponse(Call<Address> call, Response<Address> response) {
+                room.setAddressId(response.body().getId());
+                callE.enqueue(new Callback<RoomExpense>() {
+                    @Override
+                    public void onResponse(Call<RoomExpense> call, Response<RoomExpense> response) {
+                        room.setPriceId(response.body().getId());
+                        callR.enqueue(new Callback<Room>() {
+                            @Override
+                            public void onResponse(Call<Room> call, Response<Room> response) {
+                                if (response.code() == 200) { // OK
+                                    listener.OnUpdateSuccess(response.body());
 
-                } else {
-                    Log.e(TAG, response.toString());
-                    listener.OnGetRoomsError(Integer.toString(response.code()));
-                }
+                                } else {
+                                    Log.e(TAG, response.toString());
+                                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Room> call, Throwable t) {
+                                Log.e(TAG, t.toString());
+                                listener.OnGetRoomsError(t.getMessage());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<RoomExpense> call, Throwable t) {
+                        Log.e(TAG, t.toString());
+                        listener.OnGetRoomsError(t.getMessage());
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<Room> call, Throwable t) {
+            public void onFailure(Call<Address> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 listener.OnGetRoomsError(t.getMessage());
             }
         });
     }
 
-    public void serachRooms(String query){
+    public void serachRooms(String query) {
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
         Call<List<Room>> call = apiService.serachRooms(query);
@@ -163,10 +165,10 @@ public class RoomService {
 
     }
 
-    public void searchRoomsGeo(Double latitude, Double longitude, int distance){
+    public void searchRoomsAdvanced(SearchFilter searchFilter) {
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 
-        Call<List<Room>> call = apiService.serachRoomsGeo(latitude, longitude, distance);
+        Call<List<Room>> call = apiService.searchRoomsAdvanced(searchFilter);
 
         call.enqueue(new Callback<List<Room>>() {
             @Override
@@ -185,14 +187,16 @@ public class RoomService {
                 listener.OnGetRoomsError(t.getMessage());
             }
         });
-
     }
 
-    public interface RoomServiceListener {
-        void OnCreateSuccess(Room room);
-        void OnGetRoomsSuccess(List<Room> rooms);
-        void OnGetRoomsError(String error);
-        void OnUpdateSuccess(Room room);
-    }
+public interface RoomServiceListener {
+    void OnCreateSuccess(Room room);
+
+    void OnGetRoomsSuccess(List<Room> rooms);
+
+    void OnGetRoomsError(String error);
+
+    void OnUpdateSuccess(Room room);
+}
 
 }

@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
-    tools:context=".view.MainOptionsFragment">
+    tools:context=".view.MainOptionsFragment"
+    android:paddingBottom="50dp"
+    android:clipToPadding="false">
 
     <View
         android:id="@+id/view16"
@@ -26,6 +28,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -46,6 +49,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -88,6 +92,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -119,6 +124,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -192,6 +198,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -212,6 +219,7 @@
         android:ems="10"
         android:fontFamily="sans-serif"
         android:maxLength="254"
+        android:padding="16dp"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
@@ -241,7 +249,7 @@
     <ImageButton
         android:id="@+id/logout"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"

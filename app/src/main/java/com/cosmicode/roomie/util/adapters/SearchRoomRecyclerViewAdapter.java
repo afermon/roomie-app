@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment.OnFragmentInteractionListener;
 
 import org.joda.time.DateTime;
@@ -28,6 +30,8 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +69,15 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
 
         holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
+        MainActivity activity = (MainActivity) mContext;
+
+        holder.roomCard.setOnClickListener(l -> {
+            MainRoomFragment roomView = MainRoomFragment.newInstance(holder.mItem);
+            FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, roomView);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
 
         try {
 
@@ -80,7 +93,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
 
             //Price
             RoomExpense price = mValues.get(position).getPrice();
-            Double priceUser = price.getAmount() / mValues.get(position).getRooms(); // Price per user
+            Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
             if (price.getCurrency() == CurrencyType.DOLLAR) {
                 holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
             } else {
@@ -148,6 +161,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         @BindView(R.id.room_published) TextView roomPublished;
         @BindView(R.id.room_count) TextView roomCount;
         @BindView(R.id.room_distance) TextView roomDistance;
+        @BindView(R.id.room_card) CardView roomCard;
 
         public Room mItem;
 

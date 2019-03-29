@@ -1,7 +1,9 @@
 package com.cosmicode.roomie.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,28 +20,32 @@ import butterknife.OnClick;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.ListingChooseLocation;
+import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomFeatureService;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
-import android.graphics.PorterDuff.Mode;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
-public class ListingBasicInformation extends Fragment implements RoomFeatureService.OnGetFeaturesListener {
+public class ListingBasicInformation extends Fragment implements RoomFeatureService.OnGetFeaturesListener, Validator.ValidationListener {
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
@@ -47,10 +53,25 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mAdapter2;
     private RoomFeatureService roomFeatureService;
+    private Validator validator;
 
+
+    @BindView(R.id.progress)
+    ProgressBar progress;
+
+    @BindView(R.id.basic_scroll)
+    ScrollView scrollView;
+
+    @BindView(R.id.number_room)
+    TextView amount;
+
+    @NotEmpty
+    @Length(min = 4, max = 100)
     @BindView(R.id.headline_text)
     TextView headline;
 
+    @NotEmpty
+    @Length(min = 4, max = 2000)
     @BindView(R.id.desc_text)
     TextView desc;
 
@@ -78,6 +99,8 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
             room.setFeatures(new ArrayList<>());
+            validator = new Validator(this);
+            validator.setValidationListener(this);
             roomFeatureService = new RoomFeatureService(getContext(), this);
         }
     }
@@ -87,6 +110,9 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_basic_information, container, false);
         ButterKnife.bind(this, view);
+        validator = new Validator(this);
+        validator.setValidationListener(this);
+        showProgress(true);
         roomFeatureService.getAll();
         return view;
     }
@@ -116,10 +142,12 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         List<RoomFeature> lAmenities = new ArrayList<>();
         List<RoomFeature> lRestrictions = new ArrayList<>();
         for (RoomFeature feature : featureList) {
-            if(feature.getType() == FeatureType.AMENITIES){
+            if (feature.getType() == FeatureType.AMENITIES) {
                 lAmenities.add(feature);
-            }else{
-                lRestrictions.add(feature);
+            } else {
+                if(feature.getType() == FeatureType.RESTRICTIONS){
+                    lRestrictions.add(feature);
+                }
             }
         }
 
@@ -127,11 +155,40 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         amenities.setAdapter(mAdapter);
         mAdapter2 = new RestrictionsAdapter(lRestrictions);
         restrictions.setAdapter(mAdapter2);
+        showProgress(false);
     }
-
     @Override
     public void onGetFeaturesError(String error) {
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        room.setTitle(headline.getText().toString());
+        room.setDescription(desc.getText().toString());
+        room.setRooms(Integer.parseInt(amount.getText().toString()));
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
+        transaction.replace(R.id.listing_container, ListingCost.newInstance(room));
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(getContext());
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        }
+        scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
@@ -141,6 +198,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
             private TextView iconText;
             private ImageButton icon;
+
             IconViewHolder(View view) {
                 super(view);
                 iconText = view.findViewById(R.id.icon_text);
@@ -173,24 +231,34 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
-            holder.icon.setOnClickListener( v -> {
-                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
+            holder.icon.setOnClickListener(v -> {
+                if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    room.getFeatures().add(feature);
-                }else{
+                    room.getFeatures().remove(feature);
+                } else {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-                    Iterator<RoomFeature> itr = room.getFeatures().iterator();
-                    while (itr.hasNext()) {
-                        if (itr.next() == feature) {
-                            itr.remove();
-                        }
-                    }
+                    room.getFeatures().add(feature);
                 }
             });
         }
     }
+
+    @OnClick(R.id.add_number)
+    public void increase(View view) {
+        int number = Integer.parseInt(amount.getText().toString());
+        amount.setText(Integer.toString((number + 1)));
+    }
+
+    @OnClick(R.id.remove_number)
+    public void decrease(View view) {
+        int number = Integer.parseInt(amount.getText().toString());
+        if (number > 1) {
+            amount.setText(Integer.toString((number - 1)));
+        }
+    }
+
 
     public class RestrictionsAdapter extends RecyclerView.Adapter<RestrictionsAdapter.IconViewHolder> {
         private List<RoomFeature> features;
@@ -199,6 +267,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
             private TextView iconText;
             private ImageButton icon;
+
             IconViewHolder(View view) {
                 super(view);
                 iconText = view.findViewById(R.id.icon_text);
@@ -231,34 +300,23 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
-            holder.icon.setOnClickListener( v -> {
-                if(holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)){
+            holder.icon.setOnClickListener(v -> {
+                if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    room.getFeatures().add(feature);
-                }else{
+                    room.getFeatures().remove(feature);
+                } else {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-                    Iterator<RoomFeature> itr = room.getFeatures().iterator();
-                    while (itr.hasNext()) {
-                        if (itr.next() == feature) {
-                            itr.remove();
-                        }
-                    }
+                    room.getFeatures().add(feature);
                 }
             });
         }
     }
 
     @OnClick(R.id.btn_next)
-    public void onClickNext(View view){
-        room.setTitle(headline.getText().toString());
-        room.setDescription(headline.getText().toString());
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingStepCost.newInstance(room) );
-        transaction.addToBackStack(null);
-        transaction.commit();
+    public void onClickNext(View view) {
+        validator.validate();
     }
 
     @Override
@@ -274,10 +332,45 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             //Restore the fragment's state here
         }
     }
+
+    @OnClick(R.id.back_basic)
+    public void back(View view) {
+
+        startActivity(new Intent(getContext(), MainActivity.class));
+    }
+
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 
     public interface OnFragmentInteractionListener {

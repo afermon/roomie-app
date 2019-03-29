@@ -2,7 +2,7 @@ package com.cosmicode.roomie.view;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.net.Uri;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,12 +26,12 @@ import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
@@ -39,7 +39,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 
-public class ListingStepCost extends Fragment implements Validator.ValidationListener {
+public class ListingCost extends Fragment implements Validator.ValidationListener {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
@@ -49,39 +49,33 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     private Validator validator;
     private static int selectedDate;
     private RoomExpense roomExpense;
+    private static final String COST = "cost";
 
     @NotEmpty
     @BindView(R.id.edit_amount)
     EditText amount;
-
     @NotEmpty
     @BindView(R.id.movein_date)
     TextView dateText;
-
     @NotEmpty
     @BindView(R.id.moveout_date)
     TextView dateText2;
-
     @BindView(R.id.date_picker)
     ImageButton datePicker;
-
-
     @BindView(R.id.date_picker2)
     ImageButton datePicker2;
-
     @BindView(R.id.currency_radio)
     RadioGroup currency;
-
     @BindView(R.id.btn_next)
     Button next;
 
 
-    public ListingStepCost() {
+    public ListingCost() {
     }
 
 
-    public static ListingStepCost newInstance(RoomCreate room) {
-        ListingStepCost fragment = new ListingStepCost();
+    public static ListingCost newInstance(RoomCreate room) {
+        ListingCost fragment = new ListingCost();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
         fragment.setArguments(args);
@@ -94,14 +88,14 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
             roomExpense = new RoomExpense();
-            roomExpense.setCurrency(CurrencyType.DOLLAR);
+            roomExpense.setCurrency(CurrencyType.COLON);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_listing_step2, container, false);
+        View view = inflater.inflate(R.layout.fragment_listing_cost, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -111,47 +105,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         date2 = "";
-        validator = new Validator(this);
-        validator.setValidationListener(this);
-        DateTime x = new DateTime();
-        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
-        String monthS, dayS;
-        monthS = Integer.toString(x.getMonthOfYear());
-        dayS = Integer.toString(x.getDayOfMonth());
-        if (x.getMonthOfYear() <= 9) {
-            monthS = "0" + x.getMonthOfYear();
-        }
-
-        if (x.getDayOfMonth() <= 9) {
-            dayS = "0" + x.getDayOfMonth();
-        }
-        date = x.getYear() + "-" + monthS + "-" + dayS;
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                month++;
-                String monthS, dayS;
-                monthS = Integer.toString(month);
-                dayS = Integer.toString(dayOfMonth);
-                if (month <= 9) {
-                    monthS = "0" + month;
-                }
-
-                if (dayOfMonth <= 9) {
-                    dayS = "0" + dayOfMonth;
-                }
-
-                if(selectedDate == 0){
-                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
-                    date = year + "-" + monthS + "-" + dayS;
-                }else{
-                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
-                    date2 = year + "-" + monthS + "-" + dayS;
-                }
-            }
-        };
-
+        setDate();
         currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -192,6 +146,7 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
+
         selectedDate = 0;
         dialog.show();
     }
@@ -202,6 +157,13 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
+        dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dateText2.setText(getString(R.string.no_move_out));
+                date2 = "";
+            }
+        });
         selectedDate = 1;
         dialog.show();
     }
@@ -243,7 +205,54 @@ public class ListingStepCost extends Fragment implements Validator.ValidationLis
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(COST, amount.getText().toString());
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    public void setDate(){
+        DateTime x = new DateTime();
+        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
+        String monthS, dayS;
+        monthS = Integer.toString(x.getMonthOfYear());
+        dayS = Integer.toString(x.getDayOfMonth());
+        if (x.getMonthOfYear() <= 9) {
+            monthS = "0" + x.getMonthOfYear();
+        }
+
+        if (x.getDayOfMonth() <= 9) {
+            dayS = "0" + x.getDayOfMonth();
+        }
+        date = x.getYear() + "-" + monthS + "-" + dayS;
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                month++;
+                String monthS, dayS;
+                monthS = Integer.toString(month);
+                dayS = Integer.toString(dayOfMonth);
+                if (month <= 9) {
+                    monthS = "0" + month;
+                }
+
+                if (dayOfMonth <= 9) {
+                    dayS = "0" + dayOfMonth;
+                }
+
+                if(selectedDate == 0){
+                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date = year + "-" + monthS + "-" + dayS;
+                }else{
+                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date2 = year + "-" + monthS + "-" + dayS;
+                }
+            }
+        };
     }
 }

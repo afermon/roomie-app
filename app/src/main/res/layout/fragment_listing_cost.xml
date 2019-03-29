@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
-    tools:context=".view.ListingStepCost">
+    tools:context=".view.ListingCost">
 
 
     <faranjit.currency.edittext.CurrencyEditText
@@ -36,7 +36,7 @@
         app:locale="en_US"
         app:showSymbol="false" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -129,9 +129,9 @@
         android:layout_height="0dp"
         android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/view26"
+        app:layout_constraintStart_toEndOf="@+id/currency_radio"
         app:layout_constraintTop_toTopOf="@+id/view23"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/view24"
@@ -147,7 +147,6 @@
         android:id="@+id/view25"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="0.0"
@@ -158,7 +157,6 @@
         android:id="@+id/view27"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="0.0"
@@ -169,7 +167,6 @@
         android:id="@+id/view26"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="1.0"
@@ -305,7 +302,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif"
-        android:text="No date yet"
+        android:text="@string/no_move_out"
         android:textAlignment="viewEnd"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -320,7 +317,7 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:backgroundTint="@color/primary"
-        android:text="Continue"
+        android:text="@string/cont_btn"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -331,7 +328,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="100dp"
-        android:layout_marginEnd="8dp"
         android:checkedButton="@+id/radio_crc"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/view26"
@@ -345,7 +341,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="CRC"
+            android:text="@string/crc"
             android:textSize="18sp" />
 
         <RadioButton
@@ -354,7 +350,7 @@
             android:layout_height="55dp"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="USD"
+            android:text="@string/usd"
             android:textSize="18sp" />
     </RadioGroup>
 
@@ -365,7 +361,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="Fill the cost information for your place and the date in which people can move in."
+        android:text="@string/listing_cost_desc"
         android:textAlignment="center"
         android:textColor="@color/primary"
         android:textSize="18sp"

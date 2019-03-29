@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/room_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -116,7 +117,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_white_rounded"
-                android:text="$ 1700"
+                android:text="n/a"
                 android:textColor="@color/primary"
                 android:textSize="18sp"
                 android:textStyle="bold"

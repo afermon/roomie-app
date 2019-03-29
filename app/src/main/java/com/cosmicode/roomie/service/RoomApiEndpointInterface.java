@@ -4,6 +4,7 @@ import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.SearchFilter;
 
 import java.util.List;
 import retrofit2.Call;
@@ -25,9 +26,8 @@ public interface RoomApiEndpointInterface {
     Call<Room> createRoom(@Body RoomCreate room);
 
     @PUT("rooms")
-    Call<Room> updateRoom(@Body Room room);
+    Call<Room> updateRoom(@Body RoomCreate room);
 
-    @GET("_search/rooms/geo")
-    Call<List<Room>> serachRoomsGeo(@Query("latitude") Double latitude, @Query("longitude") Double longitude, @Query("distance") int distance);
-
+    @POST("_search/rooms/advanced")
+    Call<List<Room>> searchRoomsAdvanced(@Body SearchFilter searchFilter);
 }

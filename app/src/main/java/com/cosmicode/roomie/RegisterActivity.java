@@ -6,10 +6,12 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
@@ -28,6 +30,9 @@ import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnCreateRoomieListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnRegisterListener;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
@@ -58,8 +63,10 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @BindViews({R.id.view, R.id.view2, R.id.view3, R.id.view4})
     public List<View> lines;
 
-    @BindView(R.id.edit_date) TextView editDate;
-    @BindView(R.id.edit_gender) TextView editGender;
+    @BindView(R.id.edit_date)
+    TextView editDate;
+    @BindView(R.id.edit_gender)
+    TextView editGender;
     @BindView(R.id.personal_info)
     TextView infoPersonal;
     @BindView(R.id.title)
@@ -96,12 +103,15 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     ProgressBar progress;
     @BindView(R.id.back_button)
     ImageButton back;
+    @BindView(R.id.register_container)
+    ConstraintLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+        onClickMale(maleButton);
         validator = new Validator(this);
         validator.setValidationListener(this);
         password.setTransformationMethod(new PasswordTransformationMethod());
@@ -109,13 +119,13 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         datePicker.setOnClickListener(this::onClickDate);
         register.setOnClickListener(this::onClickRegister);
         roomieService = new RoomieService(this);
-
+        back.setOnClickListener(this::back);
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
                 month++;
-                dateText.setText(dayOfMonth + "/" + month  + "/" + year);
+                dateText.setText(dayOfMonth + "/" + month + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -139,7 +149,6 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
             email.setVisibility(View.GONE);
             password.setVisibility(View.GONE);
             confirmPassword.setVisibility(View.GONE);
-            back.setVisibility(View.GONE);
             register.setText(R.string.complete_user_btn);
             title.setText(R.string.complete_title);
             infoPersonal.setText(R.string.complete_title);
@@ -148,6 +157,8 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
             name.setEnabled(false);
             lastName.setEnabled(false);
             lastName.setText(intent.getStringExtra(MainActivity.JHIUSER_LAST));
+            back.setOnClickListener(l -> performLogout());
+
         }
 
         JodaTimeAndroid.init(this);
@@ -156,21 +167,30 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     public void onClickRegister(View view) {
         showProgress(true);
 
-        if(dateText.getText().toString().equals("")){
+        if (dateText.getText().toString().equals("")) {
             editDate.setError("Please choose a date");
             isValid = false;
-        }else{
+        } else {
             isValid = true;
         }
 
-        if(gender == null){
+        if (gender == null) {
             editGender.setError("Please choose a gender");
             isValid = false;
-        }else{
+        } else {
             isValid = true;
         }
 
         validator.validate();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getIntent().getStringExtra(MainActivity.JHIUSER_EMAIL) != null) {
+            performLogout();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void onClickDate(View view) {
@@ -257,6 +277,18 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        container.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        container.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        container.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
         progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
         progress.animate()
                 .setDuration(shortAnimTime)
@@ -269,18 +301,42 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
                 });
     }
 
+
+    public void back(View view) {
+        finish();
+    }
+
+
     @Override
     public void onValidationSucceeded() {
-        if(isValid){
+        if (isValid) {
             if (getIntent().getStringExtra(MainActivity.JHIUSER_EMAIL) != null) {
                 Roomie roomie = new Roomie(date, "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png", gender, null, null, "", Long.parseLong(getIntent().getStringExtra(MainActivity.JHIUSER_ID)), null, null, null, null);
                 roomieService.createRoomie(roomie, this);
             } else {
                 getJhiUsers().register(email.getText().toString(), name.getText().toString(), lastName.getText().toString(), password.getText().toString(), this);
             }
-        }else{
+        } else {
             showProgress(false);
         }
+    }
+
+    public final void performLogout() {
+        try {
+            GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
+            GoogleSignIn.getClient(this, gso).signOut();
+        } catch (Exception e) {
+            //Ignore TODO: LOG
+        }
+
+        try {
+            LoginManager.getInstance().logOut();
+        } catch (Exception e) {
+            //Ignore TODO: LOG
+        }
+
+        getJhiUsers().logout();
+        startActivity(LoginActivity.clearTopIntent(this));
     }
 
     @Override

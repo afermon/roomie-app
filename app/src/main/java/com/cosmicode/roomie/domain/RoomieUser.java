@@ -1,6 +1,9 @@
 package com.cosmicode.roomie.domain;
 
-public class RoomieUser {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class RoomieUser implements Parcelable {
 
     private String login;
     private String email;
@@ -66,4 +69,39 @@ public class RoomieUser {
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.login);
+        dest.writeString(this.email);
+        dest.writeString(this.password);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+    }
+
+    protected RoomieUser(Parcel in) {
+        this.login = in.readString();
+        this.email = in.readString();
+        this.password = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+    }
+
+    public static final Parcelable.Creator<RoomieUser> CREATOR = new Parcelable.Creator<RoomieUser>() {
+        @Override
+        public RoomieUser createFromParcel(Parcel source) {
+            return new RoomieUser(source);
+        }
+
+        @Override
+        public RoomieUser[] newArray(int size) {
+            return new RoomieUser[size];
+        }
+    };
 }

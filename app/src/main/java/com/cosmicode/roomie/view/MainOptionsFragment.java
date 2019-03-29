@@ -103,6 +103,7 @@ public class MainOptionsFragment extends Fragment {
             name.setText(user.getFullName());
             email.setText(user.getEmail());
         });
+
     }
 
     @Override

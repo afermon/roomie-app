@@ -12,7 +12,7 @@ import retrofit2.http.POST;
 
 public interface NotificationApiEndpointInterface {
 
-    @GET("notifications")
+    @GET("notifications/roomie")
     Call<List<Notification>> getNotifications();
 
 }

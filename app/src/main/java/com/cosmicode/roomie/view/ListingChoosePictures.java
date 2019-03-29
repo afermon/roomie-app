@@ -1,12 +1,9 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
@@ -14,7 +11,6 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +19,12 @@ import android.widget.ImageView;
 
 import com.asksira.bsimagepicker.BSImagePicker;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.ListingChooseLocation;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 public class ListingChoosePictures extends Fragment implements BSImagePicker.OnMultiImageSelectedListener{
 
@@ -79,10 +71,10 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
                     .isMultiSelect() //Set this if you want to use multi selection mode.
                     .setMinimumMultiSelectCount(1) //Default: 1.
                     .setMaximumMultiSelectCount(5) //Default: Integer.MAX_VALUE (i.e. User can select as many images as he/she wants)
-                    .setMultiSelectBarBgColor(android.R.color.white) //Default: #FFFFFF. You can also set it to a translucent color.
-                    .setMultiSelectTextColor(R.color.primary_text) //Default: #212121(Dark grey). This is the message in the multi-select bottom bar.
-                    .setMultiSelectDoneTextColor(R.color.colorAccent) //Default: #388e3c(Green). This is the color of the "Done" TextView.
-                    .setOverSelectTextColor(R.color.error_text) //Default: #b71c1c. This is the color of the message shown when user tries to select more than maximum select count.
+                    .setMultiSelectBarBgColor(R.color.secondary) //Default: #FFFFFF. You can also set it to a translucent color.
+                    .setMultiSelectTextColor(R.color.primary) //Default: #212121(Dark grey). This is the message in the multi-select bottom bar.
+                    .setMultiSelectDoneTextColor(R.color.primary) //Default: #388e3c(Green). This is the color of the "Done" TextView.
+                    .setOverSelectTextColor(R.color.danger) //Default: #b71c1c. This is the color of the message shown when user tries to select more than maximum select count.
                     .disableOverSelectionMessage() //You can also decide not to show this over select message.
                     .build();
         }
@@ -105,6 +97,11 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         transaction.replace(R.id.listing_container, ListingChooseLocation.newInstance(room) );
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @OnClick(R.id.back_button3)
+    public void back(View view) {
+        getFragmentManager().popBackStackImmediate();
     }
 
     @OnClick(R.id.img1)
