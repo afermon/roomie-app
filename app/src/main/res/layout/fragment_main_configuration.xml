@@ -245,10 +245,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back_button2" />
+        app:layout_constraintTop_toBottomOf="@+id/back_cost" />
 
     <ImageButton
-        android:id="@+id/back_button2"
+        android:id="@+id/back_cost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

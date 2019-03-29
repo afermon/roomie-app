@@ -29,6 +29,7 @@ import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
+import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
@@ -98,6 +99,10 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     ProgressBar progress;
     @BindView(R.id.room_scroll)
     ScrollView scrollView;
+    @BindView(R.id.no_amenities)
+    TextView noAmenties;
+    @BindView(R.id.no_restrictions)
+    TextView noRestrictions;
 
 
     private OnFragmentInteractionListener mListener;
@@ -170,6 +175,11 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             moveOut.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
 
         }
+        if(room.getPictures().isEmpty()){
+            RoomPicture p = new RoomPicture();
+            p.setUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW4YgDei5TJj0hNHD5HOuSAS7VFw0eP3zIKzjqE3efC0c7R46trg");
+            room.getPictures().add(p);
+        }
         carousel.setImageListener(imageListener);
         carousel.setPageCount(room.getPictures().size());
 
@@ -203,6 +213,18 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             } else if (feature.getType() == FeatureType.RESTRICTIONS) {
                 lRestrictions.add(feature);
             }
+        }
+
+        if(lAmenities.isEmpty()){
+            noAmenties.setVisibility(View.VISIBLE);
+        }else {
+            noAmenties.setVisibility(View.GONE);
+        }
+
+        if(lRestrictions.isEmpty()){
+            noRestrictions.setVisibility(View.VISIBLE);
+        }else {
+            noRestrictions.setVisibility(View.GONE);
         }
 
         mAdapterA = new AmenitiesAdapter(lAmenities);

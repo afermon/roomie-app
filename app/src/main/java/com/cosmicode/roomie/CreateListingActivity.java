@@ -37,6 +37,4 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         return this;
     }
 
-
-
 }

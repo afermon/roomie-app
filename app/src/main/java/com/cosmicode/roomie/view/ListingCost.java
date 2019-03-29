@@ -121,6 +121,16 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         });
     }
 
+    @OnClick(R.id.cancel_cost)
+    public void finish(View view) {
+        getActivity().finish();
+    }
+
+    @OnClick(R.id.back_cost)
+    public void back(View view) {
+        getFragmentManager().popBackStackImmediate();
+    }
+
     @OnClick(R.id.btn_next)
     public void onClickNext(View view){
         roomExpense.setName("Monthly rent");
@@ -139,6 +149,8 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
 
     @OnClick(R.id.date_picker)
     public void onClickDate(View view) {

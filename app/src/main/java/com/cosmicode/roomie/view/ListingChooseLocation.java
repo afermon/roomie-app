@@ -20,7 +20,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,11 +67,7 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
-import java.util.Date;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -135,9 +130,14 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+
+
             room = getArguments().getParcelable(ROOM);
             address = new Address();
             address.setLocation("10.3704815,-83.9526349");
+            address.setCity("No city");
+            address.setState("No state");
+
             uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
@@ -199,6 +199,9 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         }
 
     }
+
+    @OnClick(R.id.cancel_location)
+    public void finish(View view){ getActivity().finish();}
 
     @OnClick(R.id.back_location)
     public void back(View view) {
@@ -318,7 +321,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
             RoomPicture roomPicture = new RoomPicture();
             if (picAmount == room.getPicturesUris().size()) {
                 roomPicture.setIsMain(true);
-            }else{
+            } else {
                 roomPicture.setIsMain(false);
             }
             roomPicture.setUrl(url);
@@ -359,9 +362,9 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     @Override
     public void OnUpdateSuccess(Room room) {
-            showProgress(false);
-            Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getContext(), MainActivity.class));
+        showProgress(false);
+        Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getContext(), MainActivity.class));
     }
 
     @Override
@@ -378,20 +381,20 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         minutes = Integer.toString(now.getMinuteOfHour());
         seconds = Integer.toString(now.getSecondOfMinute());
 
-        if(now.getMonthOfYear() < 10){
-            month = "0"+now.getMonthOfYear();
+        if (now.getMonthOfYear() < 10) {
+            month = "0" + now.getMonthOfYear();
         }
-        if(now.getDayOfMonth() < 10){
-            day = "0"+now.getDayOfMonth();
+        if (now.getDayOfMonth() < 10) {
+            day = "0" + now.getDayOfMonth();
         }
-        if(now.getHourOfDay() < 10){
-            hour = "0"+now.getHourOfDay();
+        if (now.getHourOfDay() < 10) {
+            hour = "0" + now.getHourOfDay();
         }
-        if(now.getMinuteOfHour() < 10){
-            minutes = "0"+now.getMinuteOfHour();
+        if (now.getMinuteOfHour() < 10) {
+            minutes = "0" + now.getMinuteOfHour();
         }
-        if(now.getSecondOfMinute() < 10){
-            seconds = "0"+now.getSecondOfMinute();
+        if (now.getSecondOfMinute() < 10) {
+            seconds = "0" + now.getSecondOfMinute();
         }
 
         String date = String.format("%s-%s-%sT%s:%s:%sZ", now.getYear(), month, day, hour, minutes, seconds);
@@ -414,7 +417,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     @Override
     public void onCreatePicSuccess() {
-        if(picAmount == 0){
+        if (picAmount == 0) {
             roomService.updateRoomIndexing(room, address, room.getMonthly());
         }
     }
@@ -476,4 +479,5 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
                     }
                 });
     }
+
 }

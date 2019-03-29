@@ -3,7 +3,6 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
@@ -248,14 +246,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @OnClick(R.id.add_number)
     public void increase(View view) {
         int number = Integer.parseInt(amount.getText().toString());
-        amount.setText(Integer.toString((number + 1)));
+        amount.setText(String.format("%s", number + 1));
     }
 
     @OnClick(R.id.remove_number)
     public void decrease(View view) {
         int number = Integer.parseInt(amount.getText().toString());
         if (number > 1) {
-            amount.setText(Integer.toString((number - 1)));
+            amount.setText(String.format("%s", number + 1));
         }
     }
 
@@ -335,8 +333,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.back_basic)
     public void back(View view) {
-
-        startActivity(new Intent(getContext(), MainActivity.class));
+        getActivity().finish();
     }
 
 
@@ -372,6 +369,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
                     }
                 });
     }
+
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();

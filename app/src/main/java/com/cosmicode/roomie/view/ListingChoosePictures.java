@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
@@ -98,6 +99,9 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    @OnClick(R.id.cancel_pic)
+    public void finish(View view){ getActivity().finish();}
 
     @OnClick(R.id.back_button3)
     public void back(View view) {

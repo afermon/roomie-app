@@ -205,4 +205,6 @@
     <string name="default_notification_channel_id">roomie_default_channel</string>
     <string name="bottom_nav_add">add</string>
     <string name="to_do_list_title">To do list</string>
+    <string name="no_amenities">No amenities assigned</string>
+    <string name="no_restrictions">No restrictiones assigned</string>
 </resources>
