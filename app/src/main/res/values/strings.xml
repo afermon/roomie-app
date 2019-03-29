@@ -198,4 +198,9 @@
     <string name="default_notification_channel_id">roomie_default_channel</string>
     <string name="bottom_nav_add">add</string>
     <string name="to_do_list_title">To do list</string>
+    <string name="pick_a_date">Pick a date</string>
+    <string name="appointment_date">Appointment date</string>
+    <string name="appointment_description_hint">Tell the owner why you are a good fit!</string>
+    <string name="send">Send</string>
+    <string name="new_appointment_title">New appointment request</string>
 </resources>

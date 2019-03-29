@@ -2,34 +2,45 @@ package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Appointment;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomieService;
@@ -53,11 +64,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
 public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback {
 
+    private static final String TAG = "MainRoomFragment";
     private static final String ROOM = "room";
     private Room room;
     private RoomieService roomieService;
@@ -363,6 +376,71 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
         }
+    }
+
+
+    @OnClick(R.id.appointment_btn)
+    public void newAppointment(){
+        final Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        int mHour = c.get(Calendar.HOUR_OF_DAY);
+        int mMinute = c.get(Calendar.MINUTE);
+
+        Appointment appointment = new Appointment();
+        appointment.setRoomId(room.getId());
+        appointment.setState(AppointmentState.PENDING);
+        //Petitioner will be set in backend
+
+
+
+        AlertDialog.Builder newAppointmentDialogBuilder = new AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View newAppointmentLayout = inflater.inflate(R.layout.new_appointment_dialog, null);
+
+        Button pickDateButton = newAppointmentLayout.findViewById(R.id.pick_appointment_date_btn);
+        TextView appointmentDateTV = newAppointmentLayout.findViewById(R.id.appointment_date_tv);
+        EditText appointmentDescriptionET = newAppointmentLayout.findViewById(R.id.appointment_description);
+
+        pickDateButton.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), R.style.RoomieDialogTheme,
+                    (view, year, monthOfYear, dayOfMonth) -> {
+                        Log.d( TAG, dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.RoomieDialogTheme,
+                                (viewt, hourOfDay, minute) -> {
+                                    Log.d(TAG, hourOfDay + ":" + minute);
+                                    appointmentDateTV.setText(String.format("%s-%s-%s %s:%s", mYear, mMonth, mDay,mHour, mMinute));
+                                }, mHour, mMinute, false);
+                        timePickerDialog.show();
+                    }, mYear, mMonth, mDay);
+            datePickerDialog.getDatePicker().setMinDate(c.getTime().getTime());
+            datePickerDialog.show();
+        });
+
+        newAppointmentDialogBuilder.setTitle(R.string.new_appointment_title)
+                .setView(newAppointmentLayout)
+                .setPositiveButton(R.string.send, (dialog, which) -> { })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog newAppointmentDialog = newAppointmentDialogBuilder.create();
+        newAppointmentDialog.show();
+
+        newAppointmentDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if(true /* VALIDATE*/) {
+                /*yyyy-MM-dd'T'HH:mm:ssZ*/
+                //TODO: work timezone
+                appointment.setDateTime(String.format("%s-%s-%sT%s:%s:00Z",mYear, mMonth, mDay, mHour, mMinute));
+                appointment.setDesciption(appointmentDescriptionET.getText().toString());
+                Log.d(TAG, appointment.toString());
+
+                //TODO: Call service.
+                //showProgress(true);
+                newAppointmentDialog.dismiss();
+            }
+        });
+
     }
 
     private void showProgress(boolean show) {

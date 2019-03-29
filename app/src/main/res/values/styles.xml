@@ -9,6 +9,7 @@
         <item name="android:textViewStyle">@style/RoomieTextViewStyle</item>
         <item name="android:buttonStyle">@style/RoomieButtonStyle</item>
         <item name="android:searchViewStyle">@style/RoomieSearchViewStyle</item>
+        <item name="android:dialogTheme">@style/RoomieDialogTheme</item>
     </style>
 
     <style name="RoomieTextViewStyle" parent="android:Widget.TextView">
@@ -46,5 +47,7 @@
     <style name="SpinnerStyle">
         <item name="android:background">@drawable/background_spinner</item>
     </style>
-
+    <style name="RoomieDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>
