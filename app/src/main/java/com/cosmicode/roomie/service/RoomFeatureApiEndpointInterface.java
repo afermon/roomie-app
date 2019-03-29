@@ -10,6 +10,6 @@ import retrofit2.http.Path;
 
 public interface RoomFeatureApiEndpointInterface {
 
-    @GET("room-features")
+    @GET("room-features?size=50")
     Call<List<RoomFeature>> getAllFeatures();
 }

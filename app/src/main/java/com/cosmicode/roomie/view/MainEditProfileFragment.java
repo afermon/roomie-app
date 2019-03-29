@@ -1,6 +1,8 @@
 package com.cosmicode.roomie.view;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,21 +27,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.asksira.bsimagepicker.BSImagePicker;
 import com.asksira.bsimagepicker.Utils;
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.AddLifestylesActivity;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ChooseLocationActivity;
 import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
+import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.service.UploadPictureService;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -63,6 +71,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 
+import java.util.Iterator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -81,15 +90,21 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     @Length(min = 4, max = 750)
     private EditText bio;
 
+    private FlexboxLayout lifestyleContainer;
+    private TextView noLifeStyles;
+    private ProgressBar progress;
+    private boolean locationChanged;
+    private ScrollView scrollView;
     private ImageButton editButton, geoButton;
     private Button saveButton;
     private UploadPictureService uploadPictureService;
     private RoomieService roomieService;
     private Address address;
     private ImageButton back;
-    AddressService addressService;
-    public static final String CHOOSE_LOCATION_ADDRESS = "Address";
-    public static final int REQUEST_MAP_CODE = 1;
+    private AddressService addressService;
+    private static final String CHOOSE_LOCATION_ADDRESS = "Address";
+    private static final int REQUEST_MAP_CODE = 1;
+    private static final int REQUEST_LIFESTYLES_CODE = 2;
     private SupportMapFragment mapFragment;
     private GoogleMap gMap;
     private static final int LOCATION_PERMISSION = 1;
@@ -97,6 +112,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     private FusedLocationProviderClient fusedLocationClient;
     private Validator validator;
     private BSImagePicker singleSelectionPicker;
+    private static final String LIFESTYLES = "lifestyles";
 
 
     public MainEditProfileFragment() {
@@ -155,6 +171,18 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
         geoButton.setOnClickListener(this::onClickGeo);
         back = getView().findViewById(R.id.back_button);
         back.setOnClickListener(this::goBack);
+        progress = getView().findViewById(R.id.progress);
+        scrollView = getView().findViewById(R.id.edit_scroll);
+        lifestyleContainer = getView().findViewById(R.id.lifestyle_container);
+        noLifeStyles = getView().findViewById(R.id.no_lifestyles);
+        fillLifeStyles();
+        ImageButton lf = getView().findViewById(R.id.life);
+        lf.setOnClickListener(l -> {
+            Intent intent = new Intent(getContext(), AddLifestylesActivity.class);
+            intent.putExtra(LIFESTYLES, currentRoomie);
+            startActivityForResult(intent, REQUEST_LIFESTYLES_CODE);
+        });
+        showProgress(true);
         addressService.getAddresById(currentRoomie.getAddressId());
     }
 
@@ -166,6 +194,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
         Glide.with(getActivity().getApplicationContext()).load(currentRoomie.getPicture()).into(pfp);
         phone.setText(currentRoomie.getPhone());
         bio.setText(currentRoomie.getBiography());
+        showProgress(false);
     }
 
     public void onClickEditPhoto(View view) {
@@ -175,48 +204,87 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     public void onClickSave(View view) {
         boolean isPhoneValid, isBioValid;
-        if (phone.getText().toString().equals("") && bio.getText().toString().equals("")) {
-            currentRoomie.setBiography(null);
-            currentRoomie.setPhone(null);
-            roomieService.updateRoomie(currentRoomie);
-        } else {
-            isPhoneValid = validatePhone();
-            isBioValid = validateBio();
-            if (isBioValid && isPhoneValid) {
-                currentRoomie.setPhone(phone.getText().toString());
-                currentRoomie.setBiography(bio.getText().toString());
-                roomieService.updateRoomie(currentRoomie);
-            }
-        }
 
+        isPhoneValid = validatePhone();
+        isBioValid = validateBio();
+        if (isBioValid && isPhoneValid) {
+            if (checkFieldEmpty(phone)) {
+                currentRoomie.setPhone(null);
+            } else {
+                currentRoomie.setPhone(phone.getText().toString());
+            }
+
+            if (checkFieldEmpty(bio)) {
+                currentRoomie.setBiography(null);
+            } else {
+                currentRoomie.setBiography(bio.getText().toString());
+
+            }
+            roomieService.updateRoomie(currentRoomie);
+            showProgress(true);
+        }
+    }
+
+    public boolean checkFieldEmpty(EditText text) {
+        return text.getText().toString().equals("");
     }
 
     private boolean validatePhone() {
-        if (phone.getText().toString().length() < 4) {
-            phone.setError("Phone is too short");
-            return false;
+        if (checkFieldEmpty(phone)) {
+            return true;
         } else {
-            if (phone.getText().toString().length() > 25) {
-                phone.setError("Phone is too long");
+            if (phone.getText().toString().length() < 4) {
+                phone.setError("Phone is too short");
                 return false;
+            } else {
+                if (phone.getText().toString().length() > 25) {
+                    phone.setError("Phone is too long");
+                    return false;
+                }
             }
         }
-
         return true;
     }
 
     private boolean validateBio() {
-        if (bio.getText().toString().length() < 4) {
-            bio.setError("Bio is too short");
-            return false;
+        if (checkFieldEmpty(bio)) {
+            return true;
         } else {
-            if (bio.getText().toString().length() > 750) {
-                bio.setError("Bio is too long");
+            if (bio.getText().toString().length() < 4) {
+                bio.setError("Bio is too short");
                 return false;
+            } else {
+                if (bio.getText().toString().length() > 750) {
+                    bio.setError("Bio is too long");
+                    return false;
+                }
             }
         }
-
         return true;
+    }
+
+    private void fillLifeStyles() {
+        List<RoomFeature> lifeStyles = currentRoomie.getLifestyles();
+        lifestyleContainer.removeAllViews();
+
+        if (lifeStyles.isEmpty()) {
+            noLifeStyles.setVisibility(View.VISIBLE);
+        } else {
+            Iterator iterator = lifeStyles.iterator();
+            TextView tag;
+            noLifeStyles.setVisibility(View.GONE);
+            while (iterator.hasNext()) {
+                RoomFeature element = (RoomFeature) iterator.next();
+                tag = new TextView(new ContextThemeWrapper(getContext(), R.style.RoomieTags), null, 0);
+                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams
+                        (FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(5, 5, 5, 5);
+                tag.setText(element.getName());
+                tag.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.secondary));
+                tag.setLayoutParams(params);
+                lifestyleContainer.addView(tag);
+            }
+        }
     }
 
     public void cropImage(Uri uri) {
@@ -256,15 +324,18 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (REQUEST_MAP_CODE == requestCode) {
-            if (RESULT_OK == resultCode) {
-                address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
-                address.setState(data.getStringExtra("State"));
-                address.setCity(data.getStringExtra("City"));
-                mapFragment.getMapAsync(this);
-            }
-        } else {
-            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+        switch (requestCode) {
+            case REQUEST_MAP_CODE:
+                if (RESULT_OK == resultCode) {
+                    address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
+                    address.setState(data.getStringExtra("State"));
+                    address.setCity(data.getStringExtra("City"));
+                    locationChanged = true;
+                    mapFragment.getMapAsync(this);
+                }
+                break;
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
                 if (resultCode == RESULT_OK) {
@@ -277,9 +348,17 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
                     Log.e(TAG, result.getError().toString());
 
                 }
-            } else {
+                break;
+            case REQUEST_LIFESTYLES_CODE:
+                if (resultCode == 2) {
+                    currentRoomie.setLifestyles(data.getParcelableArrayListExtra("newLifestyles"));
+                    fillLifeStyles();
+                }
+                break;
+
+            default:
                 super.onActivityResult(requestCode, resultCode, data);
-            }
+
         }
     }
 
@@ -315,6 +394,12 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     @Override
     public void onGetAddressByIdSuccess(Address address) {
         this.address = address;
+        if(address.getCity().equals("Default")){
+            locationChanged = false;
+        }else {
+            locationChanged = true;
+        }
+
         mapFragment.getMapAsync(this);
         fillEditInfo();
     }
@@ -329,7 +414,9 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     public void onUpdateSuccess(Address address) {
         this.address = address;
         Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT).show();
+        showProgress(false);
         getFragmentManager().popBackStack();
+
     }
 
     @Override
@@ -353,10 +440,16 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
     public void onMapReady(GoogleMap map) {
         gMap = map;
         LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
-        gMap.addMarker(new MarkerOptions().position(location));
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
-        gMap.animateCamera(CameraUpdateFactory.zoomIn());
-        gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+
+        if (locationChanged) {
+            gMap.addMarker(new MarkerOptions().position(location));
+            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
+            gMap.animateCamera(CameraUpdateFactory.zoomIn());
+            gMap.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+        } else {
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+
+        }
     }
 
     @Override
@@ -428,6 +521,33 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
                 Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 
 }

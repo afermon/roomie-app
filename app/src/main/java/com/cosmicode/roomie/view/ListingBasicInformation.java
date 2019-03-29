@@ -145,7 +145,9 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             if (feature.getType() == FeatureType.AMENITIES) {
                 lAmenities.add(feature);
             } else {
-                lRestrictions.add(feature);
+                if(feature.getType() == FeatureType.RESTRICTIONS){
+                    lRestrictions.add(feature);
+                }
             }
         }
 

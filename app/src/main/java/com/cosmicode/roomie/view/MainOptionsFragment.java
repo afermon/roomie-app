@@ -37,7 +37,7 @@ public class MainOptionsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Button button, listing, button2;
+    private Button button, listing;
     private OnFragmentInteractionListener mListener;
     private ImageButton configuration, rooms;
 
@@ -84,7 +84,6 @@ public class MainOptionsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         TextView logout_button = getView().findViewById(R.id.exit_text);
         button = getView().findViewById(R.id.button4);
-        button2 = getView().findViewById(R.id.button3);
         name = getView().findViewById(R.id.options_name);
         email = getView().findViewById(R.id.options_mail);
         rooms = getView().findViewById(R.id.rooms);
@@ -105,10 +104,6 @@ public class MainOptionsFragment extends Fragment {
             email.setText(user.getEmail());
         });
 
-        button2.setOnClickListener( v -> {
-            MainRoomFragment mrf = MainRoomFragment.newInstance(null);
-            openFragment(mrf);
-        });
     }
 
     @Override
