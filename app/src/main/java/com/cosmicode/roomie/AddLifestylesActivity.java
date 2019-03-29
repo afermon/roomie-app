@@ -2,12 +2,15 @@ package com.cosmicode.roomie;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +46,11 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
     @BindView(R.id.all_recycler)
     RecyclerView allRecycler;
 
+    @BindView(R.id.progress)
+    ProgressBar progress;
+
+    @BindView(R.id.main_container)
+    ConstraintLayout cont;
 
 
     @Override
@@ -147,5 +156,32 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
         intent.putParcelableArrayListExtra("newLifestyles", lsReturn);
         setResult(2, intent);
         finish();
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        cont.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        cont.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cont.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 }
