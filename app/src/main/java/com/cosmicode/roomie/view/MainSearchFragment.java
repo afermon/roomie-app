@@ -475,7 +475,9 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             if (feature.getType() == FeatureType.AMENITIES) {
                 lAmenities.add(feature);
             } else {
-                lRestrictions.add(feature);
+                if(feature.getType() == FeatureType.RESTRICTIONS){
+                    lRestrictions.add(feature);
+                }
             }
         }
     }

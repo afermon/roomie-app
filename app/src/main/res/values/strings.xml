@@ -195,4 +195,11 @@
     <string name="appoinment_notes_desc">Indicate when you are available to receive visits for potential roommates</string>
     <string name="cont_btn">Continue</string>
     <string name="no_address">This user has no address registered</string>
+    <string name="address">Address</string>
+    <string name="add_lifestyles">Add Lifestyles</string>
+    <string name="lifestyles_title">Select lifestyles and add them to your profile</string>
+    <string name="your_lifestyles">Your lifestyles</string>
+    <string name="no_lifestyles_assignded">You have no lifestyles assigned</string>
+    <string name="lifestyles_hint">*Tap on a lifestyle to add or remove it from your profile.</string>
+    <string name="no_lifestyles_left">There are no more lifestyles</string>
 </resources>
