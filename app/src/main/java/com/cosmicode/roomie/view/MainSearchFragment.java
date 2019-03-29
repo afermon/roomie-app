@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +81,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     public static final String CHOOSE_LOCATION_STATE = "State";
     public static final int REQUEST_MAP_CODE = 1;
     private static final String TAG = "SearchFragment";
-    private static final String ARG_SEARCH_QUERY = "search-query";
+    private static final String ARG_SEARCH_FILTER = "search-filter";
     private static final int LOCATION_PERMISSION = 1;
     @BindView(R.id.room_list)
     RecyclerView roomListRecyclerView;
@@ -113,13 +112,13 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param searchQuery Parameter 1.
+     * @param searchFilter Parameter searchFilter.
      * @return A new instance of fragment MainSearchFragment.
      */
-    public static MainSearchFragment newInstance(String searchQuery) {
+    public static MainSearchFragment newInstance(SearchFilter searchFilter) {
         MainSearchFragment fragment = new MainSearchFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_SEARCH_QUERY, searchQuery);
+        args.putParcelable(ARG_SEARCH_FILTER, searchFilter);
         fragment.setArguments(args);
         return fragment;
     }
@@ -131,14 +130,12 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
         createLocationRequest();
-        String searchQuery = "";
         if (getArguments() != null)
-            searchQuery = getArguments().getString(ARG_SEARCH_QUERY);
+            searchFilter = getArguments().getParcelable(ARG_SEARCH_FILTER);
 
         roomFeatureService = new RoomFeatureService(getContext(), this);
         roomFeatureService.getAll();
         roomService = new RoomService(getContext(), this);
-        searchFilter = new SearchFilter(searchQuery, 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
     @Override
@@ -187,6 +184,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             public boolean onQueryTextSubmit(String query) {
                 showProgress(true);
                 searchFilter.setQuery(query);
+                mListener.onSearchFilterUpdated(searchFilter);
                 roomService.searchRoomsAdvanced(searchFilter);
                 showProgress(true);
                 return false;
@@ -234,7 +232,10 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             }
         });
 
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (searchFilter.getLatitude() != null && searchFilter.getLongitude() != null) {
+            Log.i(TAG, "Current user filters: " + searchFilter.toString());
+            roomService.searchRoomsAdvanced(searchFilter);
+        } else if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "Location access not granted");
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
@@ -248,6 +249,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
                             String[] locationText = getLocationText(location, getContext());
                             searchFilter.setCity(locationText[0]);
                             searchFilter.setState(locationText[1]);
+                            mListener.onSearchFilterUpdated(searchFilter);
                             Log.i(TAG, "Current user filters: " + searchFilter.toString());
                             roomService.searchRoomsAdvanced(searchFilter);
                         }
@@ -361,6 +363,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         filtersDialogBuilder.setView(searchFiltersView);
 
         filtersDialogBuilder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            mListener.onSearchFilterUpdated(searchFilter);
             roomService.searchRoomsAdvanced(searchFilter);
             searchView.setIconified(true);
             if (!searchView.isIconified()) searchView.setIconified(true);
@@ -426,6 +429,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             searchFilter.setLongitude(data.getDoubleArrayExtra(CHOOSE_LOCATION_ADDRESS)[1]);
             searchFilter.setCity(data.getExtras().getString(CHOOSE_LOCATION_CITY));
             searchFilter.setState(data.getExtras().getString(CHOOSE_LOCATION_STATE));
+            mListener.onSearchFilterUpdated(searchFilter);
             Log.d(TAG, searchFilter.toString());
             Toast.makeText(getContext(), String.format("%s, %s", searchFilter.getCity(), searchFilter.getState()), Toast.LENGTH_SHORT).show();
             roomService.searchRoomsAdvanced(searchFilter);
@@ -517,6 +521,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         BaseActivity getBaseActivity();
 
         void onSearchFragmentInteraction(Room item);
+        void onSearchFilterUpdated(SearchFilter searchFilter);
     }
 
     public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
