@@ -136,7 +136,6 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
-            Toast.makeText(getContext(), room.getFeatures().toString(), Toast.LENGTH_LONG).show();
             address = new Address();
             address.setLocation("10.3704815,-83.9526349");
             uploadPictureService = new UploadPictureService(getContext(), this);

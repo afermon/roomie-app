@@ -49,6 +49,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private Validator validator;
     private static int selectedDate;
     private RoomExpense roomExpense;
+    private static final String COST = "cost";
 
     @NotEmpty
     @BindView(R.id.edit_amount)
@@ -104,47 +105,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         date2 = "";
-        validator = new Validator(this);
-        validator.setValidationListener(this);
-        DateTime x = new DateTime();
-        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
-        String monthS, dayS;
-        monthS = Integer.toString(x.getMonthOfYear());
-        dayS = Integer.toString(x.getDayOfMonth());
-        if (x.getMonthOfYear() <= 9) {
-            monthS = "0" + x.getMonthOfYear();
-        }
-
-        if (x.getDayOfMonth() <= 9) {
-            dayS = "0" + x.getDayOfMonth();
-        }
-        date = x.getYear() + "-" + monthS + "-" + dayS;
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                month++;
-                String monthS, dayS;
-                monthS = Integer.toString(month);
-                dayS = Integer.toString(dayOfMonth);
-                if (month <= 9) {
-                    monthS = "0" + month;
-                }
-
-                if (dayOfMonth <= 9) {
-                    dayS = "0" + dayOfMonth;
-                }
-
-                if(selectedDate == 0){
-                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
-                    date = year + "-" + monthS + "-" + dayS;
-                }else{
-                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
-                    date2 = year + "-" + monthS + "-" + dayS;
-                }
-            }
-        };
-
+        setDate();
         currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -244,7 +205,54 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(COST, amount.getText().toString());
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+    }
+
+    public void setDate(){
+        DateTime x = new DateTime();
+        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
+        String monthS, dayS;
+        monthS = Integer.toString(x.getMonthOfYear());
+        dayS = Integer.toString(x.getDayOfMonth());
+        if (x.getMonthOfYear() <= 9) {
+            monthS = "0" + x.getMonthOfYear();
+        }
+
+        if (x.getDayOfMonth() <= 9) {
+            dayS = "0" + x.getDayOfMonth();
+        }
+        date = x.getYear() + "-" + monthS + "-" + dayS;
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                month++;
+                String monthS, dayS;
+                monthS = Integer.toString(month);
+                dayS = Integer.toString(dayOfMonth);
+                if (month <= 9) {
+                    monthS = "0" + month;
+                }
+
+                if (dayOfMonth <= 9) {
+                    dayS = "0" + dayOfMonth;
+                }
+
+                if(selectedDate == 0){
+                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date = year + "-" + monthS + "-" + dayS;
+                }else{
+                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
+                    date2 = year + "-" + monthS + "-" + dayS;
+                }
+            }
+        };
     }
 }
