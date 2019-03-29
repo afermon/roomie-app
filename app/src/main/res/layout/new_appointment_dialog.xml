@@ -59,6 +59,7 @@
         android:inputType="textMultiLine"
         android:maxLength="220"
         android:minLines="3"
+        android:maxLines="6"
         android:singleLine="false"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
