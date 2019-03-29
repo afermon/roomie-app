@@ -49,7 +49,7 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
     @BindView(R.id.progress)
     ProgressBar progress;
 
-    @BindView(R.id.main_container)
+    @BindView(R.id.lifestyles_constraint)
     ConstraintLayout cont;
 
 
@@ -65,6 +65,7 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
         Roomie roomie = getIntent().getParcelableExtra("lifestyles");
         addedLifestyles = roomie.getLifestyles();
         allRecycler.setLayoutManager(managerAll);
+        showProgress(true);
         roomFeatureService.getAll();
     }
 
@@ -136,7 +137,7 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
 
         mAdapterAll = new AllLifestylesAdapter(allLifestyles);
         allRecycler.setAdapter(mAdapterAll);
-
+        showProgress(false);
     }
 
     @Override
