@@ -37,6 +37,7 @@ public class UserService implements UserInterface {
     private static final String PASSWORD_PREF = "JhiPassword";
     private static final String GOOGLE_SAVED_PREF = "JhiGoogle";
     private static final String FACEBOOK_SAVED_PREF = "JhiFacebook";
+    private static final String FIREBASE_DEVICE_ID = "JhiDeviceID";
 
     private final Handler handler;
     private final boolean keepLogedIn;
@@ -452,5 +453,17 @@ public class UserService implements UserInterface {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void setMobileDeviceID(String mobileDeviceID) {
+        preferences.edit()
+                .putString(FIREBASE_DEVICE_ID, mobileDeviceID)
+                .apply();
+    }
+
+    @Override
+    public String getMobileDeviceID() {
+        return preferences.getString(FIREBASE_DEVICE_ID, "");
     }
 }

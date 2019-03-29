@@ -10,6 +10,11 @@
         android:icon="@drawable/ic_action_user"
         />
     <item
+        android:id="@+id/navigation_view_add"
+        android:title="@string/bottom_nav_add"
+        android:icon="@drawable/icon_add_white"
+        />
+    <item
         android:id="@+id/navigation_view_notifications"
         android:title="@string/bottom_nav_notifications"
         android:icon="@drawable/ic_action_notification"

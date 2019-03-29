@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
-    tools:context=".view.MainOptionsFragment">
+    tools:context=".view.MainOptionsFragment"
+    android:paddingBottom="50dp"
+    android:clipToPadding="false">
 
     <View
         android:id="@+id/view16"

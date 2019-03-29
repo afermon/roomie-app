@@ -202,4 +202,7 @@
     <string name="no_lifestyles_assignded">You have no lifestyles assigned</string>
     <string name="lifestyles_hint">*Tap on a lifestyle to add or remove it from your profile.</string>
     <string name="no_lifestyles_left">There are no more lifestyles</string>
+    <string name="default_notification_channel_id">roomie_default_channel</string>
+    <string name="bottom_nav_add">add</string>
+    <string name="to_do_list_title">To do list</string>
 </resources>

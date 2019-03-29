@@ -3,13 +3,14 @@ package com.cosmicode.roomie;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
@@ -24,9 +25,13 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener,
@@ -45,11 +50,14 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     private BottomNavigationView navigationView;
     private RoomieService roomieService;
     private Roomie currentRoomie;
+    private static final String TAG = "MainActivity";
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
     public static final String JHIUSER_LAST = "jhiLast";
+    private MenuItem currentMenuItem;
 
+    @BindView(R.id.navigation_view) RoomieBottomNavigationView bottomNavigationView;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -61,12 +69,18 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+        if(currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId()) return true;
+        
+        currentMenuItem = menuItem;
+
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
                 MainSearchFragment homeFragment = MainSearchFragment.newInstance("");
@@ -112,13 +126,13 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
             GoogleSignInOptions gso = (new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)).requestServerAuthCode(getString(R.string.default_web_client_id2)).requestEmail().build();
             GoogleSignIn.getClient(this, gso).signOut();
         } catch (Exception e) {
-            //Ignore TODO: LOG
+            Log.e(TAG, e.getMessage());
         }
 
         try {
             LoginManager.getInstance().logOut();
         } catch (Exception e) {
-            //Ignore TODO: LOG
+            Log.e(TAG, e.getMessage());
         }
 
         getJhiUsers().logout();
@@ -145,6 +159,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         this.currentRoomie = roomie;
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
+        if(getJhiUsers().getMobileDeviceID().equals("") || currentRoomie.getMobileDeviceID().equals("") || !currentRoomie.getMobileDeviceID().equals(getJhiUsers().getMobileDeviceID())) registerDeviceFirebaseCloudMessaging();
         openFragment(MainSearchFragment.newInstance(""), "up");
     }
 
@@ -170,6 +185,27 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public void onGetUserError(String error) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, SnackMessageType.ERROR);
+    }
+
+    private void registerDeviceFirebaseCloudMessaging(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "getInstanceId failed", task.getException());
+                    return;
+                }
+                // Get new Instance ID token
+                String mobileDeviceID = task.getResult().getToken();
+                Log.d(TAG, String.format("MobileDeviceID: %s", mobileDeviceID));
+                getJhiUsers().setMobileDeviceID(mobileDeviceID);
+                currentRoomie.setMobileDeviceID(mobileDeviceID);
+                roomieService.updateRoomie(currentRoomie);
+            });
+    }
+
+    @OnClick(R.id.navigation_view_add_fab)
+    public void newListing(){
+        startActivity(new Intent(this, CreateListingActivity.class));
     }
 }
