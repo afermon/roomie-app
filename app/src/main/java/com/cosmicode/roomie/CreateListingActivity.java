@@ -24,7 +24,10 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         room = new RoomCreate();
         room.setState(RoomState.SEARCH);
         room.setLookingForRoomie(true);
-
+        room.setFeatures(null);
+        room.setMonthly(null);
+        room.setAddress(null);
+        room.setPicturesUris(null);
         setContentView(R.layout.activity_create_listing);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room));
@@ -32,6 +35,21 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         transaction.commit();
     }
 
+    public void openFragment(Fragment fragment, String start) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (start) {
+            case "left":
+                transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, 0, 0);
+                break;
+            case "right":
+                transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
+                break;
+            case "up":
+        }
+        transaction.replace(R.id.listing_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
     public BaseActivity getBaseActivity() {
         return this;

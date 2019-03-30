@@ -24,6 +24,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomCreate;
@@ -35,8 +36,11 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class ListingCost extends Fragment implements Validator.ValidationListener {
@@ -51,9 +55,11 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private RoomExpense roomExpense;
     private static final String COST = "cost";
 
+    @BindView(R.id.error_text)
+    TextView error;
     @NotEmpty
     @BindView(R.id.edit_amount)
-    EditText amount;
+    CurrencyEditText amount;
     @NotEmpty
     @BindView(R.id.movein_date)
     TextView dateText;
@@ -87,8 +93,11 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
-            roomExpense = new RoomExpense();
-            roomExpense.setCurrency(CurrencyType.COLON);
+            if (room.getMonthly() == null) {
+                roomExpense = new RoomExpense();
+                roomExpense.setCurrency(CurrencyType.COLON);
+                room.setMonthly(roomExpense);
+            }
         }
     }
 
@@ -104,17 +113,34 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        date2 = "";
+
+        amount.setDecimalDigits(0);
+        if (room.getMonthly().getCurrency() != null) {
+            if (room.getMonthly().getCurrency() == CurrencyType.COLON) {
+                currency.check(R.id.radio_crc);
+                amount.setLocale(new Locale("es", "cr"));
+            } else {
+                currency.check(R.id.radio_usd);
+                amount.setLocale(Locale.US);
+            }
+        }
+
+        if (room.getMonthly().getAmount() != null) {
+            amount.setValue(room.getMonthly().getAmount().longValue());
+        }
+
         setDate();
         currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.radio_crc:
-                        roomExpense.setCurrency(CurrencyType.COLON);
+                        room.getMonthly().setCurrency(CurrencyType.COLON);
+                        amount.setLocale(new Locale("es", "cr"));
                         break;
                     case R.id.radio_usd:
-                        roomExpense.setCurrency(CurrencyType.DOLLAR);
+                        room.getMonthly().setCurrency(CurrencyType.DOLLAR);
+                        amount.setLocale(Locale.US);
                         break;
                 }
             }
@@ -128,32 +154,33 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     @OnClick(R.id.back_cost)
     public void back(View view) {
-        getFragmentManager().popBackStackImmediate();
+        saveState();
+        mListener.openFragment(ListingBasicInformation.newInstance(room), "left");
     }
 
     @OnClick(R.id.btn_next)
-    public void onClickNext(View view){
-        roomExpense.setName("Monthly rent");
-        String newStr = amount.getText().toString().replaceAll("[,]", "");
-        roomExpense.setAmount(Double.parseDouble(newStr));
-        roomExpense.setPeriodicity(30);
-        roomExpense.setMonthDay(1);
-        roomExpense.setStartDate(date);
-        room.setAvailableFrom(date);
-        if(!date2.equals("")){
-            roomExpense.setFinishDate(date2);
-        }
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingChoosePictures.newInstance(room, roomExpense) );
-        transaction.addToBackStack(null);
-        transaction.commit();
+    public void onClickNext(View view) {
+        saveState();
+        mListener.openFragment(ListingChoosePictures.newInstance(room),"right");
     }
 
-
+    private void saveState() {
+        room.getMonthly().setName("Monthly rent");
+        room.getMonthly().setAmount((double) amount.getRawValue());
+        room.getMonthly().setPeriodicity(30);
+        room.getMonthly().setMonthDay(1);
+        room.getMonthly().setStartDate(date);
+        room.setAvailableFrom(date);
+        if (!date2.equals("")) {
+            room.getMonthly().setFinishDate(date2);
+        }else{
+            room.getMonthly().setFinishDate(null);
+        }
+    }
 
     @OnClick(R.id.date_picker)
     public void onClickDate(View view) {
+        error.setVisibility(View.GONE);
         dateText.setError(null);
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
@@ -165,6 +192,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     @OnClick(R.id.date_picker2)
     public void onClickDate2(View view) {
+        error.setVisibility(View.GONE);
         dateText2.setError(null);
         DateTime max = new DateTime();
         DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear(), max.getDayOfMonth());
@@ -225,22 +253,34 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+        void openFragment(Fragment fragment, String start);
     }
 
-    public void setDate(){
-        DateTime x = new DateTime();
-        dateText.setText(x.getDayOfMonth() + "/" + x.getMonthOfYear() + "/" +x.getYear());
-        String monthS, dayS;
-        monthS = Integer.toString(x.getMonthOfYear());
-        dayS = Integer.toString(x.getDayOfMonth());
-        if (x.getMonthOfYear() <= 9) {
-            monthS = "0" + x.getMonthOfYear();
+    public void setDate() {
+        DateTime x;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTime start, finish;
+
+        if (room.getMonthly().getStartDate() != null) {
+            start = dateTimeFormatter.parseDateTime(room.getMonthly().getStartDate());
+            x = start;
+        } else {
+            x = new DateTime();
         }
 
-        if (x.getDayOfMonth() <= 9) {
-            dayS = "0" + x.getDayOfMonth();
+        if(room.getMonthly().getFinishDate() != null){
+            finish = dateTimeFormatter.parseDateTime(room.getMonthly().getFinishDate());
+            date2 = getDateString(finish);
+            dateText2.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
+        }else{
+            date2 = "";
+            dateText2.setText(getString(R.string.no_move_out));
         }
-        date = x.getYear() + "-" + monthS + "-" + dayS;
+
+        dateText.setText(String.format("%s/%s/%s", x.getDayOfMonth(), x.getMonthOfYear(), x.getYear()));
+        date = getDateString(x);
+
+
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -257,14 +297,41 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
                     dayS = "0" + dayOfMonth;
                 }
 
-                if(selectedDate == 0){
-                    dateText.setText(dayOfMonth + "/" + month  + "/" + year);
+                if (selectedDate == 0) {
+                    dateText.setText(String.format("%s/%s/%s", dayOfMonth, month, year));
                     date = year + "-" + monthS + "-" + dayS;
-                }else{
-                    dateText2.setText(dayOfMonth + "/" + month  + "/" + year);
+                } else {
                     date2 = year + "-" + monthS + "-" + dayS;
+
+                    DateTime startCompare, finishCompare;
+                    startCompare = dateTimeFormatter.parseDateTime(date);
+                    finishCompare = dateTimeFormatter.parseDateTime(date2);
+
+                    if(finishCompare.isBefore(startCompare)){
+                        error.setVisibility(View.VISIBLE);
+                        dateText2.setText(getString(R.string.no_move_out));
+                        date2 = "";
+                    }else{
+                        dateText2.setText(String.format("%s/%s/%s", dayOfMonth, month, year));
+                    }
+
                 }
             }
         };
+    }
+
+    private String getDateString(DateTime date){
+        String monthS, dayS;
+        monthS = Integer.toString(date.getMonthOfYear());
+        dayS = Integer.toString(date.getDayOfMonth());
+        if (date.getMonthOfYear() <= 9) {
+            monthS = "0" + date.getMonthOfYear();
+        }
+
+        if (date.getDayOfMonth() <= 9) {
+            dayS = "0" + date.getDayOfMonth();
+        }
+
+        return date.getYear() + "-" + monthS + "-" + dayS;
     }
 }

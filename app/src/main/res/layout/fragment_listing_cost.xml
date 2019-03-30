@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <faranjit.currency.edittext.CurrencyEditText
+    <com.blackcat.currencyedittext.CurrencyEditText
         android:id="@+id/edit_amount"
         android:layout_width="0dp"
         android:layout_height="57dp"
@@ -30,7 +30,6 @@
         android:layout_marginEnd="32dp"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textMultiLine|numberDecimal"
         android:maxLength="254"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
@@ -38,7 +37,8 @@
         android:paddingBottom="16dp"
         android:selectAllOnFocus="true"
         android:singleLine="false"
-        android:text="0.00"
+        android:text="0"
+        app:decimal_digits="0"
         android:textAlignment="viewEnd"
         android:textAppearance="@android:style/TextAppearance.Material"
         android:textColor="@color/black"
@@ -46,9 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view23"
-        app:locale="en_US"
-        app:showSymbol="false" />
+        app:layout_constraintTop_toBottomOf="@+id/view23" />
 
     <TextView
         android:id="@+id/edit_amount4"
@@ -191,25 +189,25 @@
         android:id="@+id/date_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
+        android:layout_marginStart="188dp"
         android:background="@null"
         android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="@+id/edit_amount3"
         app:layout_constraintTop_toBottomOf="@+id/view26"
-        app:layout_constraintVertical_bias="0.516"
         app:srcCompat="@drawable/ic_register_calendar" />
 
     <ImageButton
         android:id="@+id/date_picker2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="188dp"
         android:background="@null"
         android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintStart_toStartOf="@+id/edit_amount4"
         app:layout_constraintTop_toTopOf="@+id/edit_amount4"
+        app:layout_constraintVertical_bias="0.481"
         app:srcCompat="@drawable/ic_register_calendar" />
 
     <TextView
@@ -361,7 +359,7 @@
         <RadioButton
             android:id="@+id/radio_usd"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
             android:text="@string/usd"
@@ -383,5 +381,19 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title2" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/move_out_error"
+        android:textColor="@color/danger"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

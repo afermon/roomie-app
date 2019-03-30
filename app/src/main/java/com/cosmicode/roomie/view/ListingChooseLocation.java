@@ -105,7 +105,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @NotEmpty
     @Length(min = 4, max = 500)
     @BindView(R.id.address_desc)
-    TextView desc;
+    EditText desc;
     @BindView(R.id.back_location)
     ImageButton back;
     @BindView(R.id.btn_finished)
@@ -130,14 +130,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
-
             room = getArguments().getParcelable(ROOM);
-            address = new Address();
-            address.setLocation("10.3704815,-83.9526349");
-            address.setCity("No city");
-            address.setState("No state");
-
             uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
@@ -157,15 +150,30 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
                 .findFragmentById(R.id.map);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
+        if(room.getAddress() == null){
+            address = new Address();
+            address.setLocation("10.3704815,-83.9526349");
+            address.setCity("No city");
+            address.setState("No state");
+            room.setAddress(address);
+            locationChanged = false;
+        }else{
+            desc.setText(room.getAddress().getDescription());
+            notes.setText(room.getApoinmentsNotes());
+            locationChanged = true;
+        }
+
+        mapFragment.getMapAsync(this);
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
-                address.setState(data.getStringExtra("State"));
-                address.setCity(data.getStringExtra("City"));
+                room.getAddress().setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
+                room.getAddress().setState(data.getStringExtra("State"));
+                room.getAddress().setCity(data.getStringExtra("City"));
                 locationChanged = true;
                 mapFragment.getMapAsync(this);
             }
@@ -200,12 +208,18 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     }
 
+    private void saveState(){
+        room.getAddress().setDescription(desc.getText().toString());
+        room.setApoinmentsNotes(notes.getText().toString());
+    }
+
     @OnClick(R.id.cancel_location)
     public void finish(View view){ getActivity().finish();}
 
     @OnClick(R.id.back_location)
     public void back(View view) {
-        getFragmentManager().popBackStackImmediate();
+        saveState();
+        mListener.openFragment(ListingChoosePictures.newInstance(room), "left");
     }
 
     @Override
@@ -238,7 +252,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
-        LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+        LatLng location = new LatLng(room.getAddress().getLatitude(), room.getAddress().getLongitude());
 
         if (locationChanged) {
             gMap.addMarker(new MarkerOptions().position(location));
@@ -289,24 +303,6 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         });
 
 
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            address = savedInstanceState.getParcelable("address");
-            locationChanged = savedInstanceState.getBoolean("locchanged");
-            mapFragment.getMapAsync(this);
-
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("address", address);
-        outState.putBoolean("locchanged", locationChanged);
     }
 
     @OnClick(R.id.btn_finished)
@@ -369,10 +365,9 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
-        address.setDescription(desc.getText().toString());
         room.setRoomType(RoomType.ROOM);
         room.setPremium(false);
-        room.setApoinmentsNotes(notes.getText().toString());
+        saveState();
         DateTime now = DateTime.now();
         String month, day, hour, minutes, seconds;
         month = Integer.toString(now.getMonthOfYear());
@@ -418,7 +413,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @Override
     public void onCreatePicSuccess() {
         if (picAmount == 0) {
-            roomService.updateRoomIndexing(room, address, room.getMonthly());
+            roomService.updateRoomIndexing(room, room.getAddress(), room.getMonthly());
         }
     }
 
@@ -451,6 +446,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+        void openFragment(Fragment fragment, String start);
     }
 
     private void showProgress(boolean show) {

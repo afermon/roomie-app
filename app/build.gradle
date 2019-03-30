@@ -70,7 +70,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:17.5.0'
     implementation 'com.google.android.libraries.places:places:1.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
-//    implementation 'com.github.jrvansuita:PickImage:2.2.4'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'net.danlew:android.joda:2.10.1.1'
     implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
@@ -78,7 +77,7 @@ dependencies {
     implementation 'com.asksira.android:bsimagepicker:1.1.0'
     implementation 'com.github.Jay-Goo:RangeSeekBar:v2.0.4'
     implementation 'com.synnapps:carouselview:0.1.5'
-    implementation 'androidx.viewpager:viewpager:1.0.0'
+    implementation 'com.github.blackcat27:library:2.0.2-SNAPSHOT'
 }
 
 apply plugin: 'com.google.gms.google-services'
