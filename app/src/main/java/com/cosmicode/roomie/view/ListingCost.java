@@ -50,10 +50,10 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private RoomCreate room;
     private String date, date2;
     private OnFragmentInteractionListener mListener;
-    private Validator validator;
     private static int selectedDate;
     private RoomExpense roomExpense;
     private static final String COST = "cost";
+
 
     @BindView(R.id.error_text)
     TextView error;
@@ -105,6 +105,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_cost, container, false);
+        mListener.changePercentage(50);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -254,6 +255,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void openFragment(Fragment fragment, String start);
+        void changePercentage(int progress);
     }
 
     public void setDate() {

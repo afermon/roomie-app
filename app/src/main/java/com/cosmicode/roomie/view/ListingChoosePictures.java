@@ -42,7 +42,6 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
     private RoomCreate room;
     private BSImagePicker multiSelectionPicker;
 
-
     @BindView(R.id.btn_next)
     Button next;
 
@@ -90,6 +89,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_choose_pictures, container, false);
+        mListener.changePercentage(75);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -165,6 +165,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void openFragment(Fragment fragment, String start);
+        void changePercentage(int progress);
     }
 
     private void showProgress(boolean show) {

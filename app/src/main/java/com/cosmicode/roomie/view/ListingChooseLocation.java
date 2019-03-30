@@ -94,7 +94,6 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     private RoomPictureService roomPictureService;
     private static int picAmount;
     private Validator validator;
-    private Room newRoom;
 
     @NotEmpty
     @Length(min = 4, max = 200)
@@ -227,6 +226,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_listing_choose_location, container, false);
+        mListener.changePercentage(100);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -447,6 +447,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void openFragment(Fragment fragment, String start);
+        void changePercentage(int progress);
     }
 
     private void showProgress(boolean show) {
