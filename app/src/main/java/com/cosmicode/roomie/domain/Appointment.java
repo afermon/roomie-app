@@ -94,6 +94,17 @@ public class Appointment implements Parcelable {
         this.roomId = roomId;
     }
 
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", dateTime='" + dateTime + '\'' +
+                ", state=" + state +
+                ", petitionerId=" + petitionerId +
+                ", roomId=" + roomId +
+                '}';
+    }
 
     @Override
     public int describeContents() {

@@ -5,60 +5,49 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.CreateListingActivity;
 import com.cosmicode.roomie.R;
-
-import org.w3c.dom.Text;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainOptionsFragment.OnFragmentInteractionListener} interface
+ * {@link MainOptionsBottomSheetDialogFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MainOptionsFragment#newInstance} factory method to
+ * Use the {@link MainOptionsBottomSheetDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainOptionsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private TextView name, email, exit;
+public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private Button button, listing;
+    @BindView(R.id.options_name) TextView name;
+
+    @BindView(R.id.options_mail) TextView email;
+
     private OnFragmentInteractionListener mListener;
-    private ImageButton configuration, rooms;
 
-    public MainOptionsFragment() {
+    public MainOptionsBottomSheetDialogFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainOptionsFragment.
+     * @return A new instance of fragment MainOptionsBottomSheetDialogFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MainOptionsFragment newInstance(String param1, String param2) {
-        MainOptionsFragment fragment = new MainOptionsFragment();
+    public static MainOptionsBottomSheetDialogFragment newInstance() {
+        MainOptionsBottomSheetDialogFragment fragment = new MainOptionsBottomSheetDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,8 +56,6 @@ public class MainOptionsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
     }
@@ -76,34 +63,53 @@ public class MainOptionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_options, container, false);
+        View view = inflater.inflate(R.layout.fragment_main_options, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        TextView logout_button = getView().findViewById(R.id.exit_text);
-        button = getView().findViewById(R.id.button4);
-        name = getView().findViewById(R.id.options_name);
-        email = getView().findViewById(R.id.options_mail);
-        rooms = getView().findViewById(R.id.rooms);
-        rooms.setOnClickListener( v -> {
-            startActivity(new Intent(getContext(), CreateListingActivity.class));
-        });
-        configuration = getView().findViewById(R.id.configuration);
-        configuration.setOnClickListener(this::openConfiguration);
-        button.setOnClickListener(this::openTasks);
-        logout_button.setOnClickListener(v -> {
-            if (mListener != null) {
-
-                mListener.performLogout();
-            }
-        });
+        if(mListener != null)
         mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> {
             name.setText(user.getFullName());
             email.setText(user.getEmail());
         });
+    }
 
+    @OnClick(R.id.option_room)
+    public void optionRoom() {
+        startActivity(new Intent(getContext(), CreateListingActivity.class));
+        this.dismiss();
+    }
+
+    @OnClick(R.id.option_appointments)
+    public void optionAppointments() {
+        this.dismiss();
+    }
+
+    @OnClick(R.id.option_subscriptions)
+    public void optionSubscriptions() {
+        this.dismiss();
+    }
+
+    @OnClick(R.id.option_configuration)
+    public void optionConfiguration() {
+        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
+        openFragment(mainConfigurationFragment);
+        this.dismiss();
+    }
+
+    @OnClick(R.id.option_report_problem)
+    public void optionReportProblem() {
+        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
+        openFragment(todoFragment);
+        this.dismiss();
+    }
+
+    @OnClick(R.id.option_logout)
+    public void optionLogout() {
+        if (mListener != null)  mListener.performLogout();
     }
 
     @Override
@@ -115,17 +121,6 @@ public class MainOptionsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    public void openTasks(View view){
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
-        openFragment(todoFragment);
-    }
-
-
-    public void openConfiguration(View view){
-        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
-        openFragment(mainConfigurationFragment);
     }
 
     private void openFragment(Fragment fragment) {

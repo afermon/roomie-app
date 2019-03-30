@@ -9,13 +9,15 @@ import android.view.MenuItem;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.SearchFilter;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
-import com.cosmicode.roomie.view.MainOptionsFragment;
+import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment;
@@ -26,6 +28,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,7 +42,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         BottomNavigationView.OnNavigationItemSelectedListener,
         ToDoLIstFragment.OnFragmentInteractionListener,
         NewTaskFragment.OnFragmentInteractionListener,
-        MainOptionsFragment.OnFragmentInteractionListener,
+        MainOptionsBottomSheetDialogFragment.OnFragmentInteractionListener,
         MainProfileFragment.OnFragmentInteractionListener,
         MainEditProfileFragment.OnFragmentInteractionListener,
         MainNotificationFragment.OnFragmentInteractionListener,
@@ -56,6 +60,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     public static final String JHIUSER_NAME = "jhiName";
     public static final String JHIUSER_LAST = "jhiLast";
     private MenuItem currentMenuItem;
+    private SearchFilter searchFilter;
 
     @BindView(R.id.navigation_view) RoomieBottomNavigationView bottomNavigationView;
 
@@ -73,17 +78,18 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
+        searchFilter = new SearchFilter("", 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         if(currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId()) return true;
-        
-        currentMenuItem = menuItem;
+
+        if(menuItem.getItemId() != R.id.navigation_view_options) currentMenuItem = menuItem;
 
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
-                MainSearchFragment homeFragment = MainSearchFragment.newInstance("");
+                MainSearchFragment homeFragment = MainSearchFragment.newInstance(searchFilter);
                 openFragment(homeFragment, "right");
                 return true;
             case R.id.navigation_view_account:
@@ -95,11 +101,11 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 openFragment(notificationFragment, "left");
                 return true;
             case R.id.navigation_view_options:
-                MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
-                openFragment(optionsFragment, "left");
-                return true;
+                MainOptionsBottomSheetDialogFragment mainOptionsBottomSheetDialogFragment = new MainOptionsBottomSheetDialogFragment();
+                mainOptionsBottomSheetDialogFragment.show(getSupportFragmentManager(), mainOptionsBottomSheetDialogFragment.getTag());
+                return false;
             default:
-                MainSearchFragment defaultFragment = MainSearchFragment.newInstance("");
+                MainSearchFragment defaultFragment = MainSearchFragment.newInstance(searchFilter);
                 openFragment(defaultFragment, "right");
                 return super.onOptionsItemSelected(menuItem);
         }
@@ -149,8 +155,13 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     }
 
     @Override
+    public void onSearchFilterUpdated(SearchFilter searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    @Override
     public void returnToHomeFragment() {
-        MainSearchFragment mainSearchFragment = MainSearchFragment.newInstance("");
+        MainSearchFragment mainSearchFragment = MainSearchFragment.newInstance(searchFilter);
         openFragment(mainSearchFragment, "up");
     }
 
@@ -160,7 +171,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
         if(getJhiUsers().getMobileDeviceID().equals("") || currentRoomie.getMobileDeviceID().equals("") || !currentRoomie.getMobileDeviceID().equals(getJhiUsers().getMobileDeviceID())) registerDeviceFirebaseCloudMessaging();
-        openFragment(MainSearchFragment.newInstance(""), "up");
+        openFragment(MainSearchFragment.newInstance(searchFilter), "up");
     }
 
     @Override
