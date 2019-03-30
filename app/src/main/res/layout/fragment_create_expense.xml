@@ -8,6 +8,21 @@
     android:clipToPadding="false"
     tools:context=".view.NewExpenseFragment" >
 
+    <ProgressBar
+        android:id="@+id/progress2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/AmoutSplit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
     <ImageButton
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
@@ -525,7 +540,7 @@
     </ScrollView>
 
     <ScrollView
-        android:id="@+id/scrollView3"
+        android:id="@+id/add_person_expense"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
@@ -533,7 +548,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/cardView2"
+        app:layout_constraintBottom_toTopOf="@+id/AmoutSplit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_expense">
@@ -572,7 +587,7 @@
     </ScrollView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
+        android:id="@+id/AmoutSplit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
