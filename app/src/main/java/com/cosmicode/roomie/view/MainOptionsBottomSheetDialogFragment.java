@@ -85,6 +85,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_appointments)
     public void optionAppointments() {
+        AppointmentsListFragment appointmentsListFragment = new AppointmentsListFragment();
+        openFragment(appointmentsListFragment);
         this.dismiss();
     }
 
