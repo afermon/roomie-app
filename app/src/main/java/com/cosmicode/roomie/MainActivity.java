@@ -17,7 +17,7 @@ import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
-import com.cosmicode.roomie.view.MainOptionsFragment;
+import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment;
@@ -42,7 +42,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         BottomNavigationView.OnNavigationItemSelectedListener,
         ToDoLIstFragment.OnFragmentInteractionListener,
         NewTaskFragment.OnFragmentInteractionListener,
-        MainOptionsFragment.OnFragmentInteractionListener,
+        MainOptionsBottomSheetDialogFragment.OnFragmentInteractionListener,
         MainProfileFragment.OnFragmentInteractionListener,
         MainEditProfileFragment.OnFragmentInteractionListener,
         MainNotificationFragment.OnFragmentInteractionListener,
@@ -84,8 +84,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         if(currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId()) return true;
-        
-        currentMenuItem = menuItem;
+
+        if(menuItem.getItemId() != R.id.navigation_view_options) currentMenuItem = menuItem;
 
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
@@ -101,9 +101,9 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 openFragment(notificationFragment, "left");
                 return true;
             case R.id.navigation_view_options:
-                MainOptionsFragment optionsFragment = MainOptionsFragment.newInstance("", "");
-                openFragment(optionsFragment, "left");
-                return true;
+                MainOptionsBottomSheetDialogFragment mainOptionsBottomSheetDialogFragment = new MainOptionsBottomSheetDialogFragment();
+                mainOptionsBottomSheetDialogFragment.show(getSupportFragmentManager(), mainOptionsBottomSheetDialogFragment.getTag());
+                return false;
             default:
                 MainSearchFragment defaultFragment = MainSearchFragment.newInstance(searchFilter);
                 openFragment(defaultFragment, "right");
