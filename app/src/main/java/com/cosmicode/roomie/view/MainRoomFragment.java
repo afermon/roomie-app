@@ -22,14 +22,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -43,8 +41,8 @@ import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.service.AppointmentService;
 import com.cosmicode.roomie.service.RoomieService;
-import com.cosmicode.roomie.service.UserService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.google.android.flexbox.FlexDirection;
@@ -68,12 +66,13 @@ import java.util.Calendar;
 import java.util.List;
 
 
-public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback {
+public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback, AppointmentService.OnAppointmentListener {
 
     private static final String TAG = "MainRoomFragment";
     private static final String ROOM = "room";
     private Room room;
     private RoomieService roomieService;
+    private AppointmentService appointmentService;
     private Roomie roomie;
     private RecyclerView.Adapter mAdapterA, mAdapterR;
     private SupportMapFragment map;
@@ -133,6 +132,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         if (getArguments() != null) {
             this.room = getArguments().getParcelable(ROOM);
             roomieService = new RoomieService(getContext());
+            appointmentService = new AppointmentService(getContext(), this);
         }
     }
 
@@ -292,6 +292,32 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onCreateAppointmentSuccess(Appointment appointment) {
+        ((BaseActivity) getContext()).showUserMessage(getString(R.string.appointment_created_message), BaseActivity.SnackMessageType.SUCCESS);
+        showProgress(false);
+    }
+
+    @Override
+    public void onUpdateAppointmentSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onGetAppointmentSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onGetAppointmentListSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onAppointmentError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(String.format("Error: %s", error), BaseActivity.SnackMessageType.ERROR);
+    }
+
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
         private List<RoomFeature> features;
 
@@ -381,19 +407,17 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
     @OnClick(R.id.appointment_btn)
     public void newAppointment(){
-        final Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
+        DateTime currentTime = DateTime.now();
+        int mYear = currentTime.getYear();
+        int mMonth = currentTime.getMonthOfYear() - 1;
+        int mDay = currentTime.getDayOfMonth();
+        int mHour = currentTime.getHourOfDay();
+        int mMinute = currentTime.getMinuteOfHour();
 
         Appointment appointment = new Appointment();
         appointment.setRoomId(room.getId());
         appointment.setState(AppointmentState.PENDING);
         //Petitioner will be set in backend
-
-
 
         AlertDialog.Builder newAppointmentDialogBuilder = new AlertDialog.Builder(getContext());
 
@@ -409,13 +433,13 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
                     (view, year, monthOfYear, dayOfMonth) -> {
                         Log.d( TAG, dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                         TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.RoomieDialogTheme,
-                                (viewt, hourOfDay, minute) -> {
+                                (view2, hourOfDay, minute) -> {
                                     Log.d(TAG, hourOfDay + ":" + minute);
-                                    appointmentDateTV.setText(String.format("%s-%s-%s %s:%s", mYear, mMonth, mDay,mHour, mMinute));
+                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", mDay, (mMonth + 1), mYear, mHour, mMinute));
                                 }, mHour, mMinute, false);
                         timePickerDialog.show();
                     }, mYear, mMonth, mDay);
-            datePickerDialog.getDatePicker().setMinDate(c.getTime().getTime());
+            datePickerDialog.getDatePicker().setMinDate(currentTime.getMillis());
             datePickerDialog.show();
         });
 
@@ -428,16 +452,23 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         newAppointmentDialog.show();
 
         newAppointmentDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            if(true /* VALIDATE*/) {
-                /*yyyy-MM-dd'T'HH:mm:ssZ*/
-                //TODO: work timezone
-                appointment.setDateTime(String.format("%s-%s-%sT%s:%s:00Z",mYear, mMonth, mDay, mHour, mMinute));
+            if(!appointmentDateTV.getText().toString().equals(getString(R.string.appointment_date))) {
+
+                DateTime appointmentDateTime = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm").parseDateTime(appointmentDateTV.getText().toString());
+
+                DateTimeFormatter roomieInstantFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ").withZoneUTC();
+
+                appointment.setDateTime(roomieInstantFormatter.print(appointmentDateTime));
                 appointment.setDesciption(appointmentDescriptionET.getText().toString());
+
                 Log.d(TAG, appointment.toString());
 
-                //TODO: Call service.
-                //showProgress(true);
+                appointmentService.createAppointment(appointment);
+                showProgress(true);
+
                 newAppointmentDialog.dismiss();
+            } else {
+                pickDateButton.performClick();
             }
         });
 

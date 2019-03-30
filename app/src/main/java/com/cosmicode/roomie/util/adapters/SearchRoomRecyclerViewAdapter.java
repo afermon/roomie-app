@@ -118,19 +118,19 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         Period period = new Period(published, now);
 
         PeriodFormatterBuilder builder = new PeriodFormatterBuilder();
-        //TODO: Replace for strings
+
         if(period.getYears() != 0) {
-            builder.appendYears().appendSuffix(" year ago", " years ago");
+            builder.appendYears().appendSuffix(mContext.getString(R.string.time_year), mContext.getString(R.string.time_years));
         } else if(period.getMonths() != 0) {
-            builder.appendMonths().appendSuffix(" month ago", " months ago");
+            builder.appendMonths().appendSuffix(mContext.getString(R.string.time_month), mContext.getString(R.string.time_months));
         } else if(period.getDays() != 0) {
-            builder.appendDays().appendSuffix(" day ago", " days ago");
+            builder.appendDays().appendSuffix(mContext.getString(R.string.time_day), mContext.getString(R.string.time_days));
         } else if(period.getHours() != 0) {
-            builder.appendHours().appendSuffix(" hour ago", " hours ago");
+            builder.appendHours().appendSuffix(mContext.getString(R.string.time_hour), mContext.getString(R.string.time_hours));
         } else if(period.getMinutes() != 0) {
-            builder.appendMinutes().appendSuffix(" minute ago", " minutes ago");
+            builder.appendMinutes().appendSuffix(mContext.getString(R.string.time_minute), mContext.getString(R.string.time_minutes));
         } else if(period.getSeconds() != 0) {
-            builder.appendSeconds().appendSuffix(" second ago"," seconds ago");
+            builder.appendSeconds().appendSuffix(mContext.getString(R.string.time_second), mContext.getString(R.string.time_seconds));
         }
         PeriodFormatter formatter = builder.printZeroNever().toFormatter();
         String elapsed = formatter.print(period);

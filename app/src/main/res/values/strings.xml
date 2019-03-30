@@ -210,4 +210,17 @@
     <string name="appointment_description_hint">Tell the owner why you are a good fit!</string>
     <string name="send">Send</string>
     <string name="new_appointment_title">New appointment request</string>
+    <string name="appointment_created_message">Appointment created, you will get a notification once approved</string>
+    <string name="time_year">year ago</string>
+    <string name="time_years">years ago</string>
+    <string name="time_month">month ago</string>
+    <string name="time_months">months ago</string>
+    <string name="time_day">day ago</string>
+    <string name="time_days">days ago</string>
+    <string name="time_hours">hours ago</string>
+    <string name="time_hour">hour ago</string>
+    <string name="time_minute">minute ago</string>
+    <string name="time_minutes">minutes ago</string>
+    <string name="time_second">second ago</string>
+    <string name="time_seconds">seconds ago</string>
 </resources>
