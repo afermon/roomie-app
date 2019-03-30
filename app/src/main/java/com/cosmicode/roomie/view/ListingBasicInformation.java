@@ -3,14 +3,12 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -28,7 +26,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
@@ -98,7 +95,9 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
-            room.setFeatures(new ArrayList<>());
+            if(room.getFeatures() == null){
+                room.setFeatures(new ArrayList<>());
+            }
             validator = new Validator(this);
             validator.setValidationListener(this);
             roomFeatureService = new RoomFeatureService(getContext(), this);
@@ -132,6 +131,17 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(room.getTitle() != null){
+            headline.setText(room.getTitle());
+        }
+
+        if(room.getDescription() != null){
+            desc.setText(room.getDescription());
+        }
+
+        if(room.getRooms() != null){
+            amount.setText(String.format("%s", room.getRooms()));
+        }
         amenities.setLayoutManager(new GridLayoutManager(getContext(), 4));
         restrictions.setLayoutManager(new GridLayoutManager(getContext(), 4));
 
@@ -167,12 +177,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         room.setTitle(headline.getText().toString());
         room.setDescription(desc.getText().toString());
         room.setRooms(Integer.parseInt(amount.getText().toString()));
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingCost.newInstance(room));
-        transaction.addToBackStack(null);
-        transaction.commit();
-
+        mListener.openFragment(ListingCost.newInstance(room), "right");
     }
 
     @Override
@@ -231,11 +236,18 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
+            if(isPresent(feature)){
+                holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+            }else{
+                holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+            }
             holder.icon.setOnClickListener(v -> {
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    room.getFeatures().remove(feature);
+                    room.getFeatures().remove(room.getFeatures().stream().filter(f -> f.getId().equals(feature.getId())).findAny().get());
                 } else {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
@@ -248,14 +260,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @OnClick(R.id.add_number)
     public void increase(View view) {
         int number = Integer.parseInt(amount.getText().toString());
-        amount.setText(Integer.toString((number + 1)));
+        amount.setText(String.format("%s", number + 1));
     }
 
     @OnClick(R.id.remove_number)
     public void decrease(View view) {
         int number = Integer.parseInt(amount.getText().toString());
         if (number > 1) {
-            amount.setText(Integer.toString((number - 1)));
+            amount.setText(String.format("%s", number - 1));
         }
     }
 
@@ -300,11 +312,20 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
+
+            if(isPresent(feature)){
+                holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
+            }else{
+                holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+            }
+
             holder.icon.setOnClickListener(v -> {
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                    room.getFeatures().remove(feature);
+                    room.getFeatures().remove(room.getFeatures().stream().filter(f -> f.getId().equals(feature.getId())).findAny().get());
                 } else {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
@@ -312,6 +333,11 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
                 }
             });
         }
+    }
+
+
+    public boolean isPresent(RoomFeature ls){
+        return room.getFeatures().stream().anyMatch(f -> f.getId().equals(ls.getId()));
     }
 
     @OnClick(R.id.btn_next)
@@ -335,8 +361,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.back_basic)
     public void back(View view) {
-
-        startActivity(new Intent(getContext(), MainActivity.class));
+        getActivity().finish();
     }
 
 
@@ -373,7 +398,9 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
                 });
     }
 
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+        void openFragment(Fragment fragment, String start);
     }
 }

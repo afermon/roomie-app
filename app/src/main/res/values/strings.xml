@@ -156,7 +156,7 @@
     <string name="spinner_room">Room</string>
     <string name="spinner_apt">Apartment</string>
     <string name="spinner_house">House</string>
-    <string name="move_out">Move-out date</string>
+    <string name="move_out">Move-Out Date</string>
     <string name="pictures">Pictures</string>
     <string name="basic_info">Basic Information</string>
     <string name="amenities">Amenities</string>
@@ -205,4 +205,7 @@
     <string name="default_notification_channel_id">roomie_default_channel</string>
     <string name="bottom_nav_add">add</string>
     <string name="to_do_list_title">To do list</string>
+    <string name="no_amenities">No amenities assigned</string>
+    <string name="no_restrictions">No restrictiones assigned</string>
+    <string name="move_out_error">The move-out date can\'t be before the move-in date!</string>
 </resources>
