@@ -118,8 +118,8 @@ public class MainOptionsFragment extends Fragment {
     }
 
     public void openTasks(View view){
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
-        openFragment(todoFragment);
+        NewExpenseFragment newExpenseFragment = NewExpenseFragment.newInstance();
+        openFragment(newExpenseFragment);
     }
 
 

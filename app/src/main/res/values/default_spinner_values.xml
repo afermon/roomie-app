@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="days">
+        <item>1 Month</item>
+        <item>2 Month</item>
+        <item>3 Month</item>
+        <item>4 Month</item>
+        <item>5 Month</item>
+        <item>6 Month</item>
+        <item>7 Month</item>
+        <item>8 Month</item>
+    </string-array>
+</resources>
