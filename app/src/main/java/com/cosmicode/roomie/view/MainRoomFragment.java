@@ -2,20 +2,27 @@ package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,14 +33,17 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Appointment;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
+import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.service.AppointmentService;
 import com.cosmicode.roomie.service.RoomieService;
-import com.cosmicode.roomie.service.UserService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.google.android.flexbox.FlexDirection;
@@ -53,14 +63,17 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
-public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback {
+public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback, AppointmentService.OnAppointmentListener {
 
+    private static final String TAG = "MainRoomFragment";
     private static final String ROOM = "room";
     private Room room;
     private RoomieService roomieService;
+    private AppointmentService appointmentService;
     private Roomie roomie;
     private RecyclerView.Adapter mAdapterA, mAdapterR;
     private SupportMapFragment map;
@@ -98,6 +111,10 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     ProgressBar progress;
     @BindView(R.id.room_scroll)
     ScrollView scrollView;
+    @BindView(R.id.no_amenities)
+    TextView noAmenties;
+    @BindView(R.id.no_restrictions)
+    TextView noRestrictions;
 
 
     private OnFragmentInteractionListener mListener;
@@ -120,6 +137,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         if (getArguments() != null) {
             this.room = getArguments().getParcelable(ROOM);
             roomieService = new RoomieService(getContext());
+            appointmentService = new AppointmentService(getContext(), this);
         }
     }
 
@@ -170,6 +188,11 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             moveOut.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
 
         }
+        if(room.getPictures().isEmpty()){
+            RoomPicture p = new RoomPicture();
+            p.setUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW4YgDei5TJj0hNHD5HOuSAS7VFw0eP3zIKzjqE3efC0c7R46trg");
+            room.getPictures().add(p);
+        }
         carousel.setImageListener(imageListener);
         carousel.setPageCount(room.getPictures().size());
 
@@ -203,6 +226,18 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             } else if (feature.getType() == FeatureType.RESTRICTIONS) {
                 lRestrictions.add(feature);
             }
+        }
+
+        if(lAmenities.isEmpty()){
+            noAmenties.setVisibility(View.VISIBLE);
+        }else {
+            noAmenties.setVisibility(View.GONE);
+        }
+
+        if(lRestrictions.isEmpty()){
+            noRestrictions.setVisibility(View.VISIBLE);
+        }else {
+            noRestrictions.setVisibility(View.GONE);
         }
 
         mAdapterA = new AmenitiesAdapter(lAmenities);
@@ -277,6 +312,32 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     @Override
     public void onGetUserError(String error) {
         Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onCreateAppointmentSuccess(Appointment appointment) {
+        ((BaseActivity) getContext()).showUserMessage(getString(R.string.appointment_created_message), BaseActivity.SnackMessageType.SUCCESS);
+        showProgress(false);
+    }
+
+    @Override
+    public void onUpdateAppointmentSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onGetAppointmentSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onGetAppointmentListSuccess(Appointment appointment) {
+
+    }
+
+    @Override
+    public void onAppointmentError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(String.format("Error: %s", error), BaseActivity.SnackMessageType.ERROR);
     }
 
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {
@@ -363,6 +424,76 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
         }
+    }
+
+
+    @OnClick(R.id.appointment_btn)
+    public void newAppointment(){
+        DateTime currentTime = DateTime.now();
+        int mYear = currentTime.getYear();
+        int mMonth = currentTime.getMonthOfYear() - 1;
+        int mDay = currentTime.getDayOfMonth();
+        int mHour = currentTime.getHourOfDay();
+        int mMinute = currentTime.getMinuteOfHour();
+
+        Appointment appointment = new Appointment();
+        appointment.setRoomId(room.getId());
+        appointment.setState(AppointmentState.PENDING);
+        //Petitioner will be set in backend
+
+        AlertDialog.Builder newAppointmentDialogBuilder = new AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View newAppointmentLayout = inflater.inflate(R.layout.new_appointment_dialog, null);
+
+        Button pickDateButton = newAppointmentLayout.findViewById(R.id.pick_appointment_date_btn);
+        TextView appointmentDateTV = newAppointmentLayout.findViewById(R.id.appointment_date_tv);
+        EditText appointmentDescriptionET = newAppointmentLayout.findViewById(R.id.appointment_description);
+
+        pickDateButton.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), R.style.RoomieDialogTheme,
+                    (view, year, monthOfYear, dayOfMonth) -> {
+                        Log.d( TAG, dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.RoomieDialogTheme,
+                                (view2, hourOfDay, minute) -> {
+                                    Log.d(TAG, hourOfDay + ":" + minute);
+                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", mDay, (mMonth + 1), mYear, mHour, mMinute));
+                                }, mHour, mMinute, false);
+                        timePickerDialog.show();
+                    }, mYear, mMonth, mDay);
+            datePickerDialog.getDatePicker().setMinDate(currentTime.getMillis());
+            datePickerDialog.show();
+        });
+
+        newAppointmentDialogBuilder.setTitle(R.string.new_appointment_title)
+                .setView(newAppointmentLayout)
+                .setPositiveButton(R.string.send, (dialog, which) -> { })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog newAppointmentDialog = newAppointmentDialogBuilder.create();
+        newAppointmentDialog.show();
+
+        newAppointmentDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if(!appointmentDateTV.getText().toString().equals(getString(R.string.appointment_date))) {
+
+                DateTime appointmentDateTime = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm").parseDateTime(appointmentDateTV.getText().toString());
+
+                DateTimeFormatter roomieInstantFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ").withZoneUTC();
+
+                appointment.setDateTime(roomieInstantFormatter.print(appointmentDateTime));
+                appointment.setDesciption(appointmentDescriptionET.getText().toString());
+
+                Log.d(TAG, appointment.toString());
+
+                appointmentService.createAppointment(appointment);
+                showProgress(true);
+
+                newAppointmentDialog.dismiss();
+            } else {
+                pickDateButton.performClick();
+            }
+        });
+
     }
 
     private void showProgress(boolean show) {
