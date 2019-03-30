@@ -226,4 +226,10 @@
     <string name="no_amenities">No amenities assigned</string>
     <string name="no_restrictions">No restrictiones assigned</string>
     <string name="move_out_error">The move-out date can\'t be before the move-in date!</string>
+    <string name="my_rooms">My Rooms</string>
+    <string name="appointments">Appointments</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="configuration">Configuration</string>
+    <string name="report_a_problem">Report a problem</string>
+    <string name="logout">Logout</string>
 </resources>
