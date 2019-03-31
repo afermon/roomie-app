@@ -16,6 +16,7 @@ import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
+import com.cosmicode.roomie.view.MainMyRoomsFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
 import com.cosmicode.roomie.view.MainProfileFragment;
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainConfigurationFragment.OnFragmentInteractionListener,
         MainSearchFragment.OnFragmentInteractionListener,
         MainRoomFragment.OnFragmentInteractionListener,
+        MainMyRoomsFragment.OnFragmentInteractionListener,
         OnGetUserEmailListener {
 
     private BottomNavigationView navigationView;
@@ -214,6 +216,11 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
                 roomieService.updateRoomie(currentRoomie);
             });
     }
+
+    public Roomie getCurrentRoomie(){
+        return this.currentRoomie;
+    }
+
 
     @OnClick(R.id.navigation_view_add_fab)
     public void newListing(){

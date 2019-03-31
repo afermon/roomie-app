@@ -50,10 +50,10 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private RoomCreate room;
     private String date, date2;
     private OnFragmentInteractionListener mListener;
-    private Validator validator;
     private static int selectedDate;
     private RoomExpense roomExpense;
     private static final String COST = "cost";
+
 
     @BindView(R.id.error_text)
     TextView error;
@@ -105,6 +105,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_cost, container, false);
+        mListener.changePercentage(50);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -133,7 +134,8 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+                    mListener.hideKeyboard();
+                    switch (checkedId) {
                     case R.id.radio_crc:
                         room.getMonthly().setCurrency(CurrencyType.COLON);
                         amount.setLocale(new Locale("es", "cr"));
@@ -161,7 +163,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     @OnClick(R.id.btn_next)
     public void onClickNext(View view) {
         saveState();
-        mListener.openFragment(ListingChoosePictures.newInstance(room),"right");
+        mListener.openFragment(ListingChoosePictures.newInstance(room), "right");
     }
 
     private void saveState() {
@@ -173,13 +175,14 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         room.setAvailableFrom(date);
         if (!date2.equals("")) {
             room.getMonthly().setFinishDate(date2);
-        }else{
+        } else {
             room.getMonthly().setFinishDate(null);
         }
     }
 
     @OnClick(R.id.date_picker)
     public void onClickDate(View view) {
+        mListener.hideKeyboard();
         error.setVisibility(View.GONE);
         dateText.setError(null);
         DateTime max = new DateTime();
@@ -192,6 +195,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     @OnClick(R.id.date_picker2)
     public void onClickDate2(View view) {
+        mListener.hideKeyboard();
         error.setVisibility(View.GONE);
         dateText2.setError(null);
         DateTime max = new DateTime();
@@ -253,7 +257,12 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+
         void openFragment(Fragment fragment, String start);
+
+        void changePercentage(int progress);
+
+        void hideKeyboard();
     }
 
     public void setDate() {
@@ -268,11 +277,11 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
             x = new DateTime();
         }
 
-        if(room.getMonthly().getFinishDate() != null){
+        if (room.getMonthly().getFinishDate() != null) {
             finish = dateTimeFormatter.parseDateTime(room.getMonthly().getFinishDate());
             date2 = getDateString(finish);
             dateText2.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
-        }else{
+        } else {
             date2 = "";
             dateText2.setText(getString(R.string.no_move_out));
         }
@@ -307,11 +316,11 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
                     startCompare = dateTimeFormatter.parseDateTime(date);
                     finishCompare = dateTimeFormatter.parseDateTime(date2);
 
-                    if(finishCompare.isBefore(startCompare)){
+                    if (finishCompare.isBefore(startCompare)) {
                         error.setVisibility(View.VISIBLE);
                         dateText2.setText(getString(R.string.no_move_out));
                         date2 = "";
-                    }else{
+                    } else {
                         dateText2.setText(String.format("%s/%s/%s", dayOfMonth, month, year));
                     }
 
@@ -320,7 +329,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         };
     }
 
-    private String getDateString(DateTime date){
+    private String getDateString(DateTime date) {
         String monthS, dayS;
         monthS = Integer.toString(date.getMonthOfYear());
         dayS = Integer.toString(date.getDayOfMonth());

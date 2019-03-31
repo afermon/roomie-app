@@ -95,7 +95,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
-            if(room.getFeatures() == null){
+            if (room.getFeatures() == null) {
                 room.setFeatures(new ArrayList<>());
             }
             validator = new Validator(this);
@@ -108,6 +108,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listing_basic_information, container, false);
+        mListener.changePercentage(25);
         ButterKnife.bind(this, view);
         validator = new Validator(this);
         validator.setValidationListener(this);
@@ -131,15 +132,15 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(room.getTitle() != null){
+        if (room.getTitle() != null) {
             headline.setText(room.getTitle());
         }
 
-        if(room.getDescription() != null){
+        if (room.getDescription() != null) {
             desc.setText(room.getDescription());
         }
 
-        if(room.getRooms() != null){
+        if (room.getRooms() != null) {
             amount.setText(String.format("%s", room.getRooms()));
         }
         amenities.setLayoutManager(new GridLayoutManager(getContext(), 4));
@@ -155,7 +156,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             if (feature.getType() == FeatureType.AMENITIES) {
                 lAmenities.add(feature);
             } else {
-                if(feature.getType() == FeatureType.RESTRICTIONS){
+                if (feature.getType() == FeatureType.RESTRICTIONS) {
                     lRestrictions.add(feature);
                 }
             }
@@ -167,6 +168,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         restrictions.setAdapter(mAdapter2);
         showProgress(false);
     }
+
     @Override
     public void onGetFeaturesError(String error) {
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
@@ -236,14 +238,15 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             RoomFeature feature = this.features.get(position);
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
-            if(isPresent(feature)){
+            if (isPresent(feature)) {
                 holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-            }else{
+            } else {
                 holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
             }
             holder.icon.setOnClickListener(v -> {
+                mListener.hideKeyboard();
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
@@ -259,12 +262,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.add_number)
     public void increase(View view) {
+        mListener.hideKeyboard();
         int number = Integer.parseInt(amount.getText().toString());
         amount.setText(String.format("%s", number + 1));
     }
 
     @OnClick(R.id.remove_number)
     public void decrease(View view) {
+        mListener.hideKeyboard();
         int number = Integer.parseInt(amount.getText().toString());
         if (number > 1) {
             amount.setText(String.format("%s", number - 1));
@@ -313,15 +318,16 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             holder.iconText.setText(feature.getName());
             Glide.with(holder.itemView).load(feature.getIcon()).centerCrop().into(holder.icon);
 
-            if(isPresent(feature)){
+            if (isPresent(feature)) {
                 holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
                 holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary));
-            }else{
+            } else {
                 holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
             }
 
             holder.icon.setOnClickListener(v -> {
+                mListener.hideKeyboard();
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
@@ -336,12 +342,13 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     }
 
 
-    public boolean isPresent(RoomFeature ls){
+    public boolean isPresent(RoomFeature ls) {
         return room.getFeatures().stream().anyMatch(f -> f.getId().equals(ls.getId()));
     }
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view) {
+        mListener.hideKeyboard();
         validator.validate();
     }
 
@@ -401,6 +408,11 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+
         void openFragment(Fragment fragment, String start);
+
+        void changePercentage(int progress);
+
+        void hideKeyboard();
     }
 }

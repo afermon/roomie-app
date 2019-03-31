@@ -9,10 +9,12 @@ import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.SearchFilter;
+import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -23,10 +25,36 @@ public class RoomService {
     private String authToken;
     private RoomServiceListener listener;
 
-    public RoomService(Context context, RoomServiceListener listener) {
+    public RoomService(Context context){
         this.context = context;
-        this.listener = listener;
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
+    }
+    public RoomService(Context context, RoomServiceListener listener) {
+        this(context);
+        this.listener = listener;
+    }
+
+    public void getOwnedRooms(Long id, final OnGetOwnedRoomsListener listener){
+        RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+        Call<List<Room>> call = RoomApiService.getOwnedRooms(id);
+
+        call.enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if(response.code() == 200){
+                    listener.onGetOwnedRoomsSuccess(response.body());
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onGetOwnedRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.onGetOwnedRoomsError(t.getMessage());
+            }
+        });
     }
 
     public void createRoom(RoomCreate room) {
@@ -91,7 +119,7 @@ public class RoomService {
 
 
         AddressApiEndpointInterface AddressApiService = ApiServiceGenerator.createService(AddressApiEndpointInterface.class, authToken);
-        Call<Address> callA = AddressApiService .createAddress(address);
+        Call<Address> callA = AddressApiService.createAddress(address);
 
         RoomExpenseApiEndpointInterface ExpenseApiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
         Call<RoomExpense> callE = ExpenseApiService.createExpense(expense);
@@ -189,14 +217,14 @@ public class RoomService {
         });
     }
 
-public interface RoomServiceListener {
-    void OnCreateSuccess(Room room);
+    public interface RoomServiceListener {
+        void OnCreateSuccess(Room room);
 
-    void OnGetRoomsSuccess(List<Room> rooms);
+        void OnGetRoomsSuccess(List<Room> rooms);
 
-    void OnGetRoomsError(String error);
+        void OnGetRoomsError(String error);
 
-    void OnUpdateSuccess(Room room);
-}
+        void OnUpdateSuccess(Room room);
+    }
 
 }
