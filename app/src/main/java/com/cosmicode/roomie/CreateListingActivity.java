@@ -3,7 +3,10 @@ package com.cosmicode.roomie;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.cosmicode.roomie.domain.RoomCreate;
@@ -53,8 +56,17 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         transaction.commit();
     }
 
-    public void changePercentage(int progress){
+    public void changePercentage(int progress) {
         stepBar.setProgress(progress);
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public BaseActivity getBaseActivity() {

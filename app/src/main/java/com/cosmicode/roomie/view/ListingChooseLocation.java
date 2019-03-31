@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -23,6 +25,7 @@ import butterknife.OnClick;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,6 +71,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -130,6 +134,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            room.setPictures(new ArrayList<>());
             uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
@@ -149,14 +154,14 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
                 .findFragmentById(R.id.map);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
-        if(room.getAddress() == null){
+        if (room.getAddress() == null) {
             address = new Address();
             address.setLocation("10.3704815,-83.9526349");
             address.setCity("No city");
             address.setState("No state");
             room.setAddress(address);
             locationChanged = false;
-        }else{
+        } else {
             desc.setText(room.getAddress().getDescription());
             notes.setText(room.getApoinmentsNotes());
             locationChanged = true;
@@ -184,7 +189,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     public void onClickGeo(View view) {
 
-
+        mListener.hideKeyboard();
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
@@ -207,13 +212,15 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     }
 
-    private void saveState(){
+    private void saveState() {
         room.getAddress().setDescription(desc.getText().toString());
         room.setApoinmentsNotes(notes.getText().toString());
     }
 
     @OnClick(R.id.cancel_location)
-    public void finish(View view){ getActivity().finish();}
+    public void finish(View view) {
+        getActivity().finish();
+    }
 
     @OnClick(R.id.back_location)
     public void back(View view) {
@@ -307,6 +314,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     @OnClick(R.id.btn_finished)
     public void onClickFinish(View view) {
+        mListener.hideKeyboard();
         validator.validate();
     }
 
@@ -411,7 +419,8 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     }
 
     @Override
-    public void onCreatePicSuccess() {
+    public void onCreatePicSuccess(RoomPicture picture) {
+        room.getPictures().add(picture);
         if (picAmount == 0) {
             roomService.updateRoomIndexing(room, room.getAddress(), room.getMonthly());
         }
@@ -446,8 +455,12 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+
         void openFragment(Fragment fragment, String start);
+
         void changePercentage(int progress);
+
+        void hideKeyboard();
     }
 
     private void showProgress(boolean show) {

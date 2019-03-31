@@ -79,7 +79,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_room)
     public void optionRoom() {
-        startActivity(new Intent(getContext(), CreateListingActivity.class));
+        MainMyRoomsFragment mainMyRoomsFragment = new MainMyRoomsFragment();
+        openFragment(mainMyRoomsFragment);
         this.dismiss();
     }
 

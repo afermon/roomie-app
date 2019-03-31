@@ -246,6 +246,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
                 holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
             }
             holder.icon.setOnClickListener(v -> {
+                mListener.hideKeyboard();
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
@@ -261,12 +262,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.add_number)
     public void increase(View view) {
+        mListener.hideKeyboard();
         int number = Integer.parseInt(amount.getText().toString());
         amount.setText(String.format("%s", number + 1));
     }
 
     @OnClick(R.id.remove_number)
     public void decrease(View view) {
+        mListener.hideKeyboard();
         int number = Integer.parseInt(amount.getText().toString());
         if (number > 1) {
             amount.setText(String.format("%s", number - 1));
@@ -324,6 +327,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             }
 
             holder.icon.setOnClickListener(v -> {
+                mListener.hideKeyboard();
                 if (holder.iconText.getCurrentTextColor() == ContextCompat.getColor(getContext(), R.color.primary)) {
                     holder.iconText.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                     holder.icon.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
@@ -344,6 +348,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view) {
+        mListener.hideKeyboard();
         validator.validate();
     }
 
@@ -407,5 +412,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         void openFragment(Fragment fragment, String start);
 
         void changePercentage(int progress);
+
+        void hideKeyboard();
     }
 }
