@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,11 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @OnClick(R.id.back_prem)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 
     @Override
