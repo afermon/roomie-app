@@ -63,7 +63,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -331,7 +330,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     }
 
     @Override
-    public void onGetAppointmentListSuccess(Appointment appointment) {
+    public void onGetAppointmentListSuccess(List<Appointment> appointment) {
 
     }
 
@@ -481,7 +480,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
                 DateTimeFormatter roomieInstantFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ").withZoneUTC();
 
                 appointment.setDateTime(roomieInstantFormatter.print(appointmentDateTime));
-                appointment.setDesciption(appointmentDescriptionET.getText().toString());
+                appointment.setDescription(appointmentDescriptionET.getText().toString());
 
                 Log.d(TAG, appointment.toString());
 

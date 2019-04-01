@@ -35,6 +35,9 @@ public class Roomie implements Parcelable {
     @SerializedName("userId")
     @Expose
     private Long userId;
+    @SerializedName("user")
+    @Expose
+    private JhiAccount user;
     @SerializedName("stateId")
     @Expose
     private Long stateId;
@@ -174,6 +177,14 @@ public class Roomie implements Parcelable {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public JhiAccount getUser() {
+        return user;
+    }
+
+    public void setUser(JhiAccount user) {
+        this.user = user;
     }
 
     @Override

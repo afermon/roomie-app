@@ -239,4 +239,7 @@
     <string name="espanol">Español</string>
     <string name="english">English</string>
     <string name="no_rooms_registered">You have no rooms registerd, click the \"+\" button on the navigation bar to create one.</string>
+    <string name="no_appointments_found">No appointments found</string>
+    <string name="my_rooms_requests">My Rooms</string>
+    <string name="my_appointments_requests">My Requests</string>
 </resources>
