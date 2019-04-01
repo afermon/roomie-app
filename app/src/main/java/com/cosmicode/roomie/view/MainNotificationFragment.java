@@ -217,6 +217,9 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
                 case EVENT:
                     holder.icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_register_calendar));
                     break;
+                default: //APP
+                    holder.icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_action_notification));
+                    break;
             }
         }
     }

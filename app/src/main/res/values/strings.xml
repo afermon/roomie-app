@@ -241,14 +241,11 @@
     <string name="no_rooms_registered">You have no rooms registerd, click the \"+\" button on the navigation bar to create one.</string>
     <string name="no_tasks_registered">This room has no tasks assigned, click the \"+\" button on the upper right corner to create a new one.</string>
     <string name="no_notif_text">You haven\'t received any notifications yet.</string>
-    <string name="title_activity_premium_room">PremiumRoomActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="title_activity_prem_room">PremRoomActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
     <string name="to_do_tab">To Do</string>
     <string name="expenses_tab">Expenses</string>
     <string name="events_tab">Events</string>
     <string name="premium_rooms">My Premium Rooms</string>
+    <string name="no_appointments_found">No appointments found</string>
+    <string name="my_rooms_requests">My Rooms</string>
+    <string name="my_appointments_requests">My Requests</string>
 </resources>
