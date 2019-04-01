@@ -19,6 +19,7 @@ import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainMyRoomsFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
+import com.cosmicode.roomie.view.MainPremiumRooms;
 import com.cosmicode.roomie.view.MainProfileFragment;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment;
@@ -51,6 +52,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainSearchFragment.OnFragmentInteractionListener,
         MainRoomFragment.OnFragmentInteractionListener,
         MainMyRoomsFragment.OnFragmentInteractionListener,
+        MainPremiumRooms.OnFragmentInteractionListener,
         OnGetUserEmailListener {
 
     private BottomNavigationView navigationView;

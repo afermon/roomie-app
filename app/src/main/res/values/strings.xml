@@ -204,7 +204,7 @@
     <string name="no_lifestyles_left">There are no more lifestyles</string>
     <string name="default_notification_channel_id">roomie_default_channel</string>
     <string name="bottom_nav_add">add</string>
-    <string name="to_do_list_title">To do list</string>
+    <string name="to_do_list_title">To Do List</string>
     <string name="pick_a_date">Pick a date</string>
     <string name="appointment_date">Appointment date</string>
     <string name="appointment_description_hint">Tell the owner why you are a good fit!</string>
@@ -239,6 +239,12 @@
     <string name="espanol">Español</string>
     <string name="english">English</string>
     <string name="no_rooms_registered">You have no rooms registerd, click the \"+\" button on the navigation bar to create one.</string>
+    <string name="no_tasks_registered">This room has no tasks assigned, click the \"+\" button on the upper right corner to create a new one.</string>
+    <string name="no_notif_text">You haven\'t received any notifications yet.</string>
+    <string name="to_do_tab">To Do</string>
+    <string name="expenses_tab">Expenses</string>
+    <string name="events_tab">Events</string>
+    <string name="premium_rooms">My Premium Rooms</string>
     <string name="no_appointments_found">No appointments found</string>
     <string name="my_rooms_requests">My Rooms</string>
     <string name="my_appointments_requests">My Requests</string>
