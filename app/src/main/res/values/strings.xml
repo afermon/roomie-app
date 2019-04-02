@@ -248,4 +248,9 @@
     <string name="no_appointments_found">No appointments found</string>
     <string name="my_rooms_requests">My Rooms</string>
     <string name="my_appointments_requests">My Requests</string>
+    <string name="appointment_view_room">View room</string>
+    <string name="appointment_view_user">View user</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="appointment_updated">Appointment updated and the user has been notified!</string>
 </resources>
