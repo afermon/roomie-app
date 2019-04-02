@@ -2,25 +2,33 @@ package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +37,7 @@ import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Appointment;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.AppointmentState;
 import com.cosmicode.roomie.service.AppointmentService;
 import com.cosmicode.roomie.service.RoomieService;
 
@@ -118,7 +127,8 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
 
     @Override
     public void onUpdateAppointmentSuccess(Appointment appointment) {
-
+        ((BaseActivity) getContext()).showUserMessage(getString(R.string.appointment_updated), BaseActivity.SnackMessageType.SUCCESS);
+        appointmentService.getAllAppointmentsRoomie();
     }
 
     @Override
@@ -184,6 +194,59 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
 
     }
 
+    @OnClick(R.id.back_button)
+    public void back(){
+        getFragmentManager().popBackStack();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void appointmentPopupMenu(View v, Appointment appointment) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.getMenuInflater().inflate(R.menu.appointments_menu, popup.getMenu());
+
+        Menu menu = popup.getMenu();
+
+        if (!appointment.getState().equals(AppointmentState.PENDING) || !appointment.isOwner()){
+            menu.removeItem(R.id.appointment_accept);
+            menu.removeItem(R.id.appointment_decline);
+        }
+
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.appointment_accept:
+                    appointment.setState(AppointmentState.ACCEPTED);
+                    appointmentService.updateAppointment(appointment);
+                    return true;
+                case R.id.appointment_decline:
+                    appointment.setState(AppointmentState.DECLINED);
+                    appointmentService.updateAppointment(appointment);
+                    return true;
+                case R.id.appointment_user:
+                    MainProfileFragment roomieView = MainProfileFragment.newInstance(appointment.getPetitioner());
+                    FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction2.replace(R.id.main_container, roomieView);
+                    transaction2.addToBackStack(null);
+                    transaction2.commit();
+                    return true;
+                case R.id.appointment_room:
+                    MainRoomFragment roomView = MainRoomFragment.newInstance(appointment.getRoom());
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.main_container, roomView);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                    return true;
+            }
+
+            return false;
+        });
+
+        MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
+        menuHelper.setForceShowIcon(true);
+        menuHelper.setGravity(Gravity.END);
+        menuHelper.show();
+
+    }
+
     private class AppointmentSection extends StatelessSection {
 
         final String title;
@@ -220,12 +283,7 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             itemHolder.date.setText(formattDateString(appointment.getDateTime()));
             Glide.with(getContext()).load(appointment.getPetitioner().getPicture()).centerCrop().into(itemHolder.profileImage);
 
-            if(appointment.isOwner()){
-
-            } else {
-
-            }
-
+            itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(v, appointment));
         }
 
         public String formattDateString(String pdate){
@@ -271,6 +329,7 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
         private final TextView date;
         private final TextView state;
         private final TextView description;
+        private final ImageView settings;
         private final CardView container;
 
         AppointmentViewHolder(View view) {
@@ -281,6 +340,7 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             date = view.findViewById(R.id.appointment_date);
             state = view.findViewById(R.id.appointment_state);
             description = view.findViewById(R.id.appointment_description);
+            settings = view.findViewById(R.id.appointment_settings);
             container = view.findViewById(R.id.appointment_card);
         }
     }
