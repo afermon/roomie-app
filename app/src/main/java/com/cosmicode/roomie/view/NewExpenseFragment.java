@@ -20,6 +20,7 @@ import butterknife.OnClick;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
@@ -46,6 +48,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Locale;
 
 public class NewExpenseFragment extends Fragment implements  Validator.ValidationListener, RoomExpenseService.RoomExpenseServiceListener {
     private RoomExpenseService roomExpenseService;
@@ -78,7 +81,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @NotEmpty
     @BindView(R.id.expense_amount_txt)
-    TextView expenseAmount;
+    CurrencyEditText expenseAmount;
 
     @NotEmpty
     @BindView(R.id.expense_start_date_txt)
@@ -97,24 +100,22 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     @BindView(R.id.currency_radio)
     RadioGroup radioGroupCurrency;
 
-    @BindView(R.id.spinner_expense)
-    Spinner expenseSpinner;
-
     @BindView(R.id.create_expense_btn)
     Button createExpenseBtn;
 
     @BindView(R.id.add_person_recycler)
     RecyclerView recyclerView;
 
+    Spinner expenseSpinner;
 
     public NewExpenseFragment() {
         // Required empty public constructor
     }
 
-    public static NewExpenseFragment newInstance() {
+    public static NewExpenseFragment newInstance(Room room) {
         NewExpenseFragment fragment = new NewExpenseFragment();
         Bundle args = new Bundle();
-//        args.putParcelable(ROOM, room);
+        args.putParcelable(ROOM, room);
         fragment.setArguments(args);
         return fragment;
     }
@@ -123,7 +124,6 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-//            this.room = getArguments().getParcelable(ROOM);
             roomExpense = new RoomExpense();
             roomExpenseService = new RoomExpenseService(getContext(),this);
         }
@@ -143,6 +143,24 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        expenseSpinner = getView().findViewById(R.id.spinner_expense);
+        this.room = getArguments().getParcelable(ROOM);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),R.array.numbersSpinnerExpense, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        expenseSpinner.setAdapter(spinnerAdapter);
+
+        expenseAmount.setDecimalDigits(0);
+        if (roomExpense.getCurrency() != null) {
+            if (roomExpense.getCurrency() == CurrencyType.COLON) {
+                radioGroupCurrency.check(R.id.radio_crc);
+                expenseAmount.setLocale(new Locale("es", "cr"));
+            } else {
+                radioGroupCurrency.check(R.id.radio_usd);
+                expenseAmount.setLocale(Locale.US);
+            }
+        }
+
 
         mDateSetListenerStart = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -202,17 +220,6 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         super.onViewCreated(view, savedInstanceState);
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -221,7 +228,20 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void onValidationSucceeded() {
-        showProgress(false);
+        if(isValid){
+            roomExpense.setAmount((double) expenseAmount.getRawValue());
+            roomExpense.setDesciption(expenseDescription.getText().toString());
+            roomExpense.setFinishDate(expenseEndDate.getText().toString()+"T00:00:00Z");
+            roomExpense.setStartDate(expenseStartDate.getText().toString()+"T00:00:00Z");
+            roomExpense.setName(expenseName.getText().toString());
+            roomExpense.setRoomId(Long.parseLong("1"));
+            roomExpense.setMonthDay(1);
+            Toast.makeText(getContext(), roomExpense.toString(), Toast.LENGTH_LONG).show();
+            roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
+            roomExpenseService.createExpense(roomExpense);
+        }else{
+            showProgress(false);
+        }
 
     }
 

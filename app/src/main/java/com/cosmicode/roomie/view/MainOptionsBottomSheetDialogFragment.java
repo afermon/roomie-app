@@ -104,7 +104,7 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_report_problem)
     public void optionReportProblem() {
-        ToDoLIstFragment todoFragment = ToDoLIstFragment.newInstance(Long.parseLong("1"));
+        NewExpenseFragment todoFragment = NewExpenseFragment.newInstance(null);
         openFragment(todoFragment);
         this.dismiss();
     }

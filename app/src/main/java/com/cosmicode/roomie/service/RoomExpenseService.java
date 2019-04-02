@@ -26,7 +26,7 @@ public class RoomExpenseService {
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
         this.listener = listener;
     }
-    public RoomExpense createTask(RoomExpense roomExpense){
+    public RoomExpense createExpense(RoomExpense roomExpense){
 
         RoomExpenseApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
 
