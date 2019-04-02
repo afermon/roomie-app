@@ -49,6 +49,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     private List<RoomTask> roomTaskList;
     @BindView(R.id.task_list) RecyclerView recyclerView;
     @BindView(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.no_tasks_txt) TextView noTasks;
     private FloatingActionButton conconfirmButton;
     private SectionedRecyclerViewAdapter sectionAdapter;
     private static final String ARG_ROOMID = "room_id";
@@ -165,6 +166,11 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     @Override
     public void OnGetTaskByRoomSuccess(List<RoomTask> roomTasks) {
         this.roomTaskList = roomTasks;
+        if(roomTaskList.isEmpty()){
+            noTasks.setVisibility(View.VISIBLE);
+        }else{
+            noTasks.setVisibility(View.GONE);
+        }
         sectionAdapter = new SectionedRecyclerViewAdapter();
 
          List<RoomTask> todayTasks = new ArrayList<>();

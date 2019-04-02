@@ -186,4 +186,6 @@ public class JhiAccount {
                 ", authorities=" + authorities +
                 '}';
     }
+
+
 }

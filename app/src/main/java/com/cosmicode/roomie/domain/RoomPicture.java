@@ -1,9 +1,12 @@
 package com.cosmicode.roomie.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RoomPicture {
+public class RoomPicture implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -63,4 +66,35 @@ public class RoomPicture {
         this.roomId = roomId;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.url);
+        dest.writeValue(this.isMain);
+        dest.writeValue(this.roomId);
+    }
+
+    protected RoomPicture(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.url = in.readString();
+        this.isMain = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.roomId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<RoomPicture> CREATOR = new Parcelable.Creator<RoomPicture>() {
+        @Override
+        public RoomPicture createFromParcel(Parcel source) {
+            return new RoomPicture(source);
+        }
+
+        @Override
+        public RoomPicture[] newArray(int size) {
+            return new RoomPicture[size];
+        }
+    };
 }

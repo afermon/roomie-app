@@ -7,6 +7,8 @@ import android.widget.Toast;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.util.listeners.OnCreateRoomieListener;
+import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
+import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import retrofit2.Call;
@@ -28,6 +30,32 @@ public class RoomieService {
     public RoomieService(Context context, OnGetCurrentRoomieListener listener) {
         this(context);
         this.listener = listener;
+    }
+
+    public void getRoomieById(Long id, final OnGetRoomieByIdListener listener) {
+        RoomieApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomieApiEndpointInterface.class, authToken);
+
+        Call<Roomie> call = apiService.findOneId(id);
+
+        call.enqueue(new Callback<Roomie>() {
+            @Override
+            public void onResponse(Call<Roomie> call, Response<Roomie> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnGetRoomieByIdSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.onGetRoomieError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Roomie> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.onGetRoomieError("Something went wrong!");
+            }
+        });
     }
 
     public Roomie getCurrentRoomie() {

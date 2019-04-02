@@ -12,6 +12,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RoomApiEndpointInterface {
@@ -26,8 +27,11 @@ public interface RoomApiEndpointInterface {
     Call<Room> createRoom(@Body RoomCreate room);
 
     @PUT("rooms")
-    Call<Room> updateRoom(@Body Room room);
+    Call<Room> updateRoom(@Body RoomCreate room);
 
     @POST("_search/rooms/advanced")
     Call<List<Room>> searchRoomsAdvanced(@Body SearchFilter searchFilter);
+
+    @GET("owned-rooms/{id}")
+    Call<List<Room>> getOwnedRooms(@Path("id") Long id);
 }

@@ -12,6 +12,7 @@ import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
+import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
@@ -36,6 +37,7 @@ public class UserService implements UserInterface {
     private static final String PASSWORD_PREF = "JhiPassword";
     private static final String GOOGLE_SAVED_PREF = "JhiGoogle";
     private static final String FACEBOOK_SAVED_PREF = "JhiFacebook";
+    private static final String FIREBASE_DEVICE_ID = "JhiDeviceID";
 
     private final Handler handler;
     private final boolean keepLogedIn;
@@ -425,5 +427,43 @@ public class UserService implements UserInterface {
     @Override
     public void setOnLoginStatusListener(OnLoginStatusListener listener) {
         this.statusListener = listener;
+    }
+
+    @Override
+    public void findById(Long id, OnGetUserByIdListener listener) {
+        UserApiEndpointInterface apiService = ApiServiceGenerator.createService(UserApiEndpointInterface.class);
+
+        Call<JhiAccount> call = apiService.findUserById(id);
+
+        call.enqueue(new Callback<JhiAccount>() {
+            @Override
+            public void onResponse(Call<JhiAccount> call, Response<JhiAccount> response) {
+                if (response.code() == 200) { // Created
+                    listener.onGetUserSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, "Failed getting resource");
+                    listener.onGetUserError(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JhiAccount> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void setMobileDeviceID(String mobileDeviceID) {
+        preferences.edit()
+                .putString(FIREBASE_DEVICE_ID, mobileDeviceID)
+                .apply();
+    }
+
+    @Override
+    public String getMobileDeviceID() {
+        return preferences.getString(FIREBASE_DEVICE_ID, "");
     }
 }

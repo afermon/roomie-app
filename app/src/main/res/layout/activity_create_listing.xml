@@ -7,6 +7,18 @@
     android:background="@color/secondary"
     tools:context=".CreateListingActivity">
 
+    <ProgressBar
+        android:id="@+id/step_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:progress="25"
+        android:progressTint="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:id="@+id/listing_container"
         android:layout_width="0dp"
@@ -15,6 +27,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/step_bar">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

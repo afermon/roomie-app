@@ -76,6 +76,16 @@ public class RoomCreate implements Parcelable {
 
     private RoomExpense monthly = null;
 
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public RoomCreate() {
     }
 
@@ -279,6 +289,64 @@ public class RoomCreate implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeValue(this.id);
+        dest.writeInt(this.state == null ? -1 : this.state.ordinal());
+        dest.writeString(this.created);
+        dest.writeString(this.published);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeValue(this.rooms);
+        dest.writeInt(this.roomType == null ? -1 : this.roomType.ordinal());
+        dest.writeString(this.apoinmentsNotes);
+        dest.writeValue(this.lookingForRoomie);
+        dest.writeString(this.availableFrom);
+        dest.writeValue(this.isPremium);
+        dest.writeValue(this.addressId);
+        dest.writeTypedList(this.roomies);
+        dest.writeTypedList(this.features);
+        dest.writeTypedList(this.expenses);
+        dest.writeValue(this.ownerId);
+        dest.writeValue(this.priceId);
+        dest.writeTypedList(this.pictures);
+        dest.writeTypedList(this.picturesUris);
+        dest.writeParcelable(this.monthly, flags);
     }
+
+    protected RoomCreate(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        int tmpState = in.readInt();
+        this.state = tmpState == -1 ? null : RoomState.values()[tmpState];
+        this.created = in.readString();
+        this.published = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.rooms = (Integer) in.readValue(Integer.class.getClassLoader());
+        int tmpRoomType = in.readInt();
+        this.roomType = tmpRoomType == -1 ? null : RoomType.values()[tmpRoomType];
+        this.apoinmentsNotes = in.readString();
+        this.lookingForRoomie = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.availableFrom = in.readString();
+        this.isPremium = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.addressId = (Long) in.readValue(Long.class.getClassLoader());
+        this.roomies = in.createTypedArrayList(Roomie.CREATOR);
+        this.features = in.createTypedArrayList(RoomFeature.CREATOR);
+        this.expenses = in.createTypedArrayList(RoomExpense.CREATOR);
+        this.ownerId = (Long) in.readValue(Long.class.getClassLoader());
+        this.priceId = (Long) in.readValue(Long.class.getClassLoader());
+        this.pictures = in.createTypedArrayList(RoomPicture.CREATOR);
+        this.picturesUris = in.createTypedArrayList(Uri.CREATOR);
+        this.monthly = in.readParcelable(RoomExpense.class.getClassLoader());
+    }
+
+    public static final Creator<RoomCreate> CREATOR = new Creator<RoomCreate>() {
+        @Override
+        public RoomCreate createFromParcel(Parcel source) {
+            return new RoomCreate(source);
+        }
+
+        @Override
+        public RoomCreate[] newArray(int size) {
+            return new RoomCreate[size];
+        }
+    };
 }
