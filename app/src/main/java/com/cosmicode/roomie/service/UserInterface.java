@@ -2,6 +2,7 @@ package com.cosmicode.roomie.service;
 
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.util.listeners.OnChangePasswordListener;
+import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.util.listeners.OnLoginListener;
 import com.cosmicode.roomie.util.listeners.OnLoginStatusListener;
@@ -43,4 +44,10 @@ public interface UserInterface {
     void loginWithGoogle(String token, OnLoginListener listener);
 
     void setOnLoginStatusListener(OnLoginStatusListener listener);
+
+    void findById(Long id, OnGetUserByIdListener listener);
+
+    void setMobileDeviceID(String mobileDeviceID);
+
+    String getMobileDeviceID();
 }

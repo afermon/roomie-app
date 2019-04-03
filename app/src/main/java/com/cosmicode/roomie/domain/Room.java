@@ -10,6 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room implements Parcelable {
@@ -242,16 +243,6 @@ public class Room implements Parcelable {
         this.picturesUris = picturesUris;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-    }
-
     public List<RoomExpense> getExpenses() {
         return expenses;
     }
@@ -296,4 +287,103 @@ public class Room implements Parcelable {
         return getPictures().stream()
                 .filter(picture -> picture.isIsMain()).findFirst().orElse(null);
     }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", state=" + state +
+                ", created='" + created + '\'' +
+                ", published='" + published + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", rooms=" + rooms +
+                ", roomType=" + roomType +
+                ", apoinmentsNotes='" + apoinmentsNotes + '\'' +
+                ", lookingForRoomie=" + lookingForRoomie +
+                ", availableFrom='" + availableFrom + '\'' +
+                ", isPremium=" + isPremium +
+                ", addressId=" + addressId +
+                ", roomies=" + roomies +
+                ", features=" + features +
+                ", expenses=" + expenses +
+                ", ownerId=" + ownerId +
+                ", address=" + address +
+                ", price=" + price +
+                ", pictures=" + pictures +
+                ", picturesUris=" + picturesUris +
+                ", monthly=" + monthly +
+                '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeInt(this.state == null ? -1 : this.state.ordinal());
+        dest.writeString(this.created);
+        dest.writeString(this.published);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeValue(this.rooms);
+        dest.writeInt(this.roomType == null ? -1 : this.roomType.ordinal());
+        dest.writeString(this.apoinmentsNotes);
+        dest.writeValue(this.lookingForRoomie);
+        dest.writeString(this.availableFrom);
+        dest.writeValue(this.isPremium);
+        dest.writeValue(this.addressId);
+        dest.writeTypedList(this.roomies);
+        dest.writeTypedList(this.features);
+        dest.writeTypedList(this.expenses);
+        dest.writeValue(this.ownerId);
+        dest.writeParcelable(this.address, flags);
+        dest.writeParcelable(this.price, flags);
+        dest.writeList(this.pictures);
+        dest.writeTypedList(this.picturesUris);
+        dest.writeParcelable(this.monthly, flags);
+    }
+
+    protected Room(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        int tmpState = in.readInt();
+        this.state = tmpState == -1 ? null : RoomState.values()[tmpState];
+        this.created = in.readString();
+        this.published = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.rooms = (Integer) in.readValue(Integer.class.getClassLoader());
+        int tmpRoomType = in.readInt();
+        this.roomType = tmpRoomType == -1 ? null : RoomType.values()[tmpRoomType];
+        this.apoinmentsNotes = in.readString();
+        this.lookingForRoomie = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.availableFrom = in.readString();
+        this.isPremium = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.addressId = (Long) in.readValue(Long.class.getClassLoader());
+        this.roomies = in.createTypedArrayList(Roomie.CREATOR);
+        this.features = in.createTypedArrayList(RoomFeature.CREATOR);
+        this.expenses = in.createTypedArrayList(RoomExpense.CREATOR);
+        this.ownerId = (Long) in.readValue(Long.class.getClassLoader());
+        this.address = in.readParcelable(Address.class.getClassLoader());
+        this.price = in.readParcelable(RoomExpense.class.getClassLoader());
+        this.pictures = new ArrayList<RoomPicture>();
+        in.readList(this.pictures, RoomPicture.class.getClassLoader());
+        this.picturesUris = in.createTypedArrayList(Uri.CREATOR);
+        this.monthly = in.readParcelable(RoomExpense.class.getClassLoader());
+    }
+
+    public static final Creator<Room> CREATOR = new Creator<Room>() {
+        @Override
+        public Room createFromParcel(Parcel source) {
+            return new Room(source);
+        }
+
+        @Override
+        public Room[] newArray(int size) {
+            return new Room[size];
+        }
+    };
 }

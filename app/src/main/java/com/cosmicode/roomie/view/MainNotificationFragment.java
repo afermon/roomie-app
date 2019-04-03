@@ -40,6 +40,8 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
     private RecyclerView.Adapter mAdapater;
     @BindView(R.id.notifications_recycler)
     RecyclerView notificationsRecycler;
+    @BindView(R.id.no_notif_text)
+    TextView noNotif;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,6 +104,11 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
 
     @Override
     public void OnGetNotificationsSuccess(List<Notification> notifications) {
+        if(notifications.isEmpty()){
+            noNotif.setVisibility(View.VISIBLE);
+        }else{
+            noNotif.setVisibility(View.GONE);
+        }
         mAdapater = new NotificationAdapter(notifications);
         notificationsRecycler.setAdapter(mAdapater);
         showProgress(false);
@@ -209,6 +216,9 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
                     break;
                 case EVENT:
                     holder.icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_register_calendar));
+                    break;
+                default: //APP
+                    holder.icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_action_notification));
                     break;
             }
         }

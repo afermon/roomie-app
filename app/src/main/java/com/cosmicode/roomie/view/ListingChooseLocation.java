@@ -1,4 +1,4 @@
-package com.cosmicode.roomie;
+package com.cosmicode.roomie.view;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Picture;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,28 +16,34 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.ChooseLocationActivity;
+import com.cosmicode.roomie.MainActivity;
+import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
-import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.RoomType;
-import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomPictureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
@@ -59,18 +64,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.theartofdev.edmodo.cropper.CropImage;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Length;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
 
-public class ListingChooseLocation extends Fragment implements RoomPictureService.OnCreatePictureListener, RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
+public class ListingChooseLocation extends Fragment implements Validator.ValidationListener, RoomPictureService.OnCreatePictureListener, RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
 
 
     private OnFragmentInteractionListener mListener;
@@ -90,20 +97,24 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
     private RoomieService roomieService;
     private RoomPictureService roomPictureService;
     private static int picAmount;
-    private Room newRoom;
+    private Validator validator;
 
-
+    @NotEmpty
+    @Length(min = 4, max = 200)
+    @BindView(R.id.appointment_notes)
+    EditText notes;
     @BindView(R.id.progress)
-    ProgressBar progressBar;
-
+    ProgressBar progress;
+    @NotEmpty
+    @Length(min = 4, max = 500)
     @BindView(R.id.address_desc)
-    TextView desc;
-
+    EditText desc;
     @BindView(R.id.back_location)
     ImageButton back;
-
     @BindView(R.id.btn_finished)
     Button finish;
+    @BindView(R.id.scroll_location)
+    ScrollView scrollView;
 
     public ListingChooseLocation() {
         // Required empty public constructor
@@ -123,14 +134,15 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
-            address = new Address();
-            address.setLocation("10.3704815,-83.9526349");
+            room.setPictures(new ArrayList<>());
             uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
             roomPictureService = new RoomPictureService(getContext(), this);
             picAmount = room.getPicturesUris().size();
+            validator = new Validator(this);
+            validator.setValidationListener(this);
             createLocationRequest();
         }
     }
@@ -142,13 +154,30 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
                 .findFragmentById(R.id.map);
         geoButton = getView().findViewById(R.id.geo_button);
         geoButton.setOnClickListener(this::onClickGeo);
+        if (room.getAddress() == null) {
+            address = new Address();
+            address.setLocation("10.3704815,-83.9526349");
+            address.setCity("No city");
+            address.setState("No state");
+            room.setAddress(address);
+            locationChanged = false;
+        } else {
+            desc.setText(room.getAddress().getDescription());
+            notes.setText(room.getApoinmentsNotes());
+            locationChanged = true;
+        }
+
+        mapFragment.getMapAsync(this);
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_MAP_CODE == requestCode) {
             if (RESULT_OK == resultCode) {
-                address.setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
+                room.getAddress().setLocation(data.getDoubleArrayExtra("Address")[0] + "," + data.getDoubleArrayExtra("Address")[1]);
+                room.getAddress().setState(data.getStringExtra("State"));
+                room.getAddress().setCity(data.getStringExtra("City"));
                 locationChanged = true;
                 mapFragment.getMapAsync(this);
             }
@@ -160,7 +189,7 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
 
     public void onClickGeo(View view) {
 
-
+        mListener.hideKeyboard();
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
@@ -183,9 +212,20 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
 
     }
 
+    private void saveState() {
+        room.getAddress().setDescription(desc.getText().toString());
+        room.setApoinmentsNotes(notes.getText().toString());
+    }
+
+    @OnClick(R.id.cancel_location)
+    public void finish(View view) {
+        getActivity().finish();
+    }
+
     @OnClick(R.id.back_location)
     public void back(View view) {
-        getFragmentManager().popBackStackImmediate();
+        saveState();
+        mListener.openFragment(ListingChoosePictures.newInstance(room), "left");
     }
 
     @Override
@@ -193,6 +233,7 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_listing_choose_location, container, false);
+        mListener.changePercentage(100);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -218,7 +259,7 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
-        LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+        LatLng location = new LatLng(room.getAddress().getLatitude(), room.getAddress().getLongitude());
 
         if (locationChanged) {
             gMap.addMarker(new MarkerOptions().position(location));
@@ -271,28 +312,10 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
 
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            address = savedInstanceState.getParcelable("address");
-            locationChanged = savedInstanceState.getBoolean("locchanged");
-            mapFragment.getMapAsync(this);
-
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("address", address);
-        outState.putBoolean("locchanged", locationChanged);
-    }
-
     @OnClick(R.id.btn_finished)
     public void onClickFinish(View view) {
-        showProgress(true);
-        roomieService.getCurrentRoomie();
+        mListener.hideKeyboard();
+        validator.validate();
     }
 
 
@@ -302,7 +325,7 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
             RoomPicture roomPicture = new RoomPicture();
             if (picAmount == room.getPicturesUris().size()) {
                 roomPicture.setIsMain(true);
-            }else{
+            } else {
                 roomPicture.setIsMain(false);
             }
             roomPicture.setUrl(url);
@@ -344,37 +367,44 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
     @Override
     public void OnUpdateSuccess(Room room) {
         showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getContext(), MainActivity.class));
     }
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
-        address.setDescription(desc.getText().toString());
-        address.setCity("Default");
-        address.setState("Default");
-        room.setRooms(1);
         room.setRoomType(RoomType.ROOM);
         room.setPremium(false);
-        DateTime today = new DateTime();
-        int month, day;
-        month = today.getMonthOfYear();
-        day = today.getDayOfMonth();
-        String monthS, dayS;
-        monthS = Integer.toString(month);
-        dayS = Integer.toString(day);
+        saveState();
+        DateTime now = DateTime.now();
+        String month, day, hour, minutes, seconds;
+        month = Integer.toString(now.getMonthOfYear());
+        day = Integer.toString(now.getDayOfMonth());
+        hour = Integer.toString(now.getHourOfDay());
+        minutes = Integer.toString(now.getMinuteOfHour());
+        seconds = Integer.toString(now.getSecondOfMinute());
 
-        if (month <= 9) {
-            monthS = "0" + month;
+        if (now.getMonthOfYear() < 10) {
+            month = "0" + now.getMonthOfYear();
         }
-        if (day <= 9) {
-            dayS = "0" + day;
+        if (now.getDayOfMonth() < 10) {
+            day = "0" + now.getDayOfMonth();
         }
-        String created = (today.getYear() + "-" + monthS + "-" + dayS + "T00:00:00Z");
-        room.setPublished(created);
-        room.setCreated(created);
+        if (now.getHourOfDay() < 10) {
+            hour = "0" + now.getHourOfDay();
+        }
+        if (now.getMinuteOfHour() < 10) {
+            minutes = "0" + now.getMinuteOfHour();
+        }
+        if (now.getSecondOfMinute() < 10) {
+            seconds = "0" + now.getSecondOfMinute();
+        }
+
+        String date = String.format("%s-%s-%sT%s:%s:%sZ", now.getYear(), month, day, hour, minutes, seconds);
+        room.setPublished(date);
+        room.setCreated(date);
         room.setOwnerId(roomie.getId());
-        roomService.createRoom(room, address, room.getMonthly());
+        roomService.createRoom(room);
     }
 
     @Override
@@ -389,11 +419,10 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
     }
 
     @Override
-    public void onCreatePicSuccess() {
-        if(picAmount == 0){
-            showProgress(false);
-            Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getContext(), MainActivity.class));
+    public void onCreatePicSuccess(RoomPicture picture) {
+        room.getPictures().add(picture);
+        if (picAmount == 0) {
+            roomService.updateRoomIndexing(room, room.getAddress(), room.getMonthly());
         }
     }
 
@@ -403,22 +432,62 @@ public class ListingChooseLocation extends Fragment implements RoomPictureServic
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onValidationSucceeded() {
+        showProgress(true);
+        roomieService.getCurrentRoomie();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(getContext());
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+
+        void openFragment(Fragment fragment, String start);
+
+        void changePercentage(int progress);
+
+        void hideKeyboard();
     }
 
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
-        progressBar.animate()
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
                 .setDuration(shortAnimTime)
                 .alpha((float) ((show) ? 1 : 0))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
                     }
                 });
     }
+
 }

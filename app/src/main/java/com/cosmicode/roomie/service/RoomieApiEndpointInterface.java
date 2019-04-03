@@ -20,4 +20,7 @@ public interface RoomieApiEndpointInterface {
 
     @POST("roomies")
     Call<Roomie> createRoomie(@Body Roomie roomie);
+
+    @GET("roomies/{id}")
+    Call<Roomie> findOneId(@Path("id") Long id);
 }

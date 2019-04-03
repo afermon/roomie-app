@@ -3,307 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/secondary"
-    tools:context=".view.MainOptionsFragment">
-
-    <View
-        android:id="@+id/view16"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email2" />
-
-    <TextView
-        android:id="@+id/edit_email2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="New listing"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view15" />
-
-    <TextView
-        android:id="@+id/edit_email4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="Subscriptions"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email5" />
-
-    <View
-        android:id="@+id/view19"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email4" />
-
-    <View
-        android:id="@+id/view21"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email4" />
-
-    <TextView
-        android:id="@+id/edit_email3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="Configuration"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view19" />
-
-    <View
-        android:id="@+id/view17"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email3" />
-
-    <TextView
-        android:id="@+id/edit_email5"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="Appointments"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view16" />
-
-    <ImageButton
-        android:id="@+id/appointments"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toTopOf="@+id/view18"
-        app:layout_constraintEnd_toEndOf="@+id/edit_email2"
-        app:layout_constraintTop_toBottomOf="@+id/view16" />
-
-    <ImageButton
-        android:id="@+id/subsctiption"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toTopOf="@+id/view19"
-        app:layout_constraintEnd_toEndOf="@+id/edit_email4"
-        app:layout_constraintTop_toBottomOf="@+id/view18" />
-
-    <ImageButton
-        android:id="@+id/configuration"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toTopOf="@+id/view17"
-        app:layout_constraintEnd_toEndOf="@+id/edit_email3"
-        app:layout_constraintTop_toBottomOf="@+id/view19" />
-
-    <View
-        android:id="@+id/view18"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email5" />
-
-    <TextView
-        android:id="@+id/exit_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="Exit app"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view20" />
-
-    <TextView
-        android:id="@+id/edit_email7"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:text="Report a problem"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view17" />
-
-    <ImageButton
-        android:id="@+id/report_problem"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toTopOf="@+id/view20"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view17" />
-
-    <ImageButton
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="10dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toBottomOf="@+id/exit_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view20" />
-
-    <View
-        android:id="@+id/view20"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_email7" />
-
-    <View
-        android:id="@+id/view15"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/options_mail" />
-
-    <View
-        android:id="@+id/view22"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exit_text" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="151dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exit_text" />
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    tools:context=".view.MainOptionsBottomSheetDialogFragment">
 
     <TextView
         android:id="@+id/options_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="Derek Jimenez "
         android:textColor="@color/primary"
         android:textSize="24sp"
@@ -318,25 +28,458 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:text="djimenezq@ucenfotec.ac.cr"
         android:textColor="@color/primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/options_name" />
 
-    <ImageButton
-        android:id="@+id/rooms"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+    <View
+        android:id="@+id/option_divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/secondary"
-        android:src="@drawable/ic_nav_arrow"
-        app:layout_constraintBottom_toTopOf="@+id/view16"
-        app:layout_constraintEnd_toEndOf="@+id/edit_email2"
-        app:layout_constraintTop_toTopOf="@+id/edit_email2" />
+        android:background="@color/light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/options_mail" />
+
+    <View
+        android:id="@+id/option_divider4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/option_divider3" />
+
+    <View
+        android:id="@+id/option_divider3"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@color/secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/option_divider2" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_divider4">
+
+        <ImageView
+            android:id="@+id/option_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_home_brand"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/option_text"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/my_rooms"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/action_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/option_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_appointments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_room">
+
+        <ImageView
+            android:id="@+id/option_icon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_alarm_brand"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider5"
+            app:layout_constraintEnd_toStartOf="@+id/option_text2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/appointments"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/action_icon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider5"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/option_text2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_subscriptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_appointments">
+
+        <ImageView
+            android:id="@+id/option_icon3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_subscriptions_brand"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider6"
+            app:layout_constraintEnd_toStartOf="@+id/option_text3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/subscriptions"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/action_icon3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider6"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/option_text3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_configuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_subscriptions">
+
+        <ImageView
+            android:id="@+id/option_icon4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_setting_brand"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider7"
+            app:layout_constraintEnd_toStartOf="@+id/option_text4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/configuration"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/action_icon4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text4"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider7"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/option_text4" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_report_problem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_configuration">
+
+        <ImageView
+            android:id="@+id/option_icon5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_report_brand"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider8"
+            app:layout_constraintEnd_toStartOf="@+id/option_text5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/report_a_problem"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/action_icon5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider8"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/option_text5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/option_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/option_report_problem">
+
+        <ImageView
+            android:id="@+id/option_icon6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/icon_sing_out_brand"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider9"
+            app:layout_constraintEnd_toStartOf="@+id/option_text6"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/option_text6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/logout"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/action_icon6"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_icon6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/action_icon6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/secondary"
+            android:src="@drawable/ic_nav_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/option_divider9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/option_text6"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/option_divider9"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment.OnFragmentInteractionListener;
 
 import org.joda.time.DateTime;
@@ -28,6 +30,8 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +69,15 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
 
         holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
+        MainActivity activity = (MainActivity) mContext;
+
+        holder.roomCard.setOnClickListener(l -> {
+            MainRoomFragment roomView = MainRoomFragment.newInstance(holder.mItem);
+            FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_container, roomView);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
 
         try {
 
@@ -105,19 +118,19 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         Period period = new Period(published, now);
 
         PeriodFormatterBuilder builder = new PeriodFormatterBuilder();
-        //TODO: Replace for strings
+
         if(period.getYears() != 0) {
-            builder.appendYears().appendSuffix(" year ago", " years ago");
+            builder.appendYears().appendSuffix(mContext.getString(R.string.time_year), mContext.getString(R.string.time_years));
         } else if(period.getMonths() != 0) {
-            builder.appendMonths().appendSuffix(" month ago", " months ago");
+            builder.appendMonths().appendSuffix(mContext.getString(R.string.time_month), mContext.getString(R.string.time_months));
         } else if(period.getDays() != 0) {
-            builder.appendDays().appendSuffix(" day ago", " days ago");
+            builder.appendDays().appendSuffix(mContext.getString(R.string.time_day), mContext.getString(R.string.time_days));
         } else if(period.getHours() != 0) {
-            builder.appendHours().appendSuffix(" hour ago", " hours ago");
+            builder.appendHours().appendSuffix(mContext.getString(R.string.time_hour), mContext.getString(R.string.time_hours));
         } else if(period.getMinutes() != 0) {
-            builder.appendMinutes().appendSuffix(" minute ago", " minutes ago");
+            builder.appendMinutes().appendSuffix(mContext.getString(R.string.time_minute), mContext.getString(R.string.time_minutes));
         } else if(period.getSeconds() != 0) {
-            builder.appendSeconds().appendSuffix(" second ago"," seconds ago");
+            builder.appendSeconds().appendSuffix(mContext.getString(R.string.time_second), mContext.getString(R.string.time_seconds));
         }
         PeriodFormatter formatter = builder.printZeroNever().toFormatter();
         String elapsed = formatter.print(period);
@@ -148,6 +161,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
         @BindView(R.id.room_published) TextView roomPublished;
         @BindView(R.id.room_count) TextView roomCount;
         @BindView(R.id.room_distance) TextView roomDistance;
+        @BindView(R.id.room_card) CardView roomCard;
 
         public Room mItem;
 

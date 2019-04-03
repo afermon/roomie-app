@@ -5,10 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
-    tools:context=".view.ListingStepCost">
+    tools:context=".view.ListingCost">
 
 
-    <faranjit.currency.edittext.CurrencyEditText
+    <ImageButton
+        android:id="@+id/cancel_cost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:backgroundTint="@color/primary"
+        android:contentDescription="@string/back_button"
+        android:src="@drawable/quantum_ic_clear_grey600_24"
+        android:tint="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.blackcat.currencyedittext.CurrencyEditText
         android:id="@+id/edit_amount"
         android:layout_width="0dp"
         android:layout_height="57dp"
@@ -16,7 +30,6 @@
         android:layout_marginEnd="32dp"
         android:background="@drawable/input__no_stroke"
         android:ems="10"
-        android:inputType="textMultiLine|numberDecimal"
         android:maxLength="254"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
@@ -24,7 +37,8 @@
         android:paddingBottom="16dp"
         android:selectAllOnFocus="true"
         android:singleLine="false"
-        android:text="0.00"
+        android:text="0"
+        app:decimal_digits="0"
         android:textAlignment="viewEnd"
         android:textAppearance="@android:style/TextAppearance.Material"
         android:textColor="@color/black"
@@ -32,11 +46,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view23"
-        app:locale="en_US"
-        app:showSymbol="false" />
+        app:layout_constraintTop_toBottomOf="@+id/view23" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -58,7 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,7 +93,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_amount3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -129,9 +141,9 @@
         android:layout_height="0dp"
         android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/view26"
+        app:layout_constraintStart_toEndOf="@+id/currency_radio"
         app:layout_constraintTop_toTopOf="@+id/view23"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/view24"
@@ -147,7 +159,6 @@
         android:id="@+id/view25"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="0.0"
@@ -158,7 +169,6 @@
         android:id="@+id/view27"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="0.0"
@@ -169,7 +179,6 @@
         android:id="@+id/view26"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/edit_amount"
         app:layout_constraintHorizontal_bias="1.0"
@@ -180,25 +189,25 @@
         android:id="@+id/date_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
+        android:layout_marginStart="188dp"
         android:background="@null"
         android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="@+id/edit_amount3"
         app:layout_constraintTop_toBottomOf="@+id/view26"
-        app:layout_constraintVertical_bias="0.516"
         app:srcCompat="@drawable/ic_register_calendar" />
 
     <ImageButton
         android:id="@+id/date_picker2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="188dp"
         android:background="@null"
         android:tint="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintStart_toStartOf="@+id/edit_amount4"
         app:layout_constraintTop_toTopOf="@+id/edit_amount4"
+        app:layout_constraintVertical_bias="0.481"
         app:srcCompat="@drawable/ic_register_calendar" />
 
     <TextView
@@ -220,7 +229,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/back_button2"
+        android:id="@+id/back_cost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -305,7 +314,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif"
-        android:text="No date yet"
+        android:text="@string/no_move_out"
         android:textAlignment="viewEnd"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -320,7 +329,7 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:backgroundTint="@color/primary"
-        android:text="Continue"
+        android:text="@string/cont_btn"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -331,7 +340,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="100dp"
-        android:layout_marginEnd="8dp"
         android:checkedButton="@+id/radio_crc"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/view26"
@@ -345,16 +353,16 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="CRC"
+            android:text="@string/crc"
             android:textSize="18sp" />
 
         <RadioButton
             android:id="@+id/radio_usd"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:buttonTint="@color/primary"
-            android:text="USD"
+            android:text="@string/usd"
             android:textSize="18sp" />
     </RadioGroup>
 
@@ -365,7 +373,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:text="Fill the cost information for your place and the date in which people can move in."
+        android:text="@string/listing_cost_desc"
         android:textAlignment="center"
         android:textColor="@color/primary"
         android:textSize="18sp"
@@ -373,5 +381,19 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title2" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/move_out_error"
+        android:textColor="@color/danger"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

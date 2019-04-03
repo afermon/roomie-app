@@ -9,5 +9,5 @@ import retrofit2.http.POST;
 public interface RoomPictureApiEnpointInterface {
 
     @POST("room-pictures")
-    Call<Void> createPicture(@Body RoomPicture roomPicture);
+    Call<RoomPicture> createPicture(@Body RoomPicture roomPicture);
 }

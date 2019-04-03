@@ -179,7 +179,7 @@ public class RoomExpense implements Parcelable {
         this.roomId = (Long) in.readValue(Long.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<RoomExpense> CREATOR = new Parcelable.Creator<RoomExpense>() {
+    public static final Creator<RoomExpense> CREATOR = new Creator<RoomExpense>() {
         @Override
         public RoomExpense createFromParcel(Parcel source) {
             return new RoomExpense(source);

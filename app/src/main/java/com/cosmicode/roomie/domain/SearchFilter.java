@@ -2,6 +2,8 @@ package com.cosmicode.roomie.domain;
 
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.google.gson.annotations.Expose;
@@ -9,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class SearchFilter {
+public class SearchFilter implements Parcelable {
 
     @SerializedName("query")
     @Expose
@@ -175,4 +177,50 @@ public class SearchFilter {
         location.setLongitude(getLongitude());
         return location;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.query);
+        dest.writeValue(this.latitude);
+        dest.writeValue(this.longitude);
+        dest.writeInt(this.distance);
+        dest.writeString(this.city);
+        dest.writeString(this.state);
+        dest.writeInt(this.currency == null ? -1 : this.currency.ordinal());
+        dest.writeInt(this.priceMin);
+        dest.writeInt(this.priceMax);
+        dest.writeTypedList(this.features);
+    }
+
+    protected SearchFilter(Parcel in) {
+        this.query = in.readString();
+        this.latitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.longitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.distance = in.readInt();
+        this.city = in.readString();
+        this.state = in.readString();
+        int tmpCurrency = in.readInt();
+        this.currency = tmpCurrency == -1 ? null : CurrencyType.values()[tmpCurrency];
+        this.priceMin = in.readInt();
+        this.priceMax = in.readInt();
+        this.features = in.createTypedArrayList(RoomFeature.CREATOR);
+    }
+
+    public static final Parcelable.Creator<SearchFilter> CREATOR = new Parcelable.Creator<SearchFilter>() {
+        @Override
+        public SearchFilter createFromParcel(Parcel source) {
+            return new SearchFilter(source);
+        }
+
+        @Override
+        public SearchFilter[] newArray(int size) {
+            return new SearchFilter[size];
+        }
+    };
 }
