@@ -23,6 +23,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -279,11 +280,9 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             Appointment appointment = this.appointmentList.get(position);
             itemHolder.description.setText(appointment.getDescription());
             itemHolder.state.setText(appointment.getState().name());
-            itemHolder.userName.setText(appointment.getPetitioner().getUser().getFirstName());
             itemHolder.date.setText(formattDateString(appointment.getDateTime()));
             Glide.with(getContext()).load(appointment.getPetitioner().getPicture()).centerCrop().into(itemHolder.profileImage);
-
-            itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(v, appointment));
+            itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
         }
 
         public String formattDateString(String pdate){
@@ -325,7 +324,6 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
 
         private final View rootView;
         private final CircleImageView profileImage;
-        private final TextView userName;
         private final TextView date;
         private final TextView state;
         private final TextView description;
@@ -336,7 +334,6 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             super(view);
             rootView = view;
             profileImage = view.findViewById(R.id.profile_image);
-            userName = view.findViewById(R.id.appointment_user_name);
             date = view.findViewById(R.id.appointment_date);
             state = view.findViewById(R.id.appointment_state);
             description = view.findViewById(R.id.appointment_description);
