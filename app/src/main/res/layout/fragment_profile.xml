@@ -21,7 +21,7 @@
         android:id="@+id/profile_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="50dp"
+        android:paddingBottom="56dp"
         android:clipToPadding="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
