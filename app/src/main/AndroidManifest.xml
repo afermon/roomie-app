@@ -29,7 +29,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddLifestylesActivity"></activity>
+        <activity android:name=".AddLifestylesActivity" />
         <activity android:name=".CreateListingActivity" />
         <activity android:name=".RegisterSuccess" />
         <!--
@@ -97,11 +97,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <service android:name=".service.RoomieFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_roomie_notification" />

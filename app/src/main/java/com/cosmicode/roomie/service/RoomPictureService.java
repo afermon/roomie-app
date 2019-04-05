@@ -31,14 +31,13 @@ public class RoomPictureService {
 
         RoomPictureApiEnpointInterface apiService = ApiServiceGenerator.createService(RoomPictureApiEnpointInterface.class, authToken);
 
-        Call<Void> call = apiService.createPicture(roomPicture);
+        Call<RoomPicture> call = apiService.createPicture(roomPicture);
 
-        call.enqueue(new Callback<Void>() {
+        call.enqueue(new Callback<RoomPicture>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<RoomPicture> call, Response<RoomPicture> response) {
                 if (response.code() == 201) { // OK
-                    listener.onCreatePicSuccess();
-
+                    listener.onCreatePicSuccess(response.body());
                 } else {
                     Log.e(TAG, Integer.toString(response.code()));
                     listener.onPictureError("ERROR getting resources");
@@ -46,7 +45,7 @@ public class RoomPictureService {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<RoomPicture> call, Throwable t) {
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
                 listener.onPictureError("Something went wrong!");
@@ -55,7 +54,7 @@ public class RoomPictureService {
     }
 
     public interface OnCreatePictureListener {
-        void onCreatePicSuccess();
+        void onCreatePicSuccess(RoomPicture picture);
         void onPictureError(String error);
     }
 }

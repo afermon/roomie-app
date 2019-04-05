@@ -10,6 +10,7 @@
         <item name="android:buttonStyle">@style/RoomieButtonStyle</item>
         <item name="android:searchViewStyle">@style/RoomieSearchViewStyle</item>
         <item name="android:dialogTheme">@style/RoomieDialogTheme</item>
+        <item name="alertDialogTheme">@style/RoomieAlertDialogTheme</item>
     </style>
 
     <style name="RoomieTextViewStyle" parent="android:Widget.TextView">
@@ -47,7 +48,31 @@
     <style name="SpinnerStyle">
         <item name="android:background">@drawable/background_spinner</item>
     </style>
+
     <style name="RoomieDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
+
+    <style name="RoomieAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogNegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogPositiveButtonStyle</item>
+    </style>
+
+    <style name="AlertDialogNegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dark</item>
+    </style>
+
+    <style name="AlertDialogPositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

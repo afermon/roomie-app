@@ -1,7 +1,6 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.CreateListingActivity;
 import com.cosmicode.roomie.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -79,7 +77,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_room)
     public void optionRoom() {
-        startActivity(new Intent(getContext(), CreateListingActivity.class));
+        MainMyRoomsFragment mainMyRoomsFragment = new MainMyRoomsFragment();
+        openFragment(mainMyRoomsFragment);
         this.dismiss();
     }
 
@@ -92,6 +91,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_subscriptions)
     public void optionSubscriptions() {
+        MainPremiumRooms mainPremiumRooms = MainPremiumRooms.newInstance();
+        openFragment(mainPremiumRooms);
         this.dismiss();
     }
 
@@ -104,8 +105,6 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_report_problem)
     public void optionReportProblem() {
-        NewExpenseFragment todoFragment = NewExpenseFragment.newInstance(null);
-        openFragment(todoFragment);
         this.dismiss();
     }
 

@@ -29,10 +29,19 @@ public class Appointment implements Parcelable {
     @Expose
     private Long petitionerId;
 
+    @SerializedName("petitioner")
+    @Expose
+    private Roomie petitioner;
+
     @SerializedName("roomId")
     @Expose
     private Long roomId;
 
+    @SerializedName("room")
+    @Expose
+    private Room room;
+
+    private boolean isOwner;
 
     public Appointment() {
     }
@@ -54,11 +63,11 @@ public class Appointment implements Parcelable {
         this.id = id;
     }
 
-    public String getDesciption() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDesciption(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -92,6 +101,30 @@ public class Appointment implements Parcelable {
 
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
+    }
+
+    public Roomie getPetitioner() {
+        return petitioner;
+    }
+
+    public void setPetitioner(Roomie petitioner) {
+        this.petitioner = petitioner;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public boolean isOwner() {
+        return isOwner;
+    }
+
+    public void isOwner(boolean owner) {
+        isOwner = owner;
     }
 
     @Override

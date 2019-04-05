@@ -3,7 +3,11 @@ package com.cosmicode.roomie;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
@@ -16,11 +20,12 @@ import com.cosmicode.roomie.view.ListingCost;
 public class CreateListingActivity extends BaseActivity implements ListingChooseLocation.OnFragmentInteractionListener, ListingBasicInformation.OnFragmentInteractionListener, ListingChoosePictures.OnFragmentInteractionListener, ListingStepChooseType.OnFragmentInteractionListener, ListingCost.OnFragmentInteractionListener {
 
     private RoomCreate room;
-    private Fragment mFragment;
+    private ProgressBar stepBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create_listing);
         room = new RoomCreate();
         room.setState(RoomState.SEARCH);
         room.setLookingForRoomie(true);
@@ -28,7 +33,7 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         room.setMonthly(null);
         room.setAddress(null);
         room.setPicturesUris(null);
-        setContentView(R.layout.activity_create_listing);
+        stepBar = findViewById(R.id.step_bar);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room));
         transaction.addToBackStack(null);
@@ -49,6 +54,19 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         transaction.replace(R.id.listing_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void changePercentage(int progress) {
+        stepBar.setProgress(progress);
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public BaseActivity getBaseActivity() {

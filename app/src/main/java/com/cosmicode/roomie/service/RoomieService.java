@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.util.listeners.OnCreateRoomieListener;
+import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
