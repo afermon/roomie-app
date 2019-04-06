@@ -4,11 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -28,7 +23,6 @@ import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
-import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.domain.enumeration.Gender;
 import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomieService;
@@ -47,6 +41,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnGetUserByIdListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener {
 

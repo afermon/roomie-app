@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 

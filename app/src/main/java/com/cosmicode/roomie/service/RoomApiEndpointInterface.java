@@ -1,12 +1,11 @@
 package com.cosmicode.roomie.service;
 
-import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
-import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.SearchFilter;
 
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

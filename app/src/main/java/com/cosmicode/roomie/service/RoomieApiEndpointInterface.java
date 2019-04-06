@@ -1,6 +1,5 @@
 package com.cosmicode.roomie.service;
 
-import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 
 import retrofit2.Call;
