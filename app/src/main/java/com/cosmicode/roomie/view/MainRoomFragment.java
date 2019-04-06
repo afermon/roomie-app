@@ -6,17 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +33,7 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.AppointmentService;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.RoomieTimeUtil;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
 import com.google.android.flexbox.FlexDirection;
@@ -64,6 +54,16 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class MainRoomFragment extends Fragment implements OnGetUserByIdListener, OnGetRoomieByIdListener, OnMapReadyCallback, AppointmentService.OnAppointmentListener {
@@ -477,9 +477,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
                 DateTime appointmentDateTime = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm").parseDateTime(appointmentDateTV.getText().toString());
 
-                DateTimeFormatter roomieInstantFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ").withZoneUTC();
-
-                appointment.setDateTime(roomieInstantFormatter.print(appointmentDateTime));
+                appointment.setDateTime(RoomieTimeUtil.datetimeToInstantString(appointmentDateTime));
                 appointment.setDescription(appointmentDescriptionET.getText().toString());
 
                 Log.d(TAG, appointment.toString());

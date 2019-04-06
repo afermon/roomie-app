@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Calendar;
+
 public class RoomEvent implements Parcelable {
 
     @SerializedName("id")
@@ -39,6 +41,8 @@ public class RoomEvent implements Parcelable {
     @SerializedName("organizerId")
     @Expose
     private Long organizerId;
+
+    private Calendar startTimeCalendar;
 
     public RoomEvent() {
     }
@@ -118,6 +122,27 @@ public class RoomEvent implements Parcelable {
         this.organizerId = organizerId;
     }
 
+    public Calendar getStartTimeCalendar() {
+        return startTimeCalendar;
+    }
+
+    public void setStartTimeCalendar(Calendar startTimeCalendar) {
+        this.startTimeCalendar = startTimeCalendar;
+    }
+
+    @Override
+    public String toString() {
+        return "RoomEvent{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", isPrivate=" + isPrivate +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", roomId=" + roomId +
+                ", organizerId=" + organizerId +
+                '}';
+    }
 
     @Override
     public int describeContents() {
