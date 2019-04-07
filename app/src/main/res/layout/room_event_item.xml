@@ -19,88 +19,89 @@
         app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/room_event_type"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/organizer_profile_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/icon_target_success"
+                app:civ_border_color="@color/secondary"
+                app:civ_border_width="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/room_event_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:text="2019-06-10 10:30"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@+id/room_event_state"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView8"
-                app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/room_event_type"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/icon_calendar_success"
+                app:layout_constraintStart_toStartOf="@+id/organizer_profile_image"
+                app:layout_constraintTop_toTopOf="@+id/organizer_profile_image" />
 
             <TextView
-                android:id="@+id/room_event_state"
+                android:id="@+id/room_event_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="PENDING"
+                android:text="10:30 am to 11:30 am"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/room_event_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="Event title"
                 android:textColor="@color/primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView8"
+                app:layout_constraintStart_toEndOf="@+id/organizer_profile_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/room_event_description"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id velit tristique, dapibus nulla vitae, imperdiet justo."
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id velit tristique, dapibus.."
                 android:textAlignment="viewStart"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/room_event_settings"
-                app:layout_constraintStart_toEndOf="@+id/room_event_type"
-                app:layout_constraintTop_toBottomOf="@+id/room_event_date" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/organizer_profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/room_event_title" />
 
             <ImageView
                 android:id="@+id/imageView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/room_event_date"
-                app:layout_constraintStart_toEndOf="@+id/room_event_type"
+                app:layout_constraintEnd_toStartOf="@+id/room_event_date"
                 app:layout_constraintTop_toTopOf="@+id/room_event_date"
-                app:srcCompat="@drawable/icon_calendar_brand" />
+                app:srcCompat="@drawable/icon_time_brand" />
 
-            <ImageView
-                android:id="@+id/room_event_settings"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/room_event_state"
-                app:srcCompat="@drawable/icon_setting_brand" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

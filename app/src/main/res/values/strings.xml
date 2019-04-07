@@ -283,4 +283,16 @@
     <string name="material_calendar_negative_button">Cancel</string>
     <string name="no_events_yet">No events yet.</string>
     <string name="to">to</string>
+    <string name="new_event">New event</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End time</string>
+    <string name="date">Date</string>
+    <string name="pick">Pick</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="Schedule">Schedule</string>
+    <string name="not_empty">Cannot be empty</string>
+    <string name="error_request">Error completing the request</string>
+    <string name="room_event_created">Event %s created successfully.</string>
+    <string name="room_event_time_error">End time must be past start time.</string>
 </resources>

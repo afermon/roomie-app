@@ -273,7 +273,7 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             Appointment appointment = this.appointmentList.get(position);
             itemHolder.description.setText(appointment.getDescription());
             itemHolder.state.setText(appointment.getState().name());
-            itemHolder.date.setText(RoomieTimeUtil.formatInstantStringDateTime(appointment.getDateTime()));
+            itemHolder.date.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(appointment.getDateTime()));
             Glide.with(getContext()).load(appointment.getPetitioner().getPicture()).centerCrop().into(itemHolder.profileImage);
             itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
         }
