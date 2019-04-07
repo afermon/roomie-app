@@ -79,6 +79,7 @@ dependencies {
     implementation 'com.synnapps:carouselview:0.1.5'
     implementation 'com.github.blackcat27:library:2.0.2-SNAPSHOT'
     implementation 'com.applandeo:material-calendar-view:1.5.1'
+    implementation 'com.basgeekball:awesome-validation:4.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

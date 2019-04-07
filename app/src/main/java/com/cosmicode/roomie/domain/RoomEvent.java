@@ -42,6 +42,10 @@ public class RoomEvent implements Parcelable {
     @Expose
     private Long organizerId;
 
+    @SerializedName("organizer")
+    @Expose
+    private Roomie organizer;
+
     private Calendar startTimeCalendar;
 
     public RoomEvent() {
@@ -128,6 +132,14 @@ public class RoomEvent implements Parcelable {
 
     public void setStartTimeCalendar(Calendar startTimeCalendar) {
         this.startTimeCalendar = startTimeCalendar;
+    }
+
+    public Roomie getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(Roomie organizer) {
+        this.organizer = organizer;
     }
 
     @Override

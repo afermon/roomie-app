@@ -298,7 +298,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             RoomTask roomTask = this.taskList.get(position);
             itemHolder.cardDescription.setText(roomTask.getDescription());
             itemHolder.cardTitle.setText(roomTask.getTitle());
-            itemHolder.cardDeadline.setText(RoomieTimeUtil.formatInstantStringDateTime(roomTask.getDeadline()));
+            itemHolder.cardDeadline.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(roomTask.getDeadline()));
 
             if(roomTask.getState() == RoomTaskState.COMPLETED){
                 itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.toast_success));

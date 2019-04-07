@@ -477,7 +477,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
                 DateTime appointmentDateTime = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm").parseDateTime(appointmentDateTV.getText().toString());
 
-                appointment.setDateTime(RoomieTimeUtil.datetimeToInstantString(appointmentDateTime));
+                appointment.setDateTime(RoomieTimeUtil.dateTimeToInstantUTCString(appointmentDateTime));
                 appointment.setDescription(appointmentDescriptionET.getText().toString());
 
                 Log.d(TAG, appointment.toString());
