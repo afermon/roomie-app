@@ -413,6 +413,7 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
 
+            holder.roomEventTitle.setText(holder.mItem.getTitle());
             holder.roomEventDescription.setText(holder.mItem.getDescription());
 
             holder.roomEventType.setBackgroundResource((holder.mItem.getPrivate() ? R.drawable.icon_event_private_danger : R.drawable.icon_target_success));
