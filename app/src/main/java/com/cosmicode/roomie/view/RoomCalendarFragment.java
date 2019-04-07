@@ -2,15 +2,19 @@ package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -19,12 +23,6 @@ import android.widget.TextView;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.basgeekball.awesomevalidation.ValidationHolder;
-import com.basgeekball.awesomevalidation.utility.RegexTemplate;
-import com.basgeekball.awesomevalidation.utility.custom.CustomErrorReset;
-import com.basgeekball.awesomevalidation.utility.custom.CustomValidation;
-import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback;
-import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
@@ -41,8 +39,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -61,14 +63,8 @@ import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
  * create an instance of this fragment.
  */
 public class RoomCalendarFragment extends Fragment implements RoomEventService.OnRoomEventListener, RoomieService.OnGetCurrentRoomieListener {
-    private static String TAG = "RoomCalendarFragment";
     private static final String ARG_ROOM = "roomid";
-    private Long mRoomId;
-    private Roomie currentRoomie;
-    private RoomEventService roomEventService;
-    private RoomieService roomieService;
-    private OnFragmentInteractionListener mListener;
-
+    private static String TAG = "RoomCalendarFragment";
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.no_results)
@@ -77,9 +73,13 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
     CalendarView calendarView;
     @BindView(R.id.day_event_list)
     RecyclerView dayEventsRecycler;
-
     List<RoomEvent> roomEvents;
     List<EventDay> calendarEventsList;
+    private Long mRoomId;
+    private Roomie currentRoomie;
+    private RoomEventService roomEventService;
+    private RoomieService roomieService;
+    private OnFragmentInteractionListener mListener;
 
     public RoomCalendarFragment() {
         // Required empty public constructor
@@ -138,8 +138,8 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-           // throw new RuntimeException(context.toString()
-             //       + " must implement OnFragmentInteractionListener");
+            // throw new RuntimeException(context.toString()
+            //       + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -150,7 +150,7 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
     }
 
     @OnClick(R.id.create_event_fab)
-    public void createEvent(){
+    public void createEvent() {
         Calendar currentCalendar = calendarView.getFirstSelectedDate();
         Calendar startTimeCalendar = (Calendar) calendarView.getFirstSelectedDate().clone();
         Calendar endTimeCalendar = (Calendar) calendarView.getFirstSelectedDate().clone();
@@ -209,7 +209,8 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
         newEventDialogBuilder.setTitle(RoomieTimeUtil.calendarToDateString(currentCalendar))
                 .setIcon(R.drawable.icon_calendar_brand)
                 .setView(newEventLayout)
-                .setPositiveButton(R.string.Schedule, (dialog, which) -> { })
+                .setPositiveButton(R.string.Schedule, (dialog, which) -> {
+                })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
 
         AlertDialog newEventDialog = newEventDialogBuilder.create();
@@ -217,11 +218,11 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
 
         newEventDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (endTimeCalendar.get(Calendar.HOUR_OF_DAY) < startTimeCalendar.get(Calendar.HOUR_OF_DAY) ||
-                    ((endTimeCalendar.get(Calendar.HOUR_OF_DAY) == startTimeCalendar.get(Calendar.HOUR_OF_DAY)) && (endTimeCalendar.get(Calendar.MINUTE) < startTimeCalendar.get(Calendar.MINUTE)))){
+                    ((endTimeCalendar.get(Calendar.HOUR_OF_DAY) == startTimeCalendar.get(Calendar.HOUR_OF_DAY)) && (endTimeCalendar.get(Calendar.MINUTE) < startTimeCalendar.get(Calendar.MINUTE)))) {
                 endTimeCalendar.set(Calendar.HOUR_OF_DAY, startTimeCalendar.get(Calendar.HOUR_OF_DAY));
                 endTimeCalendar.set(Calendar.MINUTE, startTimeCalendar.get(Calendar.MINUTE));
                 ((BaseActivity) getContext()).showUserMessage(getString(R.string.room_event_time_error), BaseActivity.SnackMessageType.ERROR);
-            } else if(mAwesomeValidation.validate()){
+            } else if (mAwesomeValidation.validate()) {
                 RoomEvent roomEvent = new RoomEvent();
                 roomEvent.setRoomId(mRoomId);
                 roomEvent.setStartTime(RoomieTimeUtil.calendarToInstantUTCString(startTimeCalendar));
@@ -272,12 +273,20 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
         roomEvent.setOrganizer(currentRoomie);
         roomEvents.add(roomEvent);
         addCalendarEvent(roomEvent);
+        calendarView.setEvents(calendarEventsList);
         showDayEvents(RoomieTimeUtil.instantUTCStringToCalendar(roomEvent.getStartTime()));
     }
 
     @Override
     public void onUpdateRoomEventSuccess(RoomEvent roomEvent) {
 
+    }
+
+    @Override
+    public void onDeleteRoomEventSuccess() {
+        ((BaseActivity) getContext()).showUserMessage(getString(R.string.event_canceled), BaseActivity.SnackMessageType.SUCCESS);
+        showProgress(true);
+        roomEventService.getAllRoomEventsRoom(mRoomId);
     }
 
     @Override
@@ -290,7 +299,7 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
         roomEvents = roomEventList;
         calendarEventsList = new ArrayList<>();
 
-        for (RoomEvent roomEvent: roomEvents)
+        for (RoomEvent roomEvent : roomEvents)
             addCalendarEvent(roomEvent);
 
         calendarView.setEvents(calendarEventsList);
@@ -306,10 +315,10 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
     private void showDayEvents(Calendar selectedCalendar) {
         showProgress(true);
 
-        List<RoomEvent> dateRoomEvents =new ArrayList<>();
+        List<RoomEvent> dateRoomEvents = new ArrayList<>();
 
-        for(RoomEvent roomEvent: roomEvents)
-            if(RoomieTimeUtil.isSameDay(selectedCalendar, roomEvent.getStartTimeCalendar()))
+        for (RoomEvent roomEvent : roomEvents)
+            if (RoomieTimeUtil.isSameDay(selectedCalendar, roomEvent.getStartTimeCalendar()))
                 dateRoomEvents.add(roomEvent);
 
 
@@ -345,6 +354,42 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
 
     }
 
+    @SuppressLint("RestrictedApi")
+    private void roomEventPopupMenu(View v, RoomEvent roomEvent) {
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+        popup.getMenuInflater().inflate(R.menu.room_event_menu, popup.getMenu());
+
+        Menu menu = popup.getMenu();
+
+        if (roomEvent.getOrganizerId() != currentRoomie.getId())
+            menu.removeItem(R.id.room_event_cancel);
+        else
+            menu.removeItem(R.id.room_event_organizer);
+
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.room_event_cancel:
+                    roomEventService.deleteRoomEvent(roomEvent.getId());
+                    return true;
+                case R.id.room_event_organizer:
+                    MainProfileFragment roomieView = MainProfileFragment.newInstance(roomEvent.getOrganizer());
+                    FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction2.replace(R.id.main_container, roomieView);
+                    transaction2.addToBackStack(null);
+                    transaction2.commit();
+                    return true;
+            }
+
+            return false;
+        });
+
+        MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
+        menuHelper.setForceShowIcon(true);
+        menuHelper.setGravity(Gravity.END);
+        menuHelper.show();
+
+    }
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
@@ -374,11 +419,10 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
 
             Glide.with(getContext()).load(holder.mItem.getOrganizer().getPicture()).centerCrop().into(holder.organizerImageView);
 
-            holder.roomEventDate.setText(String.format("%s %s %s", RoomieTimeUtil.instantUTCStringToLocalTimeString(holder.mItem.getStartTime()), getString(R.string.to) , RoomieTimeUtil.instantUTCStringToLocalTimeString(holder.mItem.getEndTime())));
+            holder.roomEventDate.setText(String.format("%s %s %s", RoomieTimeUtil.instantUTCStringToLocalTimeString(holder.mItem.getStartTime()), getString(R.string.to), RoomieTimeUtil.instantUTCStringToLocalTimeString(holder.mItem.getEndTime())));
 
-            holder.roomEventCard.setOnClickListener(l -> {
-
-            });
+            holder.roomEventCard.setOnClickListener(l -> roomEventPopupMenu(holder.roomEventOptions, holder.mItem));
+            holder.roomEventOptions.setOnClickListener(l -> roomEventPopupMenu(holder.roomEventOptions, holder.mItem));
 
         }
 
@@ -389,6 +433,7 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
+            public RoomEvent mItem;
             @BindView(R.id.room_event_type)
             ImageView roomEventType;
             @BindView(R.id.organizer_profile_image)
@@ -401,8 +446,8 @@ public class RoomCalendarFragment extends Fragment implements RoomEventService.O
             TextView roomEventDate;
             @BindView(R.id.room_event_card)
             CardView roomEventCard;
-
-            public RoomEvent mItem;
+            @BindView(R.id.room_event_options)
+            ImageButton roomEventOptions;
 
             public ViewHolder(View view) {
                 super(view);

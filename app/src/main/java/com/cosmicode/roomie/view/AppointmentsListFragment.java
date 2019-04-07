@@ -276,6 +276,7 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             itemHolder.date.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(appointment.getDateTime()));
             Glide.with(getContext()).load(appointment.getPetitioner().getPicture()).centerCrop().into(itemHolder.profileImage);
             itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
+            itemHolder.settings.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
         }
 
         @Override

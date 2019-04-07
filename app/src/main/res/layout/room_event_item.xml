@@ -56,10 +56,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:text="10:30 am to 11:30 am"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/room_event_options"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -88,7 +88,7 @@
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id velit tristique, dapibus.."
                 android:textAlignment="viewStart"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/room_event_options"
                 app:layout_constraintStart_toEndOf="@+id/organizer_profile_image"
                 app:layout_constraintTop_toBottomOf="@+id/room_event_title" />
 
@@ -101,6 +101,17 @@
                 app:layout_constraintEnd_toStartOf="@+id/room_event_date"
                 app:layout_constraintTop_toTopOf="@+id/room_event_date"
                 app:srcCompat="@drawable/icon_time_brand" />
+
+            <ImageButton
+                android:id="@+id/room_event_options"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/icon_more_vertilcal_gray"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

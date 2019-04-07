@@ -2,9 +2,11 @@ package com.cosmicode.roomie.service;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.RoomEvent;
+import com.cosmicode.roomie.domain.RoomTask;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
@@ -131,9 +133,36 @@ public class RoomEventService {
         });
     }
 
+    public RoomTask deleteRoomEvent(Long id){
+
+        RoomEventApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomEventApiEndpointInterface.class, authToken);
+
+        Call<Void> call = apiService.deleteRoomEvent(id);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    listener.onDeleteRoomEventSuccess();
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.onRoomEventError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.onRoomEventError(t.getMessage());
+            }
+        });
+        return null;
+    }
+
     public interface OnRoomEventListener {
         void onCreateRoomEventSuccess(RoomEvent roomEvent);
         void onUpdateRoomEventSuccess(RoomEvent roomEvent);
+        void onDeleteRoomEventSuccess();
         void onGetRoomEventSuccess(RoomEvent roomEvent);
         void onGetRoomEventListSuccess(List<RoomEvent> roomEvent);
         void onRoomEventError(String error);
