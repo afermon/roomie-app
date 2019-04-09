@@ -218,7 +218,7 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
 
 
             holder.cardView.setOnClickListener( v -> {
-                Expense todoFragment = Expense.newInstance();
+                Expense todoFragment = Expense.newInstance(room, e);
                 openFragment(todoFragment);
             });
 

@@ -150,6 +150,9 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             roomExpense = new RoomExpense();
+            if (roomExpense.getCurrency() == null) {
+                roomExpense.setCurrency(CurrencyType.COLON);
+            }
             roomExpenseService = new RoomExpenseService(getContext(),this);
             roomExpenseSplitService = new RoomExpenseSplitService(getContext(),this);
         }
@@ -176,6 +179,8 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expenseSpinner.setAdapter(spinnerAdapter);
         selectedRoomies = new ArrayList<>();
+
+
         expenseAmount.setDecimalDigits(0);
         if (roomExpense.getCurrency() != null) {
             if (roomExpense.getCurrency() == CurrencyType.COLON) {
@@ -239,12 +244,14 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         radioGroupCurrency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.radio_crc:
                         roomExpense.setCurrency(CurrencyType.COLON);
+                        expenseAmount.setLocale(new Locale("es", "cr"));
                         break;
                     case R.id.radio_usd:
                         roomExpense.setCurrency(CurrencyType.DOLLAR);
+                        expenseAmount.setLocale(Locale.US);
                         break;
                 }
             }
@@ -418,7 +425,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 //        double total= roomExpenseCreated.getAmount()/selectedRoomies.size();
         double total=0;
         if(selectedRoomies.size()>0){
-           total = 10000/selectedRoomies.size();
+           total= roomExpenseCreated.getAmount()/selectedRoomies.size();
         }
         splitwiseTxt.setText(String.valueOf(total));
     }
