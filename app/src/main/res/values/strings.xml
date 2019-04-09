@@ -263,4 +263,7 @@
     <string name="week">Week</string>
     <string name="new_expense">New expense</string>
     <string name="amount_person">Amount per person: </string>
+    <string name="expenses">Expenses</string>
+    <string name="expe">Expense</string>
+    <string name="roomies">Roomie</string>
 </resources>

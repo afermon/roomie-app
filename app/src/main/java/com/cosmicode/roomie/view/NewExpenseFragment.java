@@ -268,7 +268,6 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
             roomExpense.setName(expenseName.getText().toString());
             roomExpense.setRoomId(Long.parseLong("1"));
             roomExpense.setMonthDay(1);
-//            Toast.makeText(getContext(), roomExpense.toString(), Toast.LENGTH_LONG).show();
             roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
             roomExpenseService.createExpense(roomExpense);
         }else{
@@ -385,6 +384,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void OnGetExpenseByRoomSuccess(List<RoomExpense> roomTasks) {
+
     }
 
     @Override

@@ -54,7 +54,37 @@ public class RoomExpenseService {
         return null;
     }
 
+    public List<RoomExpense> getAllExpensesByRoom(Long id){
+
+        RoomExpenseApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
+
+        Call<List<RoomExpense>> call = apiService.getExpenseByRoom(id);
+
+        call.enqueue(new Callback<List<RoomExpense>>() {
+            @Override
+            public void onResponse(Call<List<RoomExpense>> call, Response<List<RoomExpense>> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnGetExpenseByRoomSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.OnGetExpenseRoomError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RoomExpense>> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.OnGetExpenseRoomError("Something went wrong!");
+            }
+        });
+        return null;
+    }
+
+
     public interface RoomExpenseServiceListener {
+        void OnGetExpenseByRoomSuccess(List<RoomExpense> roomTasks);
         void OnCreateExpenseSuccess(RoomExpense roomExpense);
         void OnUpdateSuccess(RoomExpense roomExpense);
         void OnGetExpenseRoomError(String error);
