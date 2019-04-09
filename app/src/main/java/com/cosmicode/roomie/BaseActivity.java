@@ -1,12 +1,13 @@
 package com.cosmicode.roomie;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.cosmicode.roomie.service.UserInterface;
 import com.cosmicode.roomie.util.Core;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
 

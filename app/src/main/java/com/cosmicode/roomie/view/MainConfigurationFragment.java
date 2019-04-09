@@ -1,14 +1,7 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +12,18 @@ import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.domain.UserPreferences;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
-import com.cosmicode.roomie.domain.enumeration.Gender;
 import com.cosmicode.roomie.domain.enumeration.Lang;
 import com.cosmicode.roomie.service.ConfigurationService;
 import com.cosmicode.roomie.service.RoomieService;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 public class MainConfigurationFragment extends Fragment implements ConfigurationService.ConfigurationListener, RoomieService.OnGetCurrentRoomieListener {
 

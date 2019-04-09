@@ -4,6 +4,30 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.RoomTask;
+import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
+import com.cosmicode.roomie.service.RoomTaskService;
+import com.cosmicode.roomie.util.RoomieTimeUtil;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
@@ -18,30 +42,6 @@ import butterknife.OnClick;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.RoomTask;
-import com.cosmicode.roomie.domain.enumeration.RoomTaskState;
-import com.cosmicode.roomie.service.RoomTaskService;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener {
     private OnFragmentInteractionListener mListener;
@@ -300,9 +300,8 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             RoomTask roomTask = this.taskList.get(position);
             itemHolder.cardDescription.setText(roomTask.getDescription());
             itemHolder.cardTitle.setText(roomTask.getTitle());
-            //if(roomTask != null){
-                itemHolder.cardDeadline.setText(formattDateString(roomTask.getDeadline()));
-            //}
+            itemHolder.cardDeadline.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(roomTask.getDeadline()));
+
             if(roomTask.getState() == RoomTaskState.COMPLETED){
                 itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.toast_success));
                 itemHolder.buttonConfirm.setImageResource(R.drawable.ic_todo_check);
@@ -333,18 +332,6 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             );
         }
 
-        public String formattDateString(String pdate){
-            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                    .withLocale(Locale.ROOT)
-                    .withChronology(ISOChronology.getInstanceUTC());
-            DateTime date = new DateTime();
-            String dt = new String();
-            if (pdate !=null){
-                date = format.parseDateTime(pdate);
-                dt = date.getDayOfMonth() + "/" + date.getMonthOfYear() + "/" + date.getYear() + " " + date.getHourOfDay() + ":" + date.getMinuteOfHour();
-            }
-            return dt;
-        }
         @Override
         public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
             return new TaskGroupViewHolder(view);

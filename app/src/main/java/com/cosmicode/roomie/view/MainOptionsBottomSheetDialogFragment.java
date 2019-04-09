@@ -2,12 +2,6 @@ package com.cosmicode.roomie.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +10,12 @@ import android.widget.TextView;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
@@ -105,6 +105,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_report_problem)
     public void optionReportProblem() {
+        RoomCalendarFragment roomCalendarFragment = RoomCalendarFragment.newInstance(Long.valueOf(1));
+        openFragment(roomCalendarFragment);
         this.dismiss();
     }
 

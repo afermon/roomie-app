@@ -4,12 +4,11 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
+import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
