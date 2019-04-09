@@ -36,11 +36,11 @@ public class RoomExpenseService {
             @Override
             public void onResponse(Call<RoomExpense> call, Response<RoomExpense> response) {
                 if (response.code() == 201) { // OK
-                    listener.OnCreateExpense(response.body());
+                    listener.OnCreateExpenseSuccess(response.body());
 
                 } else {
                     Log.e(TAG, Integer.toString(response.code()));
-                    listener.OnGetTaskByRoomError("ERROR getting resources");
+                    listener.OnGetExpenseRoomError("ERROR getting resources");
                 }
             }
 
@@ -48,15 +48,15 @@ public class RoomExpenseService {
             public void onFailure(Call<RoomExpense> call, Throwable t) {
                 Toast.makeText(context, "Something went wrong!",
                         Toast.LENGTH_LONG).show();
-                listener.OnGetTaskByRoomError("Something went wrong!");
+                listener.OnGetExpenseRoomError("Something went wrong!");
             }
         });
         return null;
     }
 
     public interface RoomExpenseServiceListener {
-        void OnCreateExpense(RoomExpense roomExpense);
+        void OnCreateExpenseSuccess(RoomExpense roomExpense);
         void OnUpdateSuccess(RoomExpense roomExpense);
-        void OnGetTaskByRoomError(String error);
+        void OnGetExpenseRoomError(String error);
     }
 }

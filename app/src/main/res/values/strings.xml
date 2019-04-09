@@ -253,4 +253,14 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="appointment_updated">Appointment updated and the user has been notified!</string>
+    <string name="add_person_split">Add person</string>
+    <string name="create_split">Create</string>
+    <string name="amount_split">Amount</string>
+    <string name="end_date">End date</string>
+    <string name="start_date">Start date</string>
+    <string name="frecuency">Frecuency</string>
+    <string name="every">Every</string>
+    <string name="week">Week</string>
+    <string name="new_expense">New expense</string>
+    <string name="amount_person">Amount per person: </string>
 </resources>

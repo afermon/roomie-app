@@ -2,8 +2,10 @@ package com.cosmicode.roomie.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,10 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,20 +29,27 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
+import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.RoomExpenseSplit;
+import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomExpenseService;
+import com.cosmicode.roomie.service.RoomExpenseSplitService;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -46,30 +57,41 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class NewExpenseFragment extends Fragment implements  Validator.ValidationListener, RoomExpenseService.RoomExpenseServiceListener {
+public class NewExpenseFragment extends Fragment implements  Validator.ValidationListener, RoomExpenseService.RoomExpenseServiceListener, RoomExpenseSplitService.RoomExpenseSplitServiceListener {
     private RoomExpenseService roomExpenseService;
+    private RoomExpenseSplitService roomExpenseSplitService;
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
     private Room room;
     private Validator validator;
     private boolean isValid = true;
     private String dateStart, dateEnd;
-    private RoomExpense roomExpense;
+    private RoomExpense roomExpense, roomExpenseCreated;
     private DatePickerDialog.OnDateSetListener mDateSetListenerStart,mDateSetListenerEnd;
     private int step = 0;
-
+    private DateTimeComparator comparator;
+    private RecyclerView.LayoutManager layoutManager;
+    private List<Roomie> selectedRoomies;
     @BindView(R.id.main_info_expense)
     ScrollView mainInfoView;
 
     @BindView(R.id.add_person_expense)
     ScrollView addPersonView;
 
+    @BindView(R.id.amount_splitwise_txt)
+    TextView splitwiseTxt;
+
     @BindView(R.id.AmoutSplit)
-    CardView amountSplit;
+    RelativeLayout amountSplit;
 
     @BindView(R.id.progress2)
     ProgressBar progressBar;;
@@ -103,10 +125,13 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     @BindView(R.id.create_expense_btn)
     Button createExpenseBtn;
 
-    @BindView(R.id.add_person_recycler)
     RecyclerView recyclerView;
 
+    private RecyclerView.Adapter mAdapter;
+
     Spinner expenseSpinner;
+
+    List<Roomie> roomies;
 
     public NewExpenseFragment() {
         // Required empty public constructor
@@ -126,6 +151,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         if (getArguments() != null) {
             roomExpense = new RoomExpense();
             roomExpenseService = new RoomExpenseService(getContext(),this);
+            roomExpenseSplitService = new RoomExpenseSplitService(getContext(),this);
         }
     }
 
@@ -149,7 +175,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),R.array.numbersSpinnerExpense, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expenseSpinner.setAdapter(spinnerAdapter);
-
+        selectedRoomies = new ArrayList<>();
         expenseAmount.setDecimalDigits(0);
         if (roomExpense.getCurrency() != null) {
             if (roomExpense.getCurrency() == CurrencyType.COLON) {
@@ -161,6 +187,12 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
             }
         }
 
+        recyclerView = getView().findViewById(R.id.add_person_recycler);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new MyAdapter(room.getRoomies());
+
+        recyclerView.setAdapter(mAdapter);
 
         mDateSetListenerStart = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -231,12 +263,12 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         if(isValid){
             roomExpense.setAmount((double) expenseAmount.getRawValue());
             roomExpense.setDesciption(expenseDescription.getText().toString());
-            roomExpense.setFinishDate(expenseEndDate.getText().toString()+"T00:00:00Z");
-            roomExpense.setStartDate(expenseStartDate.getText().toString()+"T00:00:00Z");
+            roomExpense.setFinishDate(dateEnd+"T00:00:00Z");
+            roomExpense.setStartDate(dateStart+"T00:00:00Z");
             roomExpense.setName(expenseName.getText().toString());
             roomExpense.setRoomId(Long.parseLong("1"));
             roomExpense.setMonthDay(1);
-            Toast.makeText(getContext(), roomExpense.toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getContext(), roomExpense.toString(), Toast.LENGTH_LONG).show();
             roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
             roomExpenseService.createExpense(roomExpense);
         }else{
@@ -244,6 +276,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         }
 
     }
+
 
     @Override
     public void onValidationFailed(List<ValidationError> errors) {
@@ -282,7 +315,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         switch (step){
             case 0:
                 showProgress(true);
-                if(expenseStartDate.toString().equals("")){
+                if(expenseStartDate.getText().toString().equals("")){
                     expenseStartDate.setError("Please choose a date");
                     isValid = false;
                 }else{
@@ -290,26 +323,61 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                 }
 
 
-                if(expenseEndDate.toString().equals("")){
-                    expenseEndDate.setError("Please choose a gender");
+                if(expenseEndDate.getText().toString().equals("")){
+                    expenseEndDate.setError("Please choose a date");
                     isValid = false;
                 }else{
                     isValid = true;
                 }
 
-                if (expenseAmount.toString().equals("0.00")){
+                if (expenseAmount.getText().toString().equals("0")){
                     expenseAmount.setError("Can not be 0.00 or less");
                     isValid = false;
                 }else{
                     isValid = true;
                 }
 
+//                if(dateEnd==null && dateStart==null){
+//                    DateTime dEnd,dStart;
+//                    dEnd = formatDate(dateEnd+"T00:00:00Z");
+//                    dStart = formatDate(dateStart+"T00:00:00Z");
+//                    int difday = comparator.compare(dEnd, dStart);
+//                    if(difday<0){
+//                        isValid = false;
+//                        Toast.makeText(getContext(), "End date can't be older than the start date of the expense", Toast.LENGTH_SHORT).show();
+//                    }else{
+//                        isValid = true;
+//                    }
+//                }
+
                 validator.validate();
                 break;
             case 1:
+                Toast.makeText(getContext(), Integer.toString(selectedRoomies.size()), Toast.LENGTH_LONG).show();
+                List<RoomExpenseSplit> roomExpenseSplitLIst = new ArrayList<RoomExpenseSplit>();
 
+                for (Roomie r: selectedRoomies){
+//                    Long id, Double amount, Long expenseId, Long roomieId
+                    RoomExpenseSplit expenseSplit = new RoomExpenseSplit();
+                    expenseSplit.setAmount(Double.parseDouble(splitwiseTxt.getText().toString()));
+                    expenseSplit.setRoomieId(r.getId());
+                    expenseSplit.setExpenseId(roomExpenseCreated.getId());
+                    roomExpenseSplitLIst.add(expenseSplit);
+                }
+
+                roomExpenseSplitService.createExpense(roomExpenseSplitLIst);
+                showProgress(true);
                 break;
         }
+    }
+
+    public DateTime formatDate(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
     }
 
     private void openFragment(Fragment fragment) {
@@ -320,14 +388,15 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     }
 
     @Override
-    public void OnCreateExpense(RoomExpense roomExpense) {
+    public void OnCreateExpenseSuccess(RoomExpense roomExpense) {
         showProgress(false);
+        roomExpenseCreated = roomExpense;
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         step = 1;
         mainInfoView.setVisibility(View.GONE);
         addPersonView.setVisibility(View.VISIBLE);
         amountSplit.setVisibility(View.VISIBLE);
-
+        createExpenseBtn.setText(R.string.add_person_split);
     }
 
     @Override
@@ -337,7 +406,33 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     }
 
     @Override
-    public void OnGetTaskByRoomError(String error) {
+    public void OnGetExpenseRoomError(String error) {
+
+    }
+
+    public void updateAmountSplit(){
+//        double total= roomExpenseCreated.getAmount()/selectedRoomies.size();
+        double total=0;
+        if(selectedRoomies.size()>0){
+           total = 10000/selectedRoomies.size();
+        }
+        splitwiseTxt.setText(String.valueOf(total));
+    }
+
+    @Override
+    public void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplit) {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void OnUpdateSuccess(RoomExpenseSplit roomExpenseSplit) {
+
+    }
+
+    @Override
+    public void OnGetRoomExpenseSplitError(String error) {
 
     }
 
@@ -359,4 +454,65 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                     }
                 });
     }
+
+    //    -----------------------------------------Recycler-------------------------------------------
+    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.RoomieViewHolder>{
+
+        private List<Roomie> roomieList;
+        public class RoomieViewHolder extends  RecyclerView.ViewHolder {
+            private CardView cardView;
+            private TextView txtPersonName;
+            private CircleImageView pfp;
+            private boolean selected;
+            RoomieViewHolder(View view){
+                super(view);
+                cardView = view.findViewById(R.id.card_view_add_person);
+                txtPersonName = view.findViewById(R.id.add_person_name_txt);
+                pfp = view.findViewById(R.id.profile_image2);
+                selected = false;
+            }
+
+        }
+        public MyAdapter(List<Roomie> proomieList) {
+            this.roomieList = proomieList;
+//            this.mContext = mContext;
+        }
+
+        public int getItemCount() {
+            return roomieList.size();
+        }
+
+        @Override
+        public RoomieViewHolder onCreateViewHolder( ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_person_item, viewGroup, false);
+
+            RoomieViewHolder vh = new RoomieViewHolder(v);
+
+            return vh;
+        }
+
+
+        @Override
+        public void onBindViewHolder(final RoomieViewHolder holder, int position) {
+            Roomie roomie = this.roomieList.get(position);
+            holder.txtPersonName.setText(roomie.getPhone());
+            Glide.with(getContext()).load(roomie.getPicture()).centerCrop().into(holder.pfp);
+
+            holder.cardView.setOnClickListener( v -> {
+                if(selectedRoomies.contains(roomie)==false) {
+                    holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                    selectedRoomies.add(roomie);
+                    updateAmountSplit();
+                }else{
+                    holder.cardView.setCardBackgroundColor(Color.WHITE);
+                    selectedRoomies.remove(roomie);
+                    updateAmountSplit();
+                }
+            });
+
+        }
+    }
 }
+
+
+

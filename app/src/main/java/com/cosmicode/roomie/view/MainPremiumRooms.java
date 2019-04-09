@@ -136,9 +136,10 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
             holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
 
             holder.roomCard.setOnClickListener(l -> {
-                ToDoLIstFragment toDoLIstFragment = ToDoLIstFragment.newInstance(mValues.get(position).getId());
+//                ToDoLIstFragment toDoLIstFragment = ToDoLIstFragment.newInstance(mValues.get(position).getId());
+                NewExpenseFragment newExpenseFragment = NewExpenseFragment.newInstance(mValues.get(position));
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_container, toDoLIstFragment);
+                transaction.replace(R.id.main_container, newExpenseFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             });

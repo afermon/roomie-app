@@ -57,7 +57,9 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     private long roomId = 1;
     private DateTime dateToday;
 
-    private DateTimeComparator comparator;    public ToDoLIstFragment() {
+    private DateTimeComparator comparator;
+
+    public ToDoLIstFragment() {
         // Required empty public constructor
     }
 

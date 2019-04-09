@@ -8,21 +8,6 @@
     android:clipToPadding="false"
     tools:context=".view.NewExpenseFragment" >
 
-    <ProgressBar
-        android:id="@+id/progress2"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/AmoutSplit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
     <ImageButton
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
@@ -41,7 +26,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="50dp"
-        android:text="New expense"
+        android:text="@string/new_expense"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
@@ -56,7 +41,7 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:backgroundTint="@color/primary"
-        android:text="Create"
+        android:text="@string/create_split"
         android:textColor="@color/secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,7 +93,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="32dp"
-                android:text="Description"
+                android:text="@string/description_title"
                 android:textColor="@color/primary"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -235,7 +220,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="End date"
+                        android:text="@string/end_date"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/edit_amount8"
@@ -248,7 +233,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Frecuency"
+                        android:text="@string/frecuency"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/edit_amount9"
@@ -261,8 +246,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
-                        android:inputType="none"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:fontFamily="sans-serif"
+                        android:inputType="none"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/black"
                         android:textSize="18sp"
@@ -277,11 +264,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="16dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:fontFamily="sans-serif"
+                        android:inputType="none"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        android:inputType="none"
                         app:layout_constraintBottom_toBottomOf="@+id/edit_amount8"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/expense_date_picker_end"
@@ -293,7 +282,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Start date"
+                        android:text="@string/start_date"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/edit_amount5"
@@ -455,7 +444,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:fontFamily="sans-serif"
-                        android:text="Name"
+                        android:text="@string/prompt_name"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toTopOf="@+id/expense_amount_txt"
@@ -468,7 +457,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:fontFamily="sans-serif"
-                        android:text="Amount"
+                        android:text="@string/amount_split"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/expense_amount_txt"
@@ -528,9 +517,9 @@
                         android:layout_height="25dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        android:textAlignment="center"
                         android:background="@drawable/bg_primary_round"
                         android:spinnerMode="dropdown"
+                        android:textAlignment="center"
                         app:layout_constraintBottom_toTopOf="@+id/line4"
                         app:layout_constraintEnd_toStartOf="@+id/textView30"
                         app:layout_constraintStart_toEndOf="@+id/textView27"
@@ -541,7 +530,7 @@
                         android:layout_width="34dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="64dp"
-                        android:text="Every"
+                        android:text="@string/every"
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="@+id/edit_amount9"
                         app:layout_constraintStart_toEndOf="@+id/textView20"
@@ -552,7 +541,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
-                        android:text="Week"
+                        android:text="@string/week"
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toTopOf="@+id/line4"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -595,7 +584,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/add_person_recycler"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -609,7 +598,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <androidx.cardview.widget.CardView
+    <RelativeLayout
         android:id="@+id/AmoutSplit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -624,14 +613,14 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/amount_splitwise_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="3000"
+                android:text="0"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView25"
@@ -641,12 +630,28 @@
                 android:id="@+id/textView25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amount per person:"
+                android:text="@string/amount_person"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:indeterminate="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/AmoutSplit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
