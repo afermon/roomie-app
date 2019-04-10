@@ -296,4 +296,16 @@
     <string name="room_event_created">Event %s created successfully.</string>
     <string name="room_event_time_error">End time must be past start time.</string>
     <string name="event_canceled">Event canceled</string>
+    <string name="premium_info_title">Premium Rooms</string>
+    <string name="premium_info_desc">Create a premium room and obtain all the room administration features for you and all of your roommates! With a premium room you can obtain the following benefits:</string>
+    <string name="no_ads_benefit">No Ads</string>
+    <string name="room_admin_benefit">Room Administration Tools</string>
+    <string name="share_benefit">Shared Benefits</string>
+    <string name="no_ads_info">Remove all of those annoying advertisements</string>
+    <string name="tools_info">Gain access to the expense split management, to do list, and event calendar.</string>
+    <string name="shared_info">Invite your roommates and share all of the premium benefits!</string>
+    <string name="upgrade_title">For Only:</string>
+    <string name="premium_cost">$1.99</string>
+    <string name="create_premium_button">Create a premium room</string>
+
 </resources>
