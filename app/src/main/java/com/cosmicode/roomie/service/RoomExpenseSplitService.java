@@ -55,9 +55,39 @@ public class RoomExpenseSplitService {
         return null;
     }
 
+
+    public List<RoomExpenseSplit> getSplitExpensesByExxpense(Long id){
+
+        RoomExpenseSplitApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseSplitApiEndpointInterface.class, authToken);
+
+        Call<List<RoomExpenseSplit>> call = apiService.geSplittExpenseByExpense(id);
+
+        call.enqueue(new Callback<List<RoomExpenseSplit>>() {
+            @Override
+            public void onResponse(Call<List<RoomExpenseSplit>> call, Response<List<RoomExpenseSplit>> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnGetSplitExpenseByRoomSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.OnGetRoomExpenseSplitError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RoomExpenseSplit>> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.OnGetRoomExpenseSplitError("Something went wrong!");
+            }
+        });
+        return null;
+    }
+
     public interface RoomExpenseSplitServiceListener {
         void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplitList);
         void OnUpdateSuccess(RoomExpenseSplit roomExpenseSplit);
         void OnGetRoomExpenseSplitError(String error);
+        void OnGetSplitExpenseByRoomSuccess(List<RoomExpenseSplit> body);
     }
 }

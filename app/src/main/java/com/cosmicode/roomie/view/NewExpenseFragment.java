@@ -129,7 +129,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     private RecyclerView.Adapter mAdapter;
 
-    Spinner expenseSpinner;
+    private Spinner expenseSpinner;
 
     List<Roomie> roomies;
 
@@ -444,6 +444,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void OnGetRoomExpenseSplitError(String error) {
+
+    }
+
+    @Override
+    public void OnGetSplitExpenseByRoomSuccess(List<RoomExpenseSplit> body) {
 
     }
 
