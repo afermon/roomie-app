@@ -29,7 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     public void showUserMessage(String message, SnackMessageType type){
         View view = findViewById(android.R.id.content);
         Snackbar snackbar;
-        snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
 
         switch (type){

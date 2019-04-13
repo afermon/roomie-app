@@ -100,9 +100,6 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        if (currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId())
-            return true;
-
         if (menuItem.getItemId() != R.id.navigation_view_options) currentMenuItem = menuItem;
 
         switch (menuItem.getItemId()) {
