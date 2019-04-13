@@ -8,8 +8,23 @@
 
     tools:context=".view.Expense" >
 
+    <ImageButton
+        android:id="@+id/deletebtn3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/circle_button_stroke"
+        android:backgroundTint="@null"
+        android:padding="8dp"
+        android:tint="@color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_todo_delete" />
+
     <Button
-        android:id="@+id/create_expense_btn3"
+        android:id="@+id/edit_expense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/primary"
@@ -47,7 +62,7 @@
         android:backgroundTint="@null"
         android:padding="8dp"
         android:tint="@color/white"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_profile_user_edit" />
@@ -61,7 +76,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/create_expense_btn3"
+        app:layout_constraintBottom_toTopOf="@+id/edit_expense"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +95,8 @@
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/input_stroke"
                 android:ems="10"
+                android:enabled="true"
+                android:textColor="@drawable/edit_text_selector"
                 android:gravity="top|left"
                 android:inputType="textMultiLine|text"
                 android:lines="6"
@@ -117,14 +134,16 @@
                 android:text="@string/roomies"
                 android:textColor="@color/primary"
                 android:textSize="18sp"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/expense_desc_text" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:id="@+id/expense_roomies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
@@ -154,6 +173,8 @@
                         android:layout_height="57dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
+                        android:enabled="true"
+                        android:textColor="@drawable/edit_text_selector"
                         android:background="@drawable/input__no_stroke"
                         android:ems="10"
                         android:hint="Title"
@@ -447,13 +468,15 @@
                         android:paddingLeft="16dp"
                         android:paddingTop="16dp"
                         android:paddingRight="16dp"
+
                         android:paddingBottom="16dp"
                         android:selectAllOnFocus="true"
                         android:singleLine="false"
                         android:text="0.00"
                         android:textAlignment="viewEnd"
                         android:textAppearance="@android:style/TextAppearance.Material"
-                        android:textColor="@color/black"
+                        android:enabled="true"
+                        android:textColor="@drawable/edit_text_selector"
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -544,6 +567,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:background="@drawable/bg_primary_round"
+                        android:textColor="@drawable/edit_text_selector"
                         android:spinnerMode="dropdown"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toTopOf="@+id/line4"
@@ -574,6 +598,20 @@
                         app:layout_constraintTop_toBottomOf="@+id/line7" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/empty_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/no_roomie"
+                android:textColor="@color/primary"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView31" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

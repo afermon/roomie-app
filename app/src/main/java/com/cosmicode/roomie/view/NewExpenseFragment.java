@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,7 +79,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     private DatePickerDialog.OnDateSetListener mDateSetListenerStart,mDateSetListenerEnd;
     private int step = 0;
     private DateTimeComparator comparator;
-    private RecyclerView.LayoutManager layoutManager;
+    private GridLayoutManager layoutManager;
     private List<Roomie> selectedRoomies;
     @BindView(R.id.main_info_expense)
     ScrollView mainInfoView;
@@ -115,7 +115,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
 
     @NotEmpty
-    @Length(min = 4, max = 300)
+    @Length(min = 4, max = 250)
     @BindView(R.id.expense_desc_text)
     TextView expenseDescription;
 
@@ -193,7 +193,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         }
 
         recyclerView = getView().findViewById(R.id.add_person_recycler);
-        layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new MyAdapter(room.getRoomies());
 
@@ -477,13 +477,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         private List<Roomie> roomieList;
         public class RoomieViewHolder extends  RecyclerView.ViewHolder {
             private CardView cardView;
-            private TextView txtPersonName;
             private CircleImageView pfp;
             private boolean selected;
             RoomieViewHolder(View view){
                 super(view);
                 cardView = view.findViewById(R.id.card_view_add_person);
-                txtPersonName = view.findViewById(R.id.add_person_name_txt);
                 pfp = view.findViewById(R.id.profile_image2);
                 selected = false;
             }
@@ -511,7 +509,6 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         @Override
         public void onBindViewHolder(final RoomieViewHolder holder, int position) {
             Roomie roomie = this.roomieList.get(position);
-            holder.txtPersonName.setText(roomie.getPhone());
             Glide.with(getContext()).load(roomie.getPicture()).centerCrop().into(holder.pfp);
 
             holder.cardView.setOnClickListener( v -> {

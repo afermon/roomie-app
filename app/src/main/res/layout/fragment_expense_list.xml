@@ -43,6 +43,7 @@
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/ic_todo_add"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

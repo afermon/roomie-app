@@ -26,23 +26,36 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
+import com.cosmicode.roomie.domain.RoomTask;
+import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomExpenseService;
+import com.cosmicode.roomie.service.RoomieService;
+
+import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Locale;
 
-public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpenseServiceListener {
+public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpenseServiceListener, RoomieService.OnGetCurrentRoomieListener {
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
+    private Roomie currentRoomie;
     private Room room;
     private List<RoomExpense> roomExpenseList;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter mAdapter;
     private RoomExpenseService roomExpenseService;
+    private RoomieService roomieService;
 
     ImageView addExpenseBtn;
 
@@ -63,6 +76,7 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            roomieService = new RoomieService(getContext(), this);
             roomExpenseService = new RoomExpenseService(getContext(),this);
         }
     }
@@ -83,12 +97,15 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
 
         recyclerView = getView().findViewById(R.id.expense_recycler);
         layoutManager = new LinearLayoutManager(getContext());
-        getRooms();
+        getRoomie();
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void getRooms(){
+    public void getRoomie(){
         showProgress(true);
+        roomieService.getCurrentRoomie();
+    }
+    public void getRooms(){
         roomExpenseService.getAllExpensesByRoom(room.getId());
 
     }
@@ -143,8 +160,28 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        currentRoomie = roomie;
+
+        if (room.getOwnerId() == roomie.getId()){
+            addExpenseBtn.setVisibility(View.VISIBLE);
+        }
+        getRooms();
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+        showProgress(false);
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
+    }
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -170,14 +207,14 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
         public class ExpenseViewHolder extends  RecyclerView.ViewHolder {
             private TextView expenseName;
             private TextView endDate;
-            private TextView amount;
             private TextView description;
             private CardView cardView;
+            private CurrencyEditText typeAmount;
             ExpenseViewHolder(View view){
                 super(view);
+                typeAmount = view.findViewById(R.id.txt_expense_list_amount_type);
                 expenseName = view.findViewById(R.id.expense_name);
                 endDate = view.findViewById(R.id.expense_date_list);
-                amount = view.findViewById(R.id.txt_expense_list_amount);
                 description = view.findViewById(R.id.txt_expenselist_desc);
                 cardView = view.findViewById(R.id.expense_item);
             }
@@ -201,6 +238,35 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
             return vh;
         }
 
+        public DateTime formatDate(String pdate){
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd")
+                    .withLocale(Locale.ROOT)
+                    .withChronology(ISOChronology.getInstanceUTC());
+
+            DateTime dt = format.parseDateTime(pdate);
+            return dt;
+        }
+
+        public String getUsableDate(String pDate){
+            DateTime date = formatDate(pDate);
+
+            int month, day;
+            month = date.getMonthOfYear();
+            day = date.getDayOfMonth();
+            String monthS, dayS;
+            monthS = Integer.toString(month);
+            dayS = Integer.toString(day);
+            RoomTask task;
+            if(month <= 9){
+                monthS = "0"+month;
+            }
+            if(day <= 9){
+                dayS = "0"+day;
+            }
+            String deadline = dayS+"-"+monthS+"-"+ date.getYear();
+
+            return deadline;
+        }
 
         @Override
         public void onBindViewHolder(final ExpenseViewHolder holder, int position) {
@@ -213,12 +279,17 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
             if (e.getDesciption() != null){
                 holder.description.setText(e.getDesciption());
             }
-            holder.endDate.setText(e.getFinishDate());
-            holder.amount.setText(String.valueOf(e.getAmount()));
-
+            holder.endDate.setText(getUsableDate(e.getFinishDate()));
+            holder.typeAmount.setText(String.valueOf(e.getAmount()));
+            holder.typeAmount.setEnabled(false);
+            if (e.getCurrency() == CurrencyType.COLON) {
+                holder.typeAmount.setLocale(new Locale("es", "cr"));
+            } else {
+                holder.typeAmount.setLocale(Locale.US);
+            }
 
             holder.cardView.setOnClickListener( v -> {
-                Expense todoFragment = Expense.newInstance(room, e);
+                Expense todoFragment = Expense.newInstance(room, e, currentRoomie);
                 openFragment(todoFragment);
             });
 
