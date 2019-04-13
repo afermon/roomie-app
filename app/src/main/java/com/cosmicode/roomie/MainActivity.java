@@ -4,15 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.SearchFilter;
+import com.cosmicode.roomie.domain.UserReport;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.domain.enumeration.ReportType;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.service.UserReportService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
+import com.cosmicode.roomie.util.RoomieTimeUtil;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
@@ -31,13 +39,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.basgeekball.awesomevalidation.ValidationStyle.BASIC;
 
 
 public class MainActivity extends BaseActivity implements RoomieService.OnGetCurrentRoomieListener,
@@ -55,18 +68,18 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainPremiumRooms.OnFragmentInteractionListener,
         OnGetUserEmailListener {
 
-    private BottomNavigationView navigationView;
-    private RoomieService roomieService;
-    private Roomie currentRoomie;
-    private static final String TAG = "MainActivity";
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
     public static final String JHIUSER_NAME = "jhiName";
     public static final String JHIUSER_LAST = "jhiLast";
+    private static final String TAG = "MainActivity";
+    @BindView(R.id.navigation_view)
+    RoomieBottomNavigationView bottomNavigationView;
+    private BottomNavigationView navigationView;
+    private RoomieService roomieService;
+    private Roomie currentRoomie;
     private MenuItem currentMenuItem;
     private SearchFilter searchFilter;
-
-    @BindView(R.id.navigation_view) RoomieBottomNavigationView bottomNavigationView;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -87,9 +100,10 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        if(currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId()) return true;
+        if (currentMenuItem != null && menuItem.getItemId() == currentMenuItem.getItemId())
+            return true;
 
-        if(menuItem.getItemId() != R.id.navigation_view_options) currentMenuItem = menuItem;
+        if (menuItem.getItemId() != R.id.navigation_view_options) currentMenuItem = menuItem;
 
         switch (menuItem.getItemId()) {
             case R.id.navigation_view_home:
@@ -149,6 +163,64 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         startActivity(LoginActivity.clearTopIntent(this));
     }
 
+    @Override
+    public void reportProblemApp() {
+        UserReportService userReportService = new UserReportService(this, new UserReportService.UserReportListener() {
+            @Override
+            public void onGetUserReportSuccess(UserReport userReport) {
+
+            }
+
+            @Override
+            public void onCreateUserReportSuccess(UserReport userReport) {
+                showUserMessage(getString(R.string.report_success), SnackMessageType.SUCCESS);
+            }
+
+            @Override
+            public void onUpdateUserReportSuccess(UserReport userReport) {
+
+            }
+
+            @Override
+            public void onUserReportError(String error) {
+                showUserMessage(getString(R.string.report_error_message), BaseActivity.SnackMessageType.ERROR);
+            }
+        });
+
+        AlertDialog.Builder newaReportDialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        View newReportLayout = inflater.inflate(R.layout.report_problem_app_dialog, null);
+
+        EditText reportDescriptionET = newReportLayout.findViewById(R.id.report_description);
+
+
+        AwesomeValidation mAwesomeValidation = new AwesomeValidation(BASIC);
+        mAwesomeValidation.addValidation(reportDescriptionET, "^.{4,}", getString(R.string.not_empty));
+
+        newaReportDialogBuilder.setTitle(R.string.report_a_problem)
+                .setIcon(R.drawable.icon_report_brand)
+                .setView(newReportLayout)
+                .setPositiveButton(R.string.send, (dialog, which) -> {
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog newReportDialog = newaReportDialogBuilder.create();
+        newReportDialog.show();
+
+        newReportDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (mAwesomeValidation.validate()) {
+
+                UserReport userReport = new UserReport();
+                userReport.setDate(RoomieTimeUtil.dateTimeToInstantUTCString(DateTime.now()));
+                userReport.setType(ReportType.APP);
+                userReport.setDesciption(reportDescriptionET.getText().toString());
+                userReportService.createUserReport(userReport);
+                newReportDialog.dismiss();
+            }
+        });
+    }
+
     public BaseActivity getBaseActivity() {
         return this;
     }
@@ -174,7 +246,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         this.currentRoomie = roomie;
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setOnNavigationItemSelectedListener(this);
-        if(getJhiUsers().getMobileDeviceID().equals("") || currentRoomie.getMobileDeviceID().equals("") || !currentRoomie.getMobileDeviceID().equals(getJhiUsers().getMobileDeviceID())) registerDeviceFirebaseCloudMessaging();
+        if (getJhiUsers().getMobileDeviceID().equals("") || currentRoomie.getMobileDeviceID().equals("") || !currentRoomie.getMobileDeviceID().equals(getJhiUsers().getMobileDeviceID()))
+            registerDeviceFirebaseCloudMessaging();
         openFragment(MainSearchFragment.newInstance(searchFilter), "up");
     }
 
@@ -203,29 +276,29 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         showUserMessage(error, SnackMessageType.ERROR);
     }
 
-    private void registerDeviceFirebaseCloudMessaging(){
+    private void registerDeviceFirebaseCloudMessaging() {
         FirebaseInstanceId.getInstance().getInstanceId()
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.e(TAG, "getInstanceId failed", task.getException());
-                    return;
-                }
-                // Get new Instance ID token
-                String mobileDeviceID = task.getResult().getToken();
-                Log.d(TAG, String.format("MobileDeviceID: %s", mobileDeviceID));
-                getJhiUsers().setMobileDeviceID(mobileDeviceID);
-                currentRoomie.setMobileDeviceID(mobileDeviceID);
-                roomieService.updateRoomie(currentRoomie);
-            });
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e(TAG, "getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get new Instance ID token
+                    String mobileDeviceID = task.getResult().getToken();
+                    Log.d(TAG, String.format("MobileDeviceID: %s", mobileDeviceID));
+                    getJhiUsers().setMobileDeviceID(mobileDeviceID);
+                    currentRoomie.setMobileDeviceID(mobileDeviceID);
+                    roomieService.updateRoomie(currentRoomie);
+                });
     }
 
-    public Roomie getCurrentRoomie(){
+    public Roomie getCurrentRoomie() {
         return this.currentRoomie;
     }
 
 
     @OnClick(R.id.navigation_view_add_fab)
-    public void newListing(){
+    public void newListing() {
         startActivity(new Intent(this, CreateListingActivity.class));
     }
 }

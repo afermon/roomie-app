@@ -296,4 +296,8 @@
     <string name="room_event_created">Event %s created successfully.</string>
     <string name="room_event_time_error">End time must be past start time.</string>
     <string name="event_canceled">Event canceled</string>
+    <string name="app_error_message">We are sorry for the inconvenience. We appreciate your help!</string>
+    <string name="what_went_wrong">What went wrong?</string>
+    <string name="report_success">Report submitted. You are helping us improve the application!</string>
+    <string name="report_error_message">Error creating the report. Please try again.</string>
 </resources>
