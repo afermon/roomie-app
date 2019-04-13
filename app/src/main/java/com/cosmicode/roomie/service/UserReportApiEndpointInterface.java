@@ -11,13 +11,13 @@ import retrofit2.http.Path;
 
 public interface UserReportApiEndpointInterface {
 
-    @GET("user-report/{id}")
+    @GET("user-reports/{id}")
     Call<UserReport> getUserReportById(@Path("id") Long id);
 
-    @PUT("user-report")
+    @PUT("user-reports")
     Call<UserReport> updateUserReport(@Body UserReport userReport);
 
-    @POST("user-report")
+    @POST("user-reports")
     Call<UserReport> createUserReport(@Body UserReport userReport);
 
 }

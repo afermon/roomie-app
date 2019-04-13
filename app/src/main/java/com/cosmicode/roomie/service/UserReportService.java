@@ -2,7 +2,6 @@ package com.cosmicode.roomie.service;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.domain.UserReport;
