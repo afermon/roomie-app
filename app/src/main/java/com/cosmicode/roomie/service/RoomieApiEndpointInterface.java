@@ -22,4 +22,7 @@ public interface RoomieApiEndpointInterface {
 
     @GET("roomies/{id}")
     Call<Roomie> findOneId(@Path("id") Long id);
+
+    @GET("roomie-email/{email}")
+    Call<Roomie> findOneByEmail(@Path("email") String email);
 }

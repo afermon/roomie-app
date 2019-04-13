@@ -31,6 +31,32 @@ public class RoomieService {
         this.listener = listener;
     }
 
+    public void getRoomieByEmail(String email, final OnGetRoomieByIdListener listener) {
+        RoomieApiEndpointInterface  apiService = ApiServiceGenerator.createService(RoomieApiEndpointInterface.class, authToken);
+
+        Call<Roomie> call = apiService.findOneByEmail(email);
+
+        call.enqueue(new Callback<Roomie>() {
+            @Override
+            public void onResponse(Call<Roomie> call, Response<Roomie> response) {
+                if (response.code() == 200) {
+                    listener.OnGetRoomieByIdSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.onGetRoomieError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Roomie> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.onGetRoomieError("Something went wrong!");
+            }
+        });
+    }
+
     public void getRoomieById(Long id, final OnGetRoomieByIdListener listener) {
         RoomieApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomieApiEndpointInterface.class, authToken);
 

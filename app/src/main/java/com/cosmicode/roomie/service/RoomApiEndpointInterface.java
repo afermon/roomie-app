@@ -33,4 +33,7 @@ public interface RoomApiEndpointInterface {
 
     @GET("owned-rooms/{id}")
     Call<List<Room>> getOwnedRooms(@Path("id") Long id);
+
+    @POST("pay-room/{token}")
+    Call<Room> payPremium(@Body Room room, @Path("token") String token);
 }

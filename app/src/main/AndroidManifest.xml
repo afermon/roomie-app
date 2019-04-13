@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChoosePremiumMembers"></activity>
+        <activity android:name=".PaymentActivity"></activity>
+        <activity android:name=".ChoosePremiumMembers" />
         <activity android:name=".CreatePremiumRoom" />
         <activity android:name=".AddLifestylesActivity" />
         <activity android:name=".CreateListingActivity" />

@@ -167,6 +167,24 @@ public class RoomService {
         });
     }
 
+    public void payPremium(Room room, String token){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<Room> call = apiService.payPremium(room, token);
+
+        call.enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+
+            }
+        });
+    }
+
     public void serachRooms(String query) {
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
 

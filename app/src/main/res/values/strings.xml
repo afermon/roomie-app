@@ -307,5 +307,21 @@
     <string name="upgrade_title">For Only:</string>
     <string name="premium_cost">$1.99</string>
     <string name="create_premium_button">Create a premium room</string>
+    <string name="create_premium_title">Create Premium Room</string>
+    <string name="create_premium_desc">Give a name to your premium room and invite roomies to be part of it.</string>
+    <string name="room_name">Name</string>
+    <string name="name_room_hint">Give a name to your room</string>
+    <string name="members">Members</string>
+    <string name="add_member_hint">Roomie\'s email</string>
+    <string name="add_roomie_title">Invite Roomies</string>
+    <string name="your_members">Your members</string>
+    <string name="payment_button">Continue to payment</string>
+    <string name="payment_info">Fill Payment Information</string>
+    <string name="payment_desc">Fill out your payment information, we use a secure payment system via Stripe, we do not store any of your payment information in our database.</string>
+    <string name="card_number">Card Number</string>
+    <string name="expiration">Expiration Date</string>
+    <string name="cvc">CVC</string>
+    <string name="holder_name">Name On Card</string>
+    <string name="btn_complete_payment">Complete Transaction</string>
 
 </resources>
