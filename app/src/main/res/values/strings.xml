@@ -300,4 +300,6 @@
     <string name="what_went_wrong">What went wrong?</string>
     <string name="report_success">Report submitted. You are helping us improve the application!</string>
     <string name="report_error_message">Error creating the report. Please try again.</string>
+    <string name="send_report">Send a report</string>
+    <string name="optional_description">Optional description</string>
 </resources>
