@@ -220,7 +220,20 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
                         android:background="@null"
-                        android:src="@drawable/ic_profile_settings"
+                        android:src="@drawable/ic_profile_user_edit"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/report_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="32dp"
+                        android:background="@null"
+                        android:src="@drawable/icon_report_brand"
+                        android:tint="@color/white"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

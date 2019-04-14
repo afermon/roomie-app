@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.cosmicode.roomie.domain.JhiAccount;
@@ -220,6 +221,72 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     public BaseActivity getBaseActivity() {
         return this;
+    }
+
+    @Override
+    public void sendReport(Long roomieId, String type) {
+        UserReportService userReportService = new UserReportService(this, new UserReportService.UserReportListener() {
+            @Override
+            public void onGetUserReportSuccess(UserReport userReport) {
+
+            }
+
+            @Override
+            public void onCreateUserReportSuccess(UserReport userReport) {
+                showUserMessage(getString(R.string.report_success), SnackMessageType.SUCCESS);
+            }
+
+            @Override
+            public void onUpdateUserReportSuccess(UserReport userReport) {
+
+            }
+
+            @Override
+            public void onUserReportError(String error) {
+                showUserMessage(getString(R.string.report_error_message), BaseActivity.SnackMessageType.ERROR);
+            }
+        });
+
+        AlertDialog.Builder newaReportDialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        View newReportLayout = inflater.inflate(R.layout.report_room_app_dialog, null);
+
+        Spinner reportUser = newReportLayout.findViewById(R.id.report_spinner);
+        EditText reportDescription = newReportLayout.findViewById(R.id.report_description);
+
+
+        AwesomeValidation mAwesomeValidation = new AwesomeValidation(BASIC);
+        mAwesomeValidation.addValidation(reportDescription, "^.{4,}", getString(R.string.not_empty));
+
+        newaReportDialogBuilder.setTitle(R.string.report_a_problem)
+                .setIcon(R.drawable.icon_report_brand)
+                .setView(newReportLayout)
+                .setPositiveButton(R.string.send, (dialog, which) -> {
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss());
+
+        AlertDialog newReportDialog = newaReportDialogBuilder.create();
+        newReportDialog.show();
+
+        newReportDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (mAwesomeValidation.validate()) {
+
+                UserReport userReport = new UserReport();
+                userReport.setDate(RoomieTimeUtil.dateTimeToInstantUTCString(DateTime.now()));
+                if(type.equals("user")){
+                    userReport.setType(ReportType.USER);
+                    userReport.setRoomieId(roomieId);
+                }else{
+                    userReport.setType(ReportType.ROOM);
+                    userReport.setRoomId(roomieId);
+                }
+
+                userReport.setDesciption(reportUser.getSelectedItem().toString()+" "+reportDescription.getText().toString());
+                userReportService.createUserReport(userReport);
+                newReportDialog.dismiss();
+            }
+        });
     }
 
     @Override
