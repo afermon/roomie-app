@@ -256,6 +256,16 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
 
     }
 
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
     }

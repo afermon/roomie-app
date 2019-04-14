@@ -472,6 +472,16 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
     }
 
     @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
+    }
+
+    @Override
     public void onGetFeaturesSuccess(List<RoomFeature> featureList) {
         lAmenities = new ArrayList<>();
         lRestrictions = new ArrayList<>();

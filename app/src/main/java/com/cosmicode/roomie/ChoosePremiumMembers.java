@@ -30,13 +30,15 @@ import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
+import com.cosmicode.roomie.domain.enumeration.RoomType;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByIdListener {
+public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByIdListener, RoomieService.OnGetCurrentRoomieListener {
 
     @BindView(R.id.room_name)
     EditText roomName;
@@ -53,6 +55,7 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
     @BindView(R.id.btn_payment)
     Button payment;
 
+    private Roomie owner;
     private Room premiumRoom;
     private RoomieService roomieService;
     private MembersAdapter mAdapter;
@@ -68,13 +71,33 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         members.setLayoutManager(new GridLayoutManager(this, 4));
         mAdapter = new MembersAdapter(premiumRoom.getRoomies());
         members.setAdapter(mAdapter);
+        roomieService.getCurrentRoomie();
         addMember.setOnClickListener(l -> {
             showProgress(true);
             hideKeyboard();
             roomieService.getRoomieByEmail(roomieEmail.getText().toString(), this);
         });
         payment.setOnClickListener(l -> {
-            startActivity(new Intent(this, PaymentActivity.class));
+            boolean isValid = true;
+            hideKeyboard();
+            roomieEmail.setError(null);
+            roomName.setError(null);
+            if(roomName.getText().toString().equals("")){
+                roomName.setError("This field is required");
+                isValid = false;
+            }
+            if(premiumRoom.getRoomies().isEmpty()){
+                roomieEmail.setError("You need at least 1 member");
+                isValid = false;
+            }
+
+            if(isValid){
+                premiumRoom.getRoomies().add(owner);
+                premiumRoom.setTitle(roomName.getText().toString());
+                Intent intent = new Intent(this, PaymentActivity.class);
+                intent.putExtra("premium", premiumRoom);
+                startActivity(intent);
+            }
         });
     }
 
@@ -95,6 +118,21 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
 
     private void clearEmail(){
         roomieEmail.setText(null);
+    }
+
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        owner = roomie;
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+
+    }
+
+    @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
     }
 
     public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.IconViewHolder> {

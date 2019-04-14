@@ -367,6 +367,16 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     }
 
     @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
+    }
+
+    @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
         room.setRoomType(RoomType.ROOM);
         room.setPremium(false);

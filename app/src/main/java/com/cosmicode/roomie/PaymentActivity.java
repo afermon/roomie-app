@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.listeners.OnPayPremiumListener;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
@@ -28,7 +30,7 @@ import com.stripe.android.model.Token;
 import java.util.List;
 
 
-public class PaymentActivity extends BaseActivity implements Validator.ValidationListener {
+public class PaymentActivity extends BaseActivity implements Validator.ValidationListener, RoomService.RoomServiceListener {
 
     @NotEmpty
     @Length(min = 16, max = 22)
@@ -47,12 +49,17 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
     EditText name;
 
     private Validator validator;
-
+    private RoomService roomService;
+    private Room premiumRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+        roomService = new RoomService(this, this);
+
+        premiumRoom = getIntent().getParcelableExtra("premium");
+
         ButterKnife.bind(this);
         validator = new Validator(this);
         validator.setValidationListener(this);
@@ -193,8 +200,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
                     card,
                     new TokenCallback() {
                         public void onSuccess(Token token) {
-                            RoomService roomService = new RoomService(getApplicationContext());
-                            roomService.payPremium(new Room(), token.getId());
+                            roomService.payPremium(premiumRoom, token.getId());
                         }
                         public void onError(Exception error) {
                             // Show localized error message
@@ -222,6 +228,36 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void OnCreateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+        Toast.makeText(this, room.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPayError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 }
 

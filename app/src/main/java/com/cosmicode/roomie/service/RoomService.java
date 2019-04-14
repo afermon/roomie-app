@@ -10,6 +10,7 @@ import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
+import com.cosmicode.roomie.util.listeners.OnPayPremiumListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
@@ -175,12 +176,18 @@ public class RoomService {
         call.enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
-
+                if(response.code() == 201){
+                    listener.onPaySuccess(response.body());
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onPayError(Integer.toString(response.code()));
+                }
             }
 
             @Override
             public void onFailure(Call<Room> call, Throwable t) {
-
+                Log.e(TAG, t.getMessage());
+                listener.onPayError(t.getMessage());
             }
         });
     }
@@ -242,6 +249,10 @@ public class RoomService {
         void OnGetRoomsError(String error);
 
         void OnUpdateSuccess(Room room);
+
+        void onPaySuccess(Room room);
+
+        void onPayError(String error);
     }
 
 }
