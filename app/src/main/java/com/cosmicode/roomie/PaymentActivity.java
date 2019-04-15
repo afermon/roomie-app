@@ -1,9 +1,12 @@
 package com.cosmicode.roomie;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +14,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cosmicode.roomie.domain.Room;
@@ -47,6 +51,10 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
     @NotEmpty
     @BindView(R.id.card_name)
     EditText name;
+    @BindView(R.id.progress)
+    ProgressBar progress;
+    @BindView(R.id.payment_container)
+    ConstraintLayout container;
 
     private Validator validator;
     private RoomService roomService;
@@ -59,7 +67,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
         roomService = new RoomService(this, this);
 
         premiumRoom = getIntent().getParcelableExtra("premium");
-
+        premiumRoom.getRoomies().add(getIntent().getParcelableExtra("owner"));
         ButterKnife.bind(this);
         validator = new Validator(this);
         validator.setValidationListener(this);
@@ -195,6 +203,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
         }
 
         if(isValid){
+            showProgress(true);
             Stripe stripe = new Stripe(this, "pk_test_tvOqreoDBMCR33zFGuIpqwHM00njthUCtW");
             stripe.createToken(
                     card,
@@ -203,9 +212,10 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
                             roomService.payPremium(premiumRoom, token.getId());
                         }
                         public void onError(Exception error) {
+                            showProgress(false);
                             // Show localized error message
                             Toast.makeText(getApplicationContext(),
-                                    "Something went wrong!",
+                                    error.getMessage(),
                                     Toast.LENGTH_LONG
                             ).show();
                         }
@@ -252,12 +262,43 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
 
     @Override
     public void onPaySuccess(Room room) {
-        Toast.makeText(this, room.toString(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, PaymentSuccessActivity.class);
+        intent.putExtra("room", room);
+        startActivity(intent);
+        showProgress(false);
     }
 
     @Override
     public void onPayError(String error) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        container.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        container.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        container.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 }
 

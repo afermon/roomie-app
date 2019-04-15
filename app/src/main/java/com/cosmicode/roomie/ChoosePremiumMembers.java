@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -55,6 +56,8 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
     @BindView(R.id.btn_payment)
     Button payment;
 
+
+    private List<Roomie> addedMembers;
     private Roomie owner;
     private Room premiumRoom;
     private RoomieService roomieService;
@@ -67,35 +70,43 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         ButterKnife.bind(this);
         roomieService = new RoomieService(this, this);
         premiumRoom = new Room();
-        premiumRoom.setRoomies(new ArrayList<>());
+        addedMembers = new ArrayList<>();
         members.setLayoutManager(new GridLayoutManager(this, 4));
-        mAdapter = new MembersAdapter(premiumRoom.getRoomies());
+        mAdapter = new MembersAdapter(addedMembers);
         members.setAdapter(mAdapter);
         roomieService.getCurrentRoomie();
         addMember.setOnClickListener(l -> {
-            showProgress(true);
-            hideKeyboard();
-            roomieService.getRoomieByEmail(roomieEmail.getText().toString(), this);
+            roomieEmail.setError(null);
+            if (roomieEmail.getText().toString().equals("")) {
+                roomieEmail.setError("This field is required");
+            }else{
+                showProgress(true);
+                hideKeyboard();
+                roomieService.getRoomieByEmail(roomieEmail.getText().toString(), this);
+            }
+
         });
         payment.setOnClickListener(l -> {
             boolean isValid = true;
             hideKeyboard();
             roomieEmail.setError(null);
             roomName.setError(null);
-            if(roomName.getText().toString().equals("")){
+            if (roomName.getText().toString().equals("")) {
                 roomName.setError("This field is required");
                 isValid = false;
             }
-            if(premiumRoom.getRoomies().isEmpty()){
+            if (addedMembers.isEmpty()) {
                 roomieEmail.setError("You need at least 1 member");
                 isValid = false;
             }
 
-            if(isValid){
+            if (isValid) {
                 premiumRoom.setTitle(roomName.getText().toString());
                 premiumRoom.setOwnerId(owner.getId());
+                premiumRoom.setRoomies(new ArrayList<>(addedMembers));
                 Intent intent = new Intent(this, PaymentActivity.class);
                 intent.putExtra("premium", premiumRoom);
+                intent.putExtra("owner", owner);
                 startActivity(intent);
             }
         });
@@ -105,18 +116,23 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
     public void OnGetRoomieByIdSuccess(Roomie roomie) {
         showProgress(false);
         clearEmail();
-        premiumRoom.getRoomies().add(roomie);
-        mAdapter.notifyDataSetChanged();
+        if(addedMembers.stream().anyMatch(r -> r.getId().equals(roomie.getId())) || roomie.getId().equals(owner.getId())) {
+            Toast.makeText(this, roomie.getUser().getEmail() + " is already part of the room", Toast.LENGTH_SHORT).show();
+        }else{
+            addedMembers.add(roomie);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onGetRoomieError(String error) {
         showProgress(false);
+        Toast.makeText(this, String.format("%s %s", roomieEmail.getText().toString(), "does not exist"), Toast.LENGTH_SHORT).show();
         clearEmail();
-        Toast.makeText(this,  String.format("%s %s", roomieEmail.getText().toString(), "does not exist"), Toast.LENGTH_SHORT).show();
+
     }
 
-    private void clearEmail(){
+    private void clearEmail() {
         roomieEmail.setText(null);
     }
 
@@ -174,12 +190,14 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         @Override
         public void onBindViewHolder(final IconViewHolder holder, int position) {
             Roomie roomie = roomies.get(position);
-            holder.name.setText(roomie.getUser().getFirstName());
-            Glide.with(holder.itemView).load(roomie.getPicture()).centerCrop().into(holder.pfp);
-            holder.remove.setOnClickListener(l -> {
-                premiumRoom.getRoomies().remove(roomie);
-                mAdapter.notifyDataSetChanged();
-            });
+            if(!roomie.getId().equals(owner.getId())){
+                holder.name.setText(roomie.getUser().getFirstName());
+                Glide.with(holder.itemView).load(roomie.getPicture()).centerCrop().into(holder.pfp);
+                holder.remove.setOnClickListener(l -> {
+                    addedMembers.remove(roomie);
+                    mAdapter.notifyDataSetChanged();
+                });
+            }
         }
     }
 
@@ -218,5 +236,10 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         if (currentFocusedView != null) {
             inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+
+    @OnClick(R.id.cancel_premium)
+    public void cancelPremium (View view){
+        finish();
     }
 }

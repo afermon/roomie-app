@@ -23,6 +23,7 @@ import com.cosmicode.roomie.service.UserReportService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.RoomieTimeUtil;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
+import com.cosmicode.roomie.view.ListingStepChooseType;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
 import com.cosmicode.roomie.view.MainMyRoomsFragment;
@@ -67,6 +68,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainRoomFragment.OnFragmentInteractionListener,
         MainMyRoomsFragment.OnFragmentInteractionListener,
         MainPremiumRooms.OnFragmentInteractionListener,
+        ListingStepChooseType.OnFragmentInteractionListener,
         OnGetUserEmailListener {
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
@@ -363,6 +365,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @OnClick(R.id.navigation_view_add_fab)
     public void newListing() {
-        startActivity(new Intent(this, CreateListingActivity.class));
+        ListingStepChooseType typeFragment = ListingStepChooseType.newInstance();
+        openFragment(typeFragment, "up");
     }
 }

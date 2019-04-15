@@ -102,9 +102,9 @@
     <string name="unknown_error">Unknown Error</string>
     <string name="error_existing_email">This account is already registered</string>
     <string name="activate_account_first">Confirm your email first</string>
-    <string name="action_recover">Recover</string>
+    <string name="action_recover">Send recovery link</string>
     <string name="title_activity_recover_password">Recover password</string>
-    <string name="recover_password">Forgot your password?</string>
+    <string name="recover_password">Forgot your password? Type in your email and we will send a recovery link so you can reset your password</string>
     <string name="recover_password_success">We have sent you an email with password recovery instructions</string>
     <string name="ok">OK</string>
     <string name="bottom_nav_home">Home</string>
@@ -329,4 +329,17 @@
     <string name="report_error_message">Error creating the report. Please try again.</string>
     <string name="send_report">Send a report</string>
     <string name="optional_description">Optional description</string>
+    <string name="new_room">New Room</string>
+    <string name="type_room">Select a type of room, if you want to look for roommates select new listing, if you already have your roommates and want to use our premium features select premium room</string>
+    <string name="new_listing_type">New Listing</string>
+    <string name="premium_room">Premium Room</string>
+    <string name="create_type_title">Create a new room</string>
+    <string name="thak_premium">Thank you for upgrading to premium!</string>
+    <string name="transaction_success">Your payment was processed successfully, you can check your new premium room on the subscriptions tab or you can click the button below.</string>
+    <string name="room_redirect">Take me to my room!</string>
+    <string name="recover_pw_title">Recover Password</string>
+    <string name="roomie_acount_email">Roomie account email</string>
+    <string name="card_hint">XXXX XXXX XXXX XXXX</string>
+    <string name="expire_hint">MM/YY</string>
+    <string name="cvc_hint">XXX</string>
 </resources>

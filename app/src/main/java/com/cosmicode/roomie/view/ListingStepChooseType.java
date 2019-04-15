@@ -1,6 +1,7 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.CreateListingActivity;
+import com.cosmicode.roomie.CreatePremiumRoom;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.enumeration.RoomState;
@@ -76,26 +79,24 @@ public class ListingStepChooseType extends Fragment {
 
     @OnClick(R.id.room_btn)
     public void onClickRoom(View view){
-        room.setLookingForRoomie(true);
-        activeButton(roommate, rent);
+        activeButton(roommate, rent, new Intent(getContext(), CreateListingActivity.class));
     }
 
     @OnClick(R.id.rent_btn)
-    public void onClickRent(View view){
-        room.setLookingForRoomie(false);
-        activeButton(rent, roommate);
+    public void onClickPremium(View view){
+        activeButton(rent, roommate, new Intent(getContext(), CreatePremiumRoom.class));
     }
 
-    public void activeButton(TextView active, TextView inactive) {
+    public void activeButton(TextView active, TextView inactive, Intent intent) {
         active.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.primary));
         active.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-        inactiveButton(inactive);
+        inactiveButton(inactive, intent);
     }
 
-    public void inactiveButton(TextView inactive) {
+    public void inactiveButton(TextView inactive, Intent intent) {
         inactive.setBackgroundTintList(null);
         inactive.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-        openFragment();
+        startActivity(intent);
     }
 
     @Override

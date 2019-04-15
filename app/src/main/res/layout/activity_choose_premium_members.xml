@@ -19,7 +19,7 @@
         android:ems="10"
         android:gravity="top|left"
         android:hint="@string/name_room_hint"
-        android:inputType="textMultiLine|text"
+        android:inputType="text"
         android:lines="2"
         android:paddingStart="16dp"
         android:paddingTop="8dp"

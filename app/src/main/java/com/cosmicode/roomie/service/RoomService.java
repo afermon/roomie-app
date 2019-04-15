@@ -178,6 +178,7 @@ public class RoomService {
             public void onResponse(Call<Room> call, Response<Room> response) {
                 if(response.code() == 200){
                     listener.onPaySuccess(response.body());
+
                 }else{
                     Log.e(TAG, response.toString());
                     listener.onPayError(Integer.toString(response.code()));
