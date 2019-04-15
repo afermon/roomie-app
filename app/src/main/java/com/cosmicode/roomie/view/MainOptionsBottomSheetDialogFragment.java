@@ -96,8 +96,9 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_subscriptions)
     public void optionSubscriptions() {
-        MainPremiumRooms mainPremiumRooms = MainPremiumRooms.newInstance();
-        openFragment(mainPremiumRooms);
+//        MainPremiumRooms mainPremiumRooms = MainPremiumRooms.newInstance();
+//        openFragment(mainPremiumRooms);
+        startActivity(new Intent(getContext(), ChoosePremiumMembers.class));
         this.dismiss();
     }
 
@@ -112,7 +113,6 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
     public void optionReportProblem() {
 //        RoomCalendarFragment roomCalendarFragment = RoomCalendarFragment.newInstance(Long.valueOf(1));
 //        openFragment(roomCalendarFragment);
-        startActivity(new Intent(getContext(), ChoosePremiumMembers.class));
         if (mListener != null) mListener.reportProblemApp();
         this.dismiss();
     }

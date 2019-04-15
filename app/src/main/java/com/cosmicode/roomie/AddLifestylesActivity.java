@@ -100,7 +100,7 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
         @Override
         public void onBindViewHolder(final TagViewHolder holder, int position) {
             ColorStateList primary = ContextCompat.getColorStateList(getApplicationContext(), R.color.primary);
-            ColorStateList accent = ContextCompat.getColorStateList(getApplicationContext(), R.color.colorAccent);
+            ColorStateList accent = ContextCompat.getColorStateList(getApplicationContext(), R.color.grey);
 
             RoomFeature lifestyle = this.allLifestyles.get(position);
             holder.tag.setText(lifestyle.getName());

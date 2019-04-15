@@ -65,7 +65,7 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_premium_members);
         ButterKnife.bind(this);
-        roomieService = new RoomieService(this);
+        roomieService = new RoomieService(this, this);
         premiumRoom = new Room();
         premiumRoom.setRoomies(new ArrayList<>());
         members.setLayoutManager(new GridLayoutManager(this, 4));
@@ -92,8 +92,8 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
             }
 
             if(isValid){
-                premiumRoom.getRoomies().add(owner);
                 premiumRoom.setTitle(roomName.getText().toString());
+                premiumRoom.setOwnerId(owner.getId());
                 Intent intent = new Intent(this, PaymentActivity.class);
                 intent.putExtra("premium", premiumRoom);
                 startActivity(intent);

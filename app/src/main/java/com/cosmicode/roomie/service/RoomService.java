@@ -176,7 +176,7 @@ public class RoomService {
         call.enqueue(new Callback<Room>() {
             @Override
             public void onResponse(Call<Room> call, Response<Room> response) {
-                if(response.code() == 201){
+                if(response.code() == 200){
                     listener.onPaySuccess(response.body());
                 }else{
                     Log.e(TAG, response.toString());
