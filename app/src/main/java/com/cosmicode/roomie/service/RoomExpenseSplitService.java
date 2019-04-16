@@ -27,7 +27,7 @@ public class RoomExpenseSplitService {
         this.authToken = ((BaseActivity) this.context).getJhiUsers().getAuthToken();
         this.listener = listener;
     }
-    public List<RoomExpenseSplit> createExpense(List<RoomExpenseSplit> roomExpenseSplit){
+    public List<RoomExpenseSplit> createExpenseSplit(List<RoomExpenseSplit> roomExpenseSplit){
 
         RoomExpenseSplitApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseSplitApiEndpointInterface.class, authToken);
 
@@ -55,6 +55,33 @@ public class RoomExpenseSplitService {
         return null;
     }
 
+    public RoomExpense deleteExpenseSplit(List<RoomExpenseSplit> roomExpenseSplit){
+
+        RoomExpenseSplitApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseSplitApiEndpointInterface.class, authToken);
+
+        Call<Void> call = apiService.deleteExpenseSplit(roomExpenseSplit);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnDeleteExpenseSplitSuccess();
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.OnGetRoomExpenseSplitError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.OnGetRoomExpenseSplitError("Something went wrong!");
+            }
+        });
+        return null;
+    }
 
     public List<RoomExpenseSplit> getSplitExpensesByExxpense(Long id){
 
@@ -86,8 +113,8 @@ public class RoomExpenseSplitService {
 
     public interface RoomExpenseSplitServiceListener {
         void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplitList);
-        void OnUpdateSuccess(RoomExpenseSplit roomExpenseSplit);
         void OnGetRoomExpenseSplitError(String error);
+        void OnDeleteExpenseSplitSuccess();
         void OnGetSplitExpenseByRoomSuccess(List<RoomExpenseSplit> body);
     }
 }

@@ -155,6 +155,11 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     }
 
     @Override
+    public void OnDeleteSuccess() {
+
+    }
+
+    @Override
     public void OnGetExpenseRoomError(String error) {
         showProgress(false);
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();

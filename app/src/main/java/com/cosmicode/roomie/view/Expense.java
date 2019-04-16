@@ -46,6 +46,8 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomExpenseService;
 import com.cosmicode.roomie.service.RoomExpenseSplitService;
 import com.cosmicode.roomie.service.RoomieService;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
@@ -59,9 +61,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Expense extends Fragment implements RoomExpenseSplitService.RoomExpenseSplitServiceListener {
+public class Expense extends Fragment implements RoomExpenseSplitService.RoomExpenseSplitServiceListener, Validator.ValidationListener, RoomExpenseService.RoomExpenseServiceListener{
     private OnFragmentInteractionListener mListener;
     private RoomExpenseSplitService roomExpenseSplitService;
+    private RoomExpenseService roomExpenseService;
     private static final String ROOM = "room";
     private static final String ROOMEXPENSE = "expense";
     private static final String ROOMIE = "roomie";
@@ -70,7 +73,14 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     private DatePickerDialog.OnDateSetListener mDateSetListenerStart,mDateSetListenerEnd;
     private RoomExpense roomExpense;
     private Roomie currentRoomie;
-    private List<Roomie> selectedRoomies;
+    private List<Roomie> selectedRoomies, listCreateNewExpense;
+    private List<RoomExpenseSplit> roomExpenseSplitList, newRoomExpenseSplitList;
+    private Validator validator;
+    private GridLayoutManager layoutManager;
+    private boolean isValid = true;
+    private RecyclerView.Adapter mAdapter;
+    private boolean editEnable = false;
+
 
     @BindView(R.id.progress4)
     ProgressBar progressBar;
@@ -81,7 +91,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     @BindView(R.id.edit_expense)
     Button editExpense;
 
-    @BindView(R.id.deletebtn3)
+    @BindView(R.id.delete_expense_btn)
     ImageButton deleteBtn;
 
     Spinner expenseSpinner;
@@ -122,10 +132,6 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     @BindView(R.id.empty_list)
     TextView roomieTxt;
 
-    private GridLayoutManager layoutManager;
-    private RecyclerView.Adapter mAdapter;
-    private List<RoomExpenseSplit> roomExpenseSplitList;
-    private boolean editEnable = false;
     public Expense() {
         // Required empty public constructor
     }
@@ -145,6 +151,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             roomExpenseSplitService = new RoomExpenseSplitService(getContext(),this);
+            roomExpenseService = new RoomExpenseService(getContext(), this);
         }
     }
 
@@ -155,6 +162,8 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         View view = inflater.inflate(R.layout.fragment_expense, container, false);
 
         ButterKnife.bind(this, view);
+        validator = new Validator(this);
+        validator.setValidationListener(this);
 
         return view;
     }
@@ -165,6 +174,8 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         this.roomExpense = getArguments().getParcelable(ROOMEXPENSE);
         this.currentRoomie = getArguments().getParcelable(ROOMIE);
         this.selectedRoomies = new ArrayList<>();
+        listCreateNewExpense = new ArrayList<>();
+        newRoomExpenseSplitList = new ArrayList<>();
 
         expenseSpinner = getView().findViewById(R.id.spinner_expense);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),R.array.numbersSpinnerExpense, android.R.layout.simple_spinner_item);
@@ -322,6 +333,35 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         return deadline;
     }
 
+
+    public DateTime formatDate2(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("dd-MM-yyyy")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
+    }
+    public String getUsableDateForServer(String pDate){
+        DateTime date = formatDate2(pDate);
+
+        int month, day;
+        month = date.getMonthOfYear();
+        day = date.getDayOfMonth();
+        String monthS, dayS;
+        monthS = Integer.toString(month);
+        dayS = Integer.toString(day);
+        RoomTask task;
+        if(month <= 9){
+            monthS = "0"+month;
+        }
+        if(day <= 9){
+            dayS = "0"+day;
+        }
+        String deadline = date.getYear()+"-"+monthS+"-"+dayS;
+
+        return deadline;
+    }
     public void disableTextView(){
         if (editEnable ==false){
             expenseName.setEnabled(false);
@@ -349,7 +389,16 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         editBtn.setVisibility(View.GONE);
         deleteBtn.setVisibility(View.VISIBLE);
         editExpense.setVisibility(View.VISIBLE);
+        editExpense.setText(R.string.edit);
         editEnable = true;
+
+        RecyclerView.Adapter mAdapter2 = new Expense.MyAdapter(room.getRoomies());
+        recyclerView.setAdapter(mAdapter2);
+        roomieTxt.setVisibility(View.GONE);
+
+        for (int i=0; i<selectedRoomies.size();i++){
+            listCreateNewExpense.add(selectedRoomies.get(i));
+        }
         disableTextView();
     }
 
@@ -373,6 +422,49 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         }
     }
 
+
+    @OnClick(R.id.delete_expense_btn)
+    public void onClickDelete(){
+        roomExpenseService.deleteExpense(roomExpense.getId());
+        showProgress(true);
+    }
+
+    @OnClick(R.id.back_edit_expense_btn)
+    public void goBack(){
+        getFragmentManager().popBackStack();
+    }
+
+    @OnClick(R.id.edit_expense)
+    public void OnClickEditExpense(){
+        if(expenseStartDate.getText().toString().equals("")){
+            expenseStartDate.setError("Please choose a date");
+            isValid = false;
+        }else{
+            isValid = true;
+        }
+        if(expenseEndDate.getText().toString().equals("")){
+            expenseEndDate.setError("Please choose a date");
+            isValid = false;
+        }else{
+            isValid = true;
+        }
+
+        if (expenseAmount.getText().toString().equals("0")){
+            expenseAmount.setError("Can not be 0.00 or less");
+            isValid = false;
+        }else{
+            isValid = true;
+        }
+
+        validator.validate();
+
+        showProgress(true);
+    }
+
+    public Double splitAmount(){
+        Double result =  roomExpense.getAmount()/listCreateNewExpense.size();
+        return  result;
+    }
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -395,22 +487,29 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
     @Override
     public void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplitList) {
-        this.roomExpenseSplitList = roomExpenseSplitList;
-
-        getSelectedRoomies(roomExpenseSplitList);
-
+        Toast.makeText(getContext(), "Update success", Toast.LENGTH_SHORT).show();
         showProgress(false);
-    }
-
-    @Override
-    public void OnUpdateSuccess(RoomExpenseSplit roomExpenseSplit) {
-
     }
 
     @Override
     public void OnGetRoomExpenseSplitError(String error) {
         Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         showProgress(false);
+    }
+
+    @Override
+    public void OnDeleteExpenseSplitSuccess() {
+        List<RoomExpenseSplit> roomExpenseSplitLIst = new ArrayList<RoomExpenseSplit>();
+
+        for (Roomie r: listCreateNewExpense){
+            RoomExpenseSplit expenseSplit = new RoomExpenseSplit();
+            expenseSplit.setAmount(splitAmount());
+            expenseSplit.setRoomieId(r.getId());
+            expenseSplit.setExpenseId(roomExpense.getId());
+            roomExpenseSplitLIst.add(expenseSplit);
+        }
+
+        roomExpenseSplitService.createExpenseSplit(roomExpenseSplitLIst);
     }
 
     @Override
@@ -423,6 +522,69 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             roomieTxt.setVisibility(View.VISIBLE);
         }
         showProgress(false);
+    }
+
+    @Override
+    public void OnGetExpenseByRoomSuccess(List<RoomExpense> roomTasks) {
+
+    }
+
+    @Override
+    public void OnCreateExpenseSuccess(RoomExpense roomExpense) {
+
+    }
+
+    @Override
+    public void OnUpdateSuccess(RoomExpense roomExpense) {
+        if (roomExpenseSplitList.size()>0){
+            roomExpenseSplitService.deleteExpenseSplit(roomExpenseSplitList);
+        }else {
+            for (Roomie r: listCreateNewExpense){
+                RoomExpenseSplit expenseSplit = new RoomExpenseSplit();
+                expenseSplit.setAmount(splitAmount());
+                expenseSplit.setRoomieId(r.getId());
+                expenseSplit.setExpenseId(roomExpense.getId());
+                newRoomExpenseSplitList.add(expenseSplit);
+            }
+
+            roomExpenseSplitService.createExpenseSplit(newRoomExpenseSplitList);
+        }
+
+    }
+
+    @Override
+    public void OnDeleteSuccess() {
+        showProgress(false);
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void OnGetExpenseRoomError(String error) {
+
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        if(isValid){
+            roomExpense.setAmount((double) expenseAmount.getRawValue());
+            roomExpense.setDesciption(expenseDescription.getText().toString());
+            roomExpense.setFinishDate(getUsableDateForServer(expenseEndDate.getText().toString())+"T00:00:00Z");
+            roomExpense.setStartDate(getUsableDateForServer(expenseStartDate.getText().toString())+"T00:00:00Z");
+            roomExpense.setName(expenseName.getText().toString());
+            roomExpense.setRoomId(Long.parseLong("1"));
+            roomExpense.setMonthDay(1);
+            roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
+            roomExpenseService.updateExpense(roomExpense);
+        }else{
+            showProgress(false);
+        }
+//
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+
     }
 
 
@@ -462,20 +624,24 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         }
 
 
+
         @Override
         public void onBindViewHolder(final RoomieViewHolder holder, int position) {
             Roomie roomie = this.roomieList.get(position);
             Glide.with(getContext()).load(roomie.getPicture()).centerCrop().into(holder.pfp);
 
             if (editEnable == true){
+
+                if (selectedRoomies.contains(roomie)==true) holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+
                 holder.cardView.setOnClickListener( v -> {
-//                    if(selectedRoomies.contains(roomie)==false) {
-//                        holder.cardView.setCardBackgroundColor(Color.LTGRAY);
-//                        selectedRoomies.add(roomie);
-//                    }else{
-//                        holder.cardView.setCardBackgroundColor(Color.WHITE);
-//                        selectedRoomies.remove(roomie);
-//                    }
+                    if (listCreateNewExpense.contains(roomie)==false){
+                        holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                        listCreateNewExpense.add(roomie);
+                    }else{
+                        holder.cardView.setCardBackgroundColor(Color.WHITE);
+                        listCreateNewExpense.remove(roomie);
+                    }
                 });
             }
 

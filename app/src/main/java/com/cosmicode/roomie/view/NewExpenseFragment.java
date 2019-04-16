@@ -371,7 +371,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                     roomExpenseSplitLIst.add(expenseSplit);
                 }
 
-                roomExpenseSplitService.createExpense(roomExpenseSplitLIst);
+                roomExpenseSplitService.createExpenseSplit(roomExpenseSplitLIst);
                 showProgress(true);
                 break;
         }
@@ -417,6 +417,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     }
 
     @Override
+    public void OnDeleteSuccess() {
+
+    }
+
+    @Override
     public void OnGetExpenseRoomError(String error) {
 
     }
@@ -437,13 +442,14 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         getFragmentManager().popBackStack();
     }
 
+
     @Override
-    public void OnUpdateSuccess(RoomExpenseSplit roomExpenseSplit) {
+    public void OnGetRoomExpenseSplitError(String error) {
 
     }
 
     @Override
-    public void OnGetRoomExpenseSplitError(String error) {
+    public void OnDeleteExpenseSplitSuccess() {
 
     }
 

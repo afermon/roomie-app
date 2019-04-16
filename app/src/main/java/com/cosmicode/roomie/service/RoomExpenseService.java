@@ -82,11 +82,66 @@ public class RoomExpenseService {
         return null;
     }
 
+    public RoomExpense deleteExpense(Long id){
 
+        RoomExpenseApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
+
+        Call<Void> call = apiService.deleteExpense(id);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnDeleteSuccess();
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.OnGetExpenseRoomError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.OnGetExpenseRoomError("Something went wrong!");
+            }
+        });
+        return null;
+    }
+
+    public RoomExpense updateExpense(RoomExpense roomTask){
+
+        RoomExpenseApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomExpenseApiEndpointInterface.class, authToken);
+
+        Call<RoomExpense> call = apiService.editExpense(roomTask);
+
+        call.enqueue(new Callback<RoomExpense>() {
+            @Override
+            public void onResponse(Call<RoomExpense> call, Response<RoomExpense> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, Integer.toString(response.code()));
+                    listener.OnGetExpenseRoomError("ERROR getting resources");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RoomExpense> call, Throwable t) {
+                Toast.makeText(context, "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                listener.OnGetExpenseRoomError("Something went wrong!");
+            }
+        });
+        return null;
+    }
     public interface RoomExpenseServiceListener {
         void OnGetExpenseByRoomSuccess(List<RoomExpense> roomTasks);
         void OnCreateExpenseSuccess(RoomExpense roomExpense);
         void OnUpdateSuccess(RoomExpense roomExpense);
+        void OnDeleteSuccess();
         void OnGetExpenseRoomError(String error);
     }
 }
