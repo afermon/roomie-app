@@ -238,7 +238,8 @@
     <string name="language">Language</string>
     <string name="espanol">Español</string>
     <string name="english">English</string>
-    <string name="no_rooms_registered">You have no rooms registerd, click the \"+\" button on the navigation bar to create one.</string>
+    <string name="no_rooms_registered">You have no rooms registered, click the \"+\" button on the navigation bar to create one.</string>
+    <string name="no_premium_registered">You have no premium rooms registered, click the \"+\" button on the navigation bar to create one.</string>
     <string name="no_tasks_registered">This room has no tasks assigned, click the \"+\" button on the upper right corner to create a new one.</string>
     <string name="no_notif_text">You haven\'t received any notifications yet.</string>
     <string name="to_do_tab">To Do</string>

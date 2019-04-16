@@ -96,9 +96,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_subscriptions)
     public void optionSubscriptions() {
-//        MainPremiumRooms mainPremiumRooms = MainPremiumRooms.newInstance();
-//        openFragment(mainPremiumRooms);
-        startActivity(new Intent(getContext(), ChoosePremiumMembers.class));
+        MainPremiumRooms mainPremiumRooms = MainPremiumRooms.newInstance();
+        openFragment(mainPremiumRooms);
         this.dismiss();
     }
 

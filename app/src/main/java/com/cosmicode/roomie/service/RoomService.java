@@ -57,6 +57,30 @@ public class RoomService {
         });
     }
 
+    public void getOwnedPremiumRooms(Long id, final OnGetOwnedRoomsListener listener){
+        RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+        Call<List<Room>> call = RoomApiService.getOwnedPremiumRooms(id);
+
+        call.enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if(response.code() == 200){
+                    listener.onGetOwnedRoomsSuccess(response.body());
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onGetOwnedRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.onGetOwnedRoomsError(t.getMessage());
+            }
+        });
+
+    }
+
     public void createRoom(RoomCreate room) {
 
         RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
