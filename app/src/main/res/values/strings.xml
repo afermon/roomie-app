@@ -343,4 +343,9 @@
     <string name="card_hint">XXXX XXXX XXXX XXXX</string>
     <string name="expire_hint">MM/YY</string>
     <string name="cvc_hint">XXX</string>
+    <string name="title_activity_premium_tools_acitivity">PremiumToolsAcitivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

@@ -60,6 +60,8 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
     RecyclerView premRecycler;
     @BindView(R.id.progress)
     ProgressBar progressBar;
+    @BindView(R.id.no_premium)
+    TextView noPremium;
 
     public MainPremiumRooms() {
         // Required empty public constructor
@@ -120,8 +122,13 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
 
     @Override
     public void onGetOwnedRoomsSuccess(List<Room> rooms) {
-        premRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        premRecycler.setAdapter(new PremRoomsAdapter(rooms));
+        if(rooms.isEmpty()){
+            noPremium.setVisibility(View.VISIBLE);
+        }else{
+            premRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+            premRecycler.setAdapter(new PremRoomsAdapter(rooms));
+            noPremium.setVisibility(View.GONE);
+        }
         showProgress(false);
     }
 

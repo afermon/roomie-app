@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
     ProgressBar progress;
     @BindView(R.id.payment_container)
     ConstraintLayout container;
+
 
     private Validator validator;
     private RoomService roomService;
@@ -170,6 +172,9 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
     public void completePayment(View view) {
         validator.validate();
     }
+
+    @OnClick(R.id.cancel_payment)
+    public void cancelPayment(View view){ finish();}
 
 
     @Override
