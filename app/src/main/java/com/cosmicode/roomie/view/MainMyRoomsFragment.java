@@ -32,12 +32,15 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -182,7 +185,6 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.roomTitle.setText(mValues.get(position).getTitle());
-            holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
 
             holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
 
@@ -190,6 +192,15 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 MainRoomFragment roomView = MainRoomFragment.newInstance(holder.mItem);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, roomView);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            });
+
+            holder.edit.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_profile_user_edit));
+            holder.edit.setOnClickListener(l ->{
+                MainEditRoom editRoom = MainEditRoom.newInstance(holder.mItem);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_container, editRoom);
                 transaction.addToBackStack(null);
                 transaction.commit();
             });
@@ -207,9 +218,11 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             RoomExpense price = mValues.get(position).getPrice();
             Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
             if (price.getCurrency() == CurrencyType.DOLLAR) {
-                holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
+                String str = NumberFormat.getNumberInstance(Locale.US).format(priceUser.intValue());
+                holder.roomPrice.setText(String.format("%s %s", "$", str));
             } else {
-                holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
+                String str = NumberFormat.getNumberInstance(new Locale("es", "cr")).format(priceUser.intValue());
+                holder.roomPrice.setText(String.format("%s %s", "₡", str));
             }
 
             holder.roomDistance.setVisibility(View.GONE);
@@ -269,6 +282,8 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             CardView roomCard;
             @BindView(R.id.imageView6)
             ImageView loc;
+            @BindView(R.id.roomies_amount)
+            ImageView edit;
 
             public Room mItem;
 

@@ -215,7 +215,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             roomService.updateRoom(room);
         }else{
             showProgress(true);
-            mListener.openFragment(ListingCost.newInstance(room), "right");
+            mListener.openFragment(ListingCost.newInstance(room, false), "right");
         }
     }
 

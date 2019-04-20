@@ -174,10 +174,19 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
             holder.roomTitle.setText(mValues.get(position).getTitle());
             holder.members.setText(Integer.toString(mValues.get(position).getRooms()));
             holder.card.setOnClickListener(l -> {
-                Intent intent = new Intent(getActivity(), PremiumToolsAcitivity.class);
-                intent.putExtra("room", mValues.get(position));
-                startActivity(intent);
-            });
+                        Intent intent = new Intent(getActivity(), PremiumToolsAcitivity.class);
+                        intent.putExtra("room", mValues.get(position));
+                        startActivity(intent);
+                    });
+
+//            holder.roomCard.setOnClickListener(l -> {
+//                ExpenseList newExpenseFragment = ExpenseList.newInstance(mValues.get(position));
+//                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.main_container, newExpenseFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//
+//            });
 
         }
 

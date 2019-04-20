@@ -41,16 +41,15 @@
                 app:srcCompat="@drawable/room_default_pic" />
 
             <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:id="@+id/roomies_amount"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/circle_button"
                 android:scaleType="center"
                 app:layout_constraintBottom_toBottomOf="@+id/room_picture"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/room_picture"
-                app:srcCompat="@drawable/icon_user_white" />
+                app:layout_constraintTop_toBottomOf="@+id/room_picture" />
 
             <TextView
                 android:id="@+id/room_title"
@@ -63,7 +62,7 @@
                 android:textAlignment="viewStart"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/imageView2"
+                app:layout_constraintEnd_toStartOf="@+id/roomies_amount"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/room_picture" />
@@ -128,15 +127,13 @@
                 android:id="@+id/room_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="x2"
+                android:textColor="@color/white"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/room_distance"
-                app:layout_constraintEnd_toEndOf="@+id/imageView2"
-                app:layout_constraintStart_toStartOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintBottom_toBottomOf="@+id/roomies_amount"
+                app:layout_constraintEnd_toEndOf="@+id/roomies_amount"
+                app:layout_constraintStart_toStartOf="@+id/roomies_amount"
+                app:layout_constraintTop_toTopOf="@+id/roomies_amount" />
 
             <ImageView
                 android:id="@+id/imageView3"

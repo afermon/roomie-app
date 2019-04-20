@@ -183,7 +183,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         if (room.getPrice().getFinishDate() == null) {
             moveOut.setText(getString(R.string.no_move_out));
         } else {
-            DateTime finish = dateTimeFormatter.parseDateTime(room.getAvailableFrom());
+            DateTime finish = dateTimeFormatter.parseDateTime(room.getPrice().getFinishDate());
             moveOut.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
 
         }

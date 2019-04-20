@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -24,6 +25,8 @@ import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.RoomieTimeUtil;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.ListingBasicInformation;
+import com.cosmicode.roomie.view.ListingChooseLocation;
+import com.cosmicode.roomie.view.ListingCost;
 import com.cosmicode.roomie.view.ListingStepChooseType;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
@@ -73,7 +76,9 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         ListingStepChooseType.OnFragmentInteractionListener,
         OnGetUserEmailListener,
         MainEditRoom.OnFragmentInteractionListener,
-        ListingBasicInformation.OnFragmentInteractionListener {
+        ListingBasicInformation.OnFragmentInteractionListener,
+        ListingCost.OnFragmentInteractionListener,
+        ListingChooseLocation.OnFragmentInteractionListener{
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
@@ -156,7 +161,12 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @Override
     public void hideKeyboard() {
-
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public final void performLogout() {

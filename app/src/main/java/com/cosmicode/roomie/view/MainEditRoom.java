@@ -66,6 +66,7 @@ public class MainEditRoom extends Fragment {
             roomCreate.setExpenses(room.getExpenses());
             roomCreate.setRoomies(room.getRoomies());
             roomCreate.setAddress(room.getAddress());
+            roomCreate.setMonthly(room.getPrice());
         }
     }
 
@@ -103,5 +104,20 @@ public class MainEditRoom extends Fragment {
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
         void openFragment(Fragment fragment, String start);
+    }
+
+    @OnClick(R.id.cost_text)
+    public void editCost(View view){
+        mListener.openFragment(ListingCost.newInstance(roomCreate, true), "right");
+    }
+
+    @OnClick(R.id.location_text)
+    public void editLocation(View view){
+        mListener.openFragment(ListingChooseLocation.newInstance(roomCreate, true), "right");
+    }
+
+    @OnClick(R.id.back_button)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 }

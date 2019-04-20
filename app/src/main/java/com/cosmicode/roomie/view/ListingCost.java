@@ -1,5 +1,7 @@
 package com.cosmicode.roomie.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,10 +21,15 @@ import android.widget.Toast;
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Address;
+import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.AddressService;
+import com.cosmicode.roomie.service.ReindexService;
+import com.cosmicode.roomie.service.RoomExpenseService;
+import com.cosmicode.roomie.service.RoomService;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
@@ -35,13 +43,14 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class ListingCost extends Fragment implements Validator.ValidationListener {
+public class ListingCost extends Fragment implements Validator.ValidationListener, RoomExpenseService.RoomExpenseServiceListener, RoomService.RoomServiceListener {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
@@ -54,8 +63,8 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private RoomExpense roomExpense;
     private static final String COST = "cost";
 
-    private AddressService addressService;
-    
+    private RoomService roomService;
+    private RoomExpenseService roomExpenseService;
 
 
     @BindView(R.id.error_text)
@@ -77,6 +86,14 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     RadioGroup currency;
     @BindView(R.id.btn_next)
     Button next;
+    @BindView(R.id.cont)
+    ConstraintLayout cont;
+    @BindView(R.id.main_cont)
+    ConstraintLayout mainCont;
+    @BindView(R.id.cancel_cost)
+    ImageButton cancel;
+    @BindView(R.id.progress)
+    ProgressBar progress;
 
 
     public ListingCost() {
@@ -98,6 +115,8 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         if (getArguments() != null) {
             isEdit = getArguments().getBoolean(IS_EDIT);
             room = getArguments().getParcelable(ROOM);
+            roomExpenseService = new RoomExpenseService(getContext(), this);
+            roomService = new RoomService(getContext(), this);
             if (room.getMonthly() == null) {
                 roomExpense = new RoomExpense();
                 roomExpense.setCurrency(CurrencyType.COLON);
@@ -139,8 +158,8 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         currency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    mListener.hideKeyboard();
-                    switch (checkedId) {
+                mListener.hideKeyboard();
+                switch (checkedId) {
                     case R.id.radio_crc:
                         room.getMonthly().setCurrency(CurrencyType.COLON);
                         amount.setLocale(new Locale("es", "cr"));
@@ -152,23 +171,47 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
                 }
             }
         });
+
+        if (isEdit) {
+            cancel.setVisibility(View.GONE);
+            next.setText(getString(R.string.button_save));
+            mainCont.setPadding(0, 0, 0, 135);
+            mainCont.setClipToPadding(false);
+        } else {
+            cancel.setVisibility(View.VISIBLE);
+            next.setText(getString(R.string.cont_btn));
+        }
     }
 
     @OnClick(R.id.cancel_cost)
     public void finish(View view) {
-        getActivity().finish();
+        if (isEdit) {
+            getFragmentManager().popBackStack();
+        } else {
+            getActivity().finish();
+        }
     }
 
     @OnClick(R.id.back_cost)
     public void back(View view) {
         saveState();
-        mListener.openFragment(ListingBasicInformation.newInstance(room, false), "left");
+        if (isEdit) {
+            getFragmentManager().popBackStack();
+        } else {
+            mListener.openFragment(ListingBasicInformation.newInstance(room, false), "left");
+
+        }
     }
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view) {
         saveState();
-        mListener.openFragment(ListingChoosePictures.newInstance(room), "right");
+        if (isEdit) {
+            showProgress(true);
+            roomExpenseService.updateExpense(room.getMonthly());
+        } else {
+            mListener.openFragment(ListingChoosePictures.newInstance(room), "right");
+        }
     }
 
     private void saveState() {
@@ -260,6 +303,65 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         outState.putString(COST, amount.getText().toString());
     }
 
+    @Override
+    public void OnGetExpenseByRoomSuccess(List<RoomExpense> roomTasks) {
+
+    }
+
+    @Override
+    public void OnCreateExpenseSuccess(RoomExpense roomExpense) {
+
+    }
+
+    @Override
+    public void OnUpdateSuccess(RoomExpense roomExpense) {
+        roomService.updateRoom(room);
+    }
+
+    @Override
+    public void OnDeleteSuccess() {
+
+    }
+
+    @Override
+    public void OnGetExpenseRoomError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        showProgress(false);
+    }
+
+    @Override
+    public void OnCreateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        showProgress(false);
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
+        Toast.makeText(getContext(), "Room updated!", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+        showProgress(false);
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
+    }
+
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
 
@@ -347,5 +449,32 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
         }
 
         return date.getYear() + "-" + monthS + "-" + dayS;
+    }
+
+    private void showProgress(boolean show) {
+        Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        cont.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        cont.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cont.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
+        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+        progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 1 : 0))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        progress.setVisibility(((show) ? View.VISIBLE : View.GONE));
+                    }
+                });
     }
 }

@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/room_event_start_tv"
         app:layout_constraintEnd_toStartOf="@+id/room_event_start_tv"
         app:layout_constraintTop_toTopOf="@+id/room_event_start_tv"
         app:srcCompat="@drawable/icon_time_brand" />
@@ -25,6 +26,33 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView21"
         app:layout_constraintEnd_toStartOf="@+id/textView21"
         app:layout_constraintTop_toTopOf="@+id/textView21" />
+
+    <TextView
+        android:id="@+id/room_event_start_tv2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/heading"
+        android:textColor="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+
+    <TextView
+        android:id="@+id/room_event_start_tv4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/description"
+        android:textColor="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_event_title" />
 
     <TextView
         android:id="@+id/textView21"
@@ -66,22 +94,26 @@
         android:id="@+id/room_event_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/input_stroke"
         android:ems="10"
-        android:hint="@string/title"
+        android:hint="@string/event_headline"
         android:inputType="text"
+        android:padding="16dp"
         android:textColor="@color/primary"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/room_event_private"
-        app:layout_constraintStart_toStartOf="@+id/room_event_description"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_event_start_tv2" />
 
     <Switch
         android:id="@+id/room_event_private"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="32dp"
         android:text="Private"
         android:textColor="@color/light"
         android:textSize="14sp"
@@ -89,35 +121,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/room_event_title" />
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/room_event_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icon_message_text_brand" />
-
     <EditText
         android:id="@+id/room_event_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
+        android:background="@drawable/input_stroke"
         android:ems="10"
-        android:hint="@string/description"
+        android:hint="@string/event_desc"
         android:inputType="textMultiLine"
         android:maxLength="220"
         android:maxLines="3"
+        android:padding="16dp"
         android:singleLine="false"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/room_event_title" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/room_event_start_tv4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
