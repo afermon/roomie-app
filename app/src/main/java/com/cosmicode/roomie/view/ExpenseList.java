@@ -268,7 +268,7 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
             if(day <= 9){
                 dayS = "0"+day;
             }
-            String deadline = dayS+"-"+monthS+"-"+ date.getYear();
+            String deadline = dayS+"/"+monthS+"/"+ date.getYear();
 
             return deadline;
         }

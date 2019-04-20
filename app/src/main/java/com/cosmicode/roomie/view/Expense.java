@@ -52,6 +52,7 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -303,65 +304,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
         }
         return 0;
     }
-    public DateTime formatDate(String pdate){
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd")
-                .withLocale(Locale.ROOT)
-                .withChronology(ISOChronology.getInstanceUTC());
 
-        DateTime dt = format.parseDateTime(pdate);
-        return dt;
-    }
-
-    public String getUsableDate(String pDate){
-        DateTime date = formatDate(pDate);
-
-        int month, day;
-        month = date.getMonthOfYear();
-        day = date.getDayOfMonth();
-        String monthS, dayS;
-        monthS = Integer.toString(month);
-        dayS = Integer.toString(day);
-        RoomTask task;
-        if(month <= 9){
-            monthS = "0"+month;
-        }
-        if(day <= 9){
-            dayS = "0"+day;
-        }
-        String deadline = dayS+"-"+monthS+"-"+ date.getYear();
-
-        return deadline;
-    }
-
-
-    public DateTime formatDate2(String pdate){
-        DateTimeFormatter format = DateTimeFormat.forPattern("dd-MM-yyyy")
-                .withLocale(Locale.ROOT)
-                .withChronology(ISOChronology.getInstanceUTC());
-
-        DateTime dt = format.parseDateTime(pdate);
-        return dt;
-    }
-    public String getUsableDateForServer(String pDate){
-        DateTime date = formatDate2(pDate);
-
-        int month, day;
-        month = date.getMonthOfYear();
-        day = date.getDayOfMonth();
-        String monthS, dayS;
-        monthS = Integer.toString(month);
-        dayS = Integer.toString(day);
-        RoomTask task;
-        if(month <= 9){
-            monthS = "0"+month;
-        }
-        if(day <= 9){
-            dayS = "0"+day;
-        }
-        String deadline = date.getYear()+"-"+monthS+"-"+dayS;
-
-        return deadline;
-    }
     public void disableTextView(){
         if (editEnable ==false){
             expenseName.setEnabled(false);
@@ -456,11 +399,44 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             isValid = true;
         }
 
+        isValid = validateDates();
+
         validator.validate();
 
         showProgress(true);
     }
 
+    public boolean validateDates(){
+        int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
+        int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString())*7;
+        double remainder = dayDif% totalDays;
+        if (dayDif!=0 && totalDays!=0){
+            if(remainder == 0){
+
+                return true;
+
+            }else{
+                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+                expenseEndDate.setError("Incorrect date");
+                showProgress(false);
+                return false;
+            }
+        }else {
+            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+            expenseEndDate.setError("Incorrect date");
+            showProgress(false);
+            return false;
+        }
+
+    }
+    public DateTime formatDatefromTxt(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
+    }
     public Double splitAmount(){
         Double result =  roomExpense.getAmount()/listCreateNewExpense.size();
         return  result;
@@ -590,6 +566,66 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public DateTime formatDate(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
+    }
+
+    public String getUsableDate(String pDate){
+        DateTime date = formatDate(pDate);
+
+        int month, day;
+        month = date.getMonthOfYear();
+        day = date.getDayOfMonth();
+        String monthS, dayS;
+        monthS = Integer.toString(month);
+        dayS = Integer.toString(day);
+        RoomTask task;
+        if(month <= 9){
+            monthS = "0"+month;
+        }
+        if(day <= 9){
+            dayS = "0"+day;
+        }
+        String deadline = dayS+"/"+monthS+"/"+ date.getYear();
+
+        return deadline;
+    }
+
+
+    public DateTime formatDate2(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy")
+                .withLocale(Locale.ROOT)
+                .withChronology(ISOChronology.getInstanceUTC());
+
+        DateTime dt = format.parseDateTime(pdate);
+        return dt;
+    }
+    public String getUsableDateForServer(String pDate){
+        DateTime date = formatDate2(pDate);
+
+        int month, day;
+        month = date.getMonthOfYear();
+        day = date.getDayOfMonth();
+        String monthS, dayS;
+        monthS = Integer.toString(month);
+        dayS = Integer.toString(day);
+        RoomTask task;
+        if(month <= 9){
+            monthS = "0"+month;
+        }
+        if(day <= 9){
+            dayS = "0"+day;
+        }
+        String deadline = date.getYear()+"-"+monthS+"-"+dayS;
+
+        return deadline;
     }
 
     //    -----------------------------------------Recycler-------------------------------------------
