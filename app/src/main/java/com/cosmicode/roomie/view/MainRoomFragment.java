@@ -445,7 +445,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View newAppointmentLayout = inflater.inflate(R.layout.new_appointment_dialog, null);
 
-        Button pickDateButton = newAppointmentLayout.findViewById(R.id.pick_appointment_date_btn);
+        ImageView pickDateButton = newAppointmentLayout.findViewById(R.id.pick_date);
         TextView appointmentDateTV = newAppointmentLayout.findViewById(R.id.appointment_date_tv);
         EditText appointmentDescriptionET = newAppointmentLayout.findViewById(R.id.appointment_description);
 
@@ -530,5 +530,10 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @OnClick(R.id.edit_button)
+    public void edit(View view){
+        openFragment(MainEditRoom.newInstance(room));
     }
 }

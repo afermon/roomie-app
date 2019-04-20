@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.PremiumToolsAcitivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
@@ -172,6 +173,11 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
             holder.mItem = mValues.get(position);
             holder.roomTitle.setText(mValues.get(position).getTitle());
             holder.members.setText(Integer.toString(mValues.get(position).getRooms()));
+            holder.card.setOnClickListener(l -> {
+                Intent intent = new Intent(getActivity(), PremiumToolsAcitivity.class);
+                intent.putExtra("room", mValues.get(position));
+                startActivity(intent);
+            });
 
         }
 
@@ -186,6 +192,8 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
             TextView roomTitle;
             @BindView(R.id.members)
             TextView members;
+            @BindView(R.id.premium_card)
+            CardView card;
 
             public Room mItem;
 

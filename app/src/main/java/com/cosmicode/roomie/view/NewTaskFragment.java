@@ -72,10 +72,11 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public NewTaskFragment() {
     }
 
-    public static NewTaskFragment newInstance(RoomTask task) {
+    public static NewTaskFragment newInstance(RoomTask task, Long id) {
         NewTaskFragment fragment = new NewTaskFragment();
         Bundle args = new Bundle();
         args.putParcelable(TASK_KEY, task);
+        args.putLong("room", id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -242,7 +243,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         }
         String deadline = date +"T"+ time+ ":00Z";
         String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
-        Long id = new Long(1);
+        Long id = getArguments().getLong("room");
         this.task.setTitle(editTitle.getText().toString());
         this.task.setDescription(editDesc.getText().toString());
         if(date != null && time != null){
@@ -282,22 +283,21 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     public void OnCreateTask(RoomTask roomTask) {
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        getActivity().finish();
     }
 
     @Override
     public void OnUpdateSuccess(RoomTask roomTask) {
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        getActivity().finish();
     }
 
     @Override
     public void OnDeleteSuccess() {
         showProgress(false);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
-
+        getActivity().finish();
     }
 
     @Override
@@ -333,7 +333,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             String deadline = date +"T"+ time+ ":00Z";
             String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
 
-            Long id = new Long(1);
+            Long id = getArguments().getLong("room");
             task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
 
             roomTaskService.createTask(task);
@@ -361,7 +361,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     }
 
     public void onClickBack(View view){
-        getFragmentManager().popBackStack();
+        getActivity().finish();
     }
 
     private void openFragment(Fragment fragment) {

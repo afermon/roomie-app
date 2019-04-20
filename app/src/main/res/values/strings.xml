@@ -348,4 +348,8 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="pick_appointment_date">Pick an appointment date</string>
+    <string name="forgot_pw">Forgot  your password?</string>
+    <string name="edit_room">Edit Room</string>
+    <string name="choose_edit">Choose the type of information you wish to change.</string>
 </resources>

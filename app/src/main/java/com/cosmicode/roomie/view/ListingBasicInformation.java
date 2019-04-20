@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -17,10 +18,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
 import com.cosmicode.roomie.service.RoomFeatureService;
+import com.cosmicode.roomie.service.RoomService;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
@@ -31,6 +34,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -40,19 +44,24 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class ListingBasicInformation extends Fragment implements RoomFeatureService.OnGetFeaturesListener, Validator.ValidationListener {
+public class ListingBasicInformation extends Fragment implements RoomFeatureService.OnGetFeaturesListener, Validator.ValidationListener, RoomService.RoomServiceListener {
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
+    private static final String IS_EDIT = "edit";
     private RoomCreate room;
+    private Boolean isEdit;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.Adapter mAdapter2;
     private RoomFeatureService roomFeatureService;
     private Validator validator;
-
+    private RoomService roomService;
 
     @BindView(R.id.progress)
     ProgressBar progress;
+
+    @BindView(R.id.basic_cont)
+    ConstraintLayout cont;
 
     @BindView(R.id.basic_scroll)
     ScrollView scrollView;
@@ -76,14 +85,24 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @BindView(R.id.list_restrictions)
     RecyclerView restrictions;
 
+    @BindView(R.id.btn_next)
+    Button next;
+
+    @BindView(R.id.back_button)
+    ImageButton back;
+
+    @BindView(R.id.back_basic)
+    ImageButton cancel;
+
     public ListingBasicInformation() {
         // Required empty public constructor
     }
 
-    public static ListingBasicInformation newInstance(RoomCreate room) {
+    public static ListingBasicInformation newInstance(RoomCreate room, Boolean editFlag) {
         ListingBasicInformation fragment = new ListingBasicInformation();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
+        args.putBoolean(IS_EDIT, editFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,12 +112,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            isEdit = getArguments().getBoolean(IS_EDIT);
             if (room.getFeatures() == null) {
                 room.setFeatures(new ArrayList<>());
             }
             validator = new Validator(this);
             validator.setValidationListener(this);
             roomFeatureService = new RoomFeatureService(getContext(), this);
+            roomService = new RoomService(getContext(), this);
         }
     }
 
@@ -141,6 +162,18 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         if (room.getRooms() != null) {
             amount.setText(String.format("%s", room.getRooms()));
         }
+
+        if(isEdit){
+            back.setVisibility(View.VISIBLE);
+            cancel.setVisibility(View.GONE);
+            next.setText(getString(R.string.button_save));
+            scrollView.setPadding(0,0,0,135);
+            scrollView.setClipToPadding(false);
+        }else{
+            back.setVisibility(View.GONE);
+            cancel.setVisibility(View.VISIBLE);
+            next.setText(getString(R.string.cont_btn));
+        }
         amenities.setLayoutManager(new GridLayoutManager(getContext(), 4));
         restrictions.setLayoutManager(new GridLayoutManager(getContext(), 4));
 
@@ -177,7 +210,13 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         room.setTitle(headline.getText().toString());
         room.setDescription(desc.getText().toString());
         room.setRooms(Integer.parseInt(amount.getText().toString()));
-        mListener.openFragment(ListingCost.newInstance(room), "right");
+        if(isEdit){
+            showProgress(true);
+            roomService.updateRoom(room);
+        }else{
+            showProgress(true);
+            mListener.openFragment(ListingCost.newInstance(room), "right");
+        }
     }
 
     @Override
@@ -194,6 +233,44 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             }
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
+    }
+
+    @Override
+    public void OnCreateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        showProgress(false);
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
+        Toast.makeText(getContext(), "Room updated!", Toast.LENGTH_SHORT).show();
+        getFragmentManager().popBackStack();
+        showProgress(false);
+    }
+
+    @OnClick(R.id.back_button)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
     }
 
     public class AmenitiesAdapter extends RecyclerView.Adapter<AmenitiesAdapter.IconViewHolder> {

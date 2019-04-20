@@ -23,9 +23,11 @@ import com.cosmicode.roomie.service.UserReportService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.RoomieTimeUtil;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
+import com.cosmicode.roomie.view.ListingBasicInformation;
 import com.cosmicode.roomie.view.ListingStepChooseType;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
+import com.cosmicode.roomie.view.MainEditRoom;
 import com.cosmicode.roomie.view.MainMyRoomsFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
@@ -69,7 +71,9 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainMyRoomsFragment.OnFragmentInteractionListener,
         MainPremiumRooms.OnFragmentInteractionListener,
         ListingStepChooseType.OnFragmentInteractionListener,
-        OnGetUserEmailListener {
+        OnGetUserEmailListener,
+        MainEditRoom.OnFragmentInteractionListener,
+        ListingBasicInformation.OnFragmentInteractionListener {
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
@@ -129,7 +133,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         }
     }
 
-    private void openFragment(Fragment fragment, String start) {
+    public void openFragment(Fragment fragment, String start) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (start) {
             case "left":
@@ -143,6 +147,16 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void changePercentage(int progress) {
+
+    }
+
+    @Override
+    public void hideKeyboard() {
+
     }
 
     public final void performLogout() {

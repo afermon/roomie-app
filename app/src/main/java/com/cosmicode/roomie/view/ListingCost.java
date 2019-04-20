@@ -21,6 +21,7 @@ import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.service.AddressService;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
@@ -44,12 +45,17 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private static final String ROOM = "room";
+    private static final String IS_EDIT = "edit";
     private RoomCreate room;
+    private Boolean isEdit;
     private String date, date2;
     private OnFragmentInteractionListener mListener;
     private static int selectedDate;
     private RoomExpense roomExpense;
     private static final String COST = "cost";
+
+    private AddressService addressService;
+    
 
 
     @BindView(R.id.error_text)
@@ -77,10 +83,11 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     }
 
 
-    public static ListingCost newInstance(RoomCreate room) {
+    public static ListingCost newInstance(RoomCreate room, Boolean editFlag) {
         ListingCost fragment = new ListingCost();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
+        args.putBoolean(IS_EDIT, editFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,6 +96,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            isEdit = getArguments().getBoolean(IS_EDIT);
             room = getArguments().getParcelable(ROOM);
             if (room.getMonthly() == null) {
                 roomExpense = new RoomExpense();
@@ -154,7 +162,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     @OnClick(R.id.back_cost)
     public void back(View view) {
         saveState();
-        mListener.openFragment(ListingBasicInformation.newInstance(room), "left");
+        mListener.openFragment(ListingBasicInformation.newInstance(room, false), "left");
     }
 
     @OnClick(R.id.btn_next)

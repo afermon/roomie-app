@@ -190,4 +190,20 @@ public class RoomExpense implements Parcelable {
             return new RoomExpense[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "RoomExpense{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", currency=" + currency +
+                ", amount=" + amount +
+                ", periodicity=" + periodicity +
+                ", monthDay=" + monthDay +
+                ", startDate='" + startDate + '\'' +
+                ", finishDate='" + finishDate + '\'' +
+                ", roomId=" + roomId +
+                '}';
+    }
 }
