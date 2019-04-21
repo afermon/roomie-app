@@ -3,22 +3,7 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +15,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
@@ -39,7 +23,6 @@ import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomService;
-import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 
 import org.joda.time.DateTime;
@@ -50,6 +33,17 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsListener {
 

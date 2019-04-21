@@ -10,6 +10,7 @@
         <item name="android:buttonStyle">@style/RoomieButtonStyle</item>
         <item name="android:searchViewStyle">@style/RoomieSearchViewStyle</item>
         <item name="android:dialogTheme">@style/RoomieDialogTheme</item>
+        <item name="alertDialogTheme">@style/RoomieAlertDialogTheme</item>
     </style>
 
     <style name="RoomieTextViewStyle" parent="android:Widget.TextView">
@@ -37,6 +38,7 @@
 
     <style name="SwitchTheme" parent="Theme.AppCompat.Light">
         <item name="android:colorControlActivated">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
     </style>
 
     <style name="RoomieSearchViewStyle" parent="android:Widget.Material.SearchView">
@@ -50,6 +52,20 @@
 
     <style name="RoomieDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="RoomieAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogNegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogPositiveButtonStyle</item>
+    </style>
+
+    <style name="AlertDialogNegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dark</item>
+    </style>
+
+    <style name="AlertDialogPositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/primary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

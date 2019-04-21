@@ -58,7 +58,6 @@
         android:hint="@string/appointment_description_hint"
         android:inputType="textMultiLine"
         android:maxLength="220"
-        android:minLines="3"
         android:maxLines="6"
         android:singleLine="false"
         android:textSize="14sp"
@@ -72,8 +71,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appointment_description"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/appointment_description"
         app:srcCompat="@drawable/icon_message_text_brand" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,12 +2,6 @@ package com.cosmicode.roomie.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +10,12 @@ import android.widget.TextView;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
@@ -28,9 +28,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
  */
 public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
-    @BindView(R.id.options_name) TextView name;
+    @BindView(R.id.options_name)
+    TextView name;
 
-    @BindView(R.id.options_mail) TextView email;
+    @BindView(R.id.options_mail)
+    TextView email;
 
     private OnFragmentInteractionListener mListener;
 
@@ -41,6 +43,7 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment MainOptionsBottomSheetDialogFragment.
      */
     public static MainOptionsBottomSheetDialogFragment newInstance() {
@@ -68,11 +71,11 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if(mListener != null)
-        mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> {
-            name.setText(user.getFullName());
-            email.setText(user.getEmail());
-        });
+        if (mListener != null)
+            mListener.getBaseActivity().getJhiUsers().getLogedUser(user -> {
+                name.setText(user.getFullName());
+                email.setText(user.getEmail());
+            });
     }
 
     @OnClick(R.id.option_room)
@@ -98,19 +101,20 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_configuration)
     public void optionConfiguration() {
-        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("","");
+        MainConfigurationFragment mainConfigurationFragment = MainConfigurationFragment.newInstance("", "");
         openFragment(mainConfigurationFragment);
         this.dismiss();
     }
 
     @OnClick(R.id.option_report_problem)
     public void optionReportProblem() {
+        if (mListener != null) mListener.reportProblemApp();
         this.dismiss();
     }
 
     @OnClick(R.id.option_logout)
     public void optionLogout() {
-        if (mListener != null)  mListener.performLogout();
+        if (mListener != null) mListener.performLogout();
     }
 
     @Override
@@ -149,6 +153,8 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
      */
     public interface OnFragmentInteractionListener {
         void performLogout();
+
+        void reportProblemApp();
 
         BaseActivity getBaseActivity();
     }

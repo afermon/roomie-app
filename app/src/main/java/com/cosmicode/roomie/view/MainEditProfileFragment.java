@@ -7,17 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -38,7 +30,6 @@ import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.AddLifestylesActivity;
 import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.ChooseLocationActivity;
-import com.cosmicode.roomie.MainActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.RoomFeature;
@@ -66,13 +57,17 @@ import com.google.android.gms.tasks.Task;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Length;
-import com.mobsandgeeks.saripaar.annotation.Optional;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-
 import java.util.Iterator;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import static android.app.Activity.RESULT_OK;
 

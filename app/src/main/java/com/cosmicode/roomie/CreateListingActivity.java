@@ -1,8 +1,5 @@
 package com.cosmicode.roomie;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -14,8 +11,11 @@ import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.cosmicode.roomie.view.ListingBasicInformation;
 import com.cosmicode.roomie.view.ListingChooseLocation;
 import com.cosmicode.roomie.view.ListingChoosePictures;
-import com.cosmicode.roomie.view.ListingStepChooseType;
 import com.cosmicode.roomie.view.ListingCost;
+import com.cosmicode.roomie.view.ListingStepChooseType;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class CreateListingActivity extends BaseActivity implements ListingChooseLocation.OnFragmentInteractionListener, ListingBasicInformation.OnFragmentInteractionListener, ListingChoosePictures.OnFragmentInteractionListener, ListingStepChooseType.OnFragmentInteractionListener, ListingCost.OnFragmentInteractionListener {
 
