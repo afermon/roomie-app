@@ -42,15 +42,16 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/circle_button"
-                android:scaleType="center"
-                app:layout_constraintBottom_toBottomOf="@+id/room_picture"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/room_picture"
-                app:srcCompat="@drawable/icon_user_white" />
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="4dp"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="@+id/room_count"
+                app:layout_constraintStart_toStartOf="@+id/room_count"
+                app:layout_constraintTop_toBottomOf="@+id/room_count"
+                app:srcCompat="@drawable/icon_user_orange" />
 
             <TextView
                 android:id="@+id/room_title"
@@ -110,33 +111,42 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <TextView
+            <org.fabiomsr.moneytextview.MoneyTextView
                 android:id="@+id/room_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_white_rounded"
-                android:text="n/a"
-                android:textColor="@color/primary"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:padding="10dp"
+                app:symbol="$"
+                app:symbolGravity="start|top"
+                app:symbolTextSize="14dp"
+                app:symbolMargin="6dp"
+                app:amount="1256.56"
+                app:baseTextSize="16dp"
+                app:decimalDigitsTextSize="12dp"
+                app:decimalMargin="6dp"
+                app:includeDecimalSeparator="true"
+                app:baseTextColor="@color/primary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/room_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/circle_button"
+                android:padding="10dp"
                 android:text="x2"
+                android:textAlignment="center"
+                android:textColor="@color/white"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/room_distance"
-                app:layout_constraintEnd_toEndOf="@+id/imageView2"
-                app:layout_constraintStart_toStartOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintBottom_toBottomOf="@+id/room_picture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/room_picture" />
 
             <ImageView
                 android:id="@+id/imageView3"
