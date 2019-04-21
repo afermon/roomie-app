@@ -17,4 +17,12 @@
         <item>40</item>
     </string-array>
 
+    <string-array name="reports">
+        <item>False information</item>
+        <item>Offensive pictures</item>
+        <item>Spam</item>
+        <item>Harassment</item>
+        <item>Hateful content</item>
+    </string-array>
+
 </resources>

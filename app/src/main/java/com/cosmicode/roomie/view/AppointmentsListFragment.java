@@ -4,6 +4,27 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.R;
+import com.cosmicode.roomie.domain.Appointment;
+import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.domain.enumeration.AppointmentState;
+import com.cosmicode.roomie.service.AppointmentService;
+import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.RoomieTimeUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,34 +43,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
-
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.cosmicode.roomie.BaseActivity;
-import com.cosmicode.roomie.R;
-import com.cosmicode.roomie.domain.Appointment;
-import com.cosmicode.roomie.domain.Roomie;
-import com.cosmicode.roomie.domain.enumeration.AppointmentState;
-import com.cosmicode.roomie.service.AppointmentService;
-import com.cosmicode.roomie.service.RoomieService;
-
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -280,21 +273,10 @@ public class AppointmentsListFragment extends Fragment implements AppointmentSer
             Appointment appointment = this.appointmentList.get(position);
             itemHolder.description.setText(appointment.getDescription());
             itemHolder.state.setText(appointment.getState().name());
-            itemHolder.date.setText(formattDateString(appointment.getDateTime()));
+            itemHolder.date.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(appointment.getDateTime()));
             Glide.with(getContext()).load(appointment.getPetitioner().getPicture()).centerCrop().into(itemHolder.profileImage);
             itemHolder.container.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
-        }
-
-        public String formattDateString(String pdate){
-            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                    .withLocale(Locale.ROOT)
-                    .withChronology(ISOChronology.getInstanceUTC());
-            String dt = new String();
-            if (pdate !=null){
-                DateTime date = format.parseDateTime(pdate);
-                dt = date.getDayOfMonth() + "/" + date.getMonthOfYear() + "/" + date.getYear() + " " + date.getHourOfDay() + ":" + date.getMinuteOfHour();
-            }
-            return dt;
+            itemHolder.settings.setOnClickListener(v -> appointmentPopupMenu(itemHolder.settings, appointment));
         }
 
         @Override

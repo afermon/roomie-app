@@ -14,7 +14,6 @@ import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

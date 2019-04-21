@@ -3,13 +3,11 @@ package com.cosmicode.roomie.service;
 import com.cosmicode.roomie.domain.Authorization;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.Register;
-import com.cosmicode.roomie.domain.RoomieUser;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface UserApiEndpointInterface {

@@ -43,7 +43,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:clipToPadding="false"
-        android:paddingBottom="50dp"
+        android:paddingBottom="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_title"
         tools:context=".view.AppointmentsListFragment"

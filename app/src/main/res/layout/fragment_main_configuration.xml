@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/secondary"
     tools:context=".view.MainConfigurationFragment"
-    android:paddingBottom="50dp"
+    android:paddingBottom="56dp"
     android:clipToPadding="false">
 
     <TextView

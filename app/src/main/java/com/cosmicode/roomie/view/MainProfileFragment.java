@@ -4,11 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -28,8 +23,8 @@ import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.JhiAccount;
 import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.Roomie;
-import com.cosmicode.roomie.domain.RoomieUser;
 import com.cosmicode.roomie.domain.enumeration.Gender;
+import com.cosmicode.roomie.domain.enumeration.ReportType;
 import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetUserByIdListener;
@@ -48,6 +43,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 public class MainProfileFragment extends Fragment implements RoomieService.OnGetCurrentRoomieListener, OnGetUserByIdListener, OnMapReadyCallback, AddressService.OnGetAdrressByIdListener {
 
     private OnFragmentInteractionListener mListener;
@@ -61,7 +60,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
     private ProgressBar progress;
     private ScrollView scrollView;
     private RoomieService roomieService;
-    private ImageButton settings;
+    private ImageButton settings, report;
     private final String TAG = "Profile";
     private final static String ROOMIE = "roomie";
     private Roomie roomie;
@@ -130,6 +129,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
         scrollView = getView().findViewById(R.id.profile_scroll);
         noLife = getView().findViewById(R.id.text_no_life);
         addressText = getView().findViewById(R.id.address_text);
+        report = getView().findViewById(R.id.report_button);
         showProgress(true);
 
         mListener.getBaseActivity().getJhiUsers().findById(roomie.getUserId(), this);
@@ -158,6 +158,8 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
             settings.setVisibility(View.GONE);
             mapFragment.getView().setVisibility(View.GONE);
             addressText.setVisibility(View.VISIBLE);
+            report.setVisibility(View.VISIBLE);
+            report.setOnClickListener(l-> mListener.sendReport(roomie.getId(),"user"));
             if(userAddress.getCity().equals("Default")){
                 addressText.setText(getString(R.string.no_address));
             }else{
@@ -167,6 +169,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
             settings.setVisibility(View.VISIBLE);
             mapFragment.getView().setVisibility(View.VISIBLE);
             addressText.setVisibility(View.GONE);
+            report.setVisibility(View.GONE);
         }
 
         Glide.with(getActivity().getApplicationContext()).load(roomie.getPicture()).centerCrop().into(pfp);
@@ -301,7 +304,9 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+        void sendReport(Long roomieId, String type);
     }
+
 
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);

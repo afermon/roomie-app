@@ -1,15 +1,13 @@
 package com.cosmicode.roomie.domain;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.math.BigDecimal;
 
 public class Address implements Parcelable {
 

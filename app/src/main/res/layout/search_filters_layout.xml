@@ -58,7 +58,7 @@
             android:layout_marginTop="24dp"
             android:text="@string/distance"
             android:textColor="@color/dark"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -99,7 +99,7 @@
             android:layout_marginStart="24dp"
             android:text="@string/price"
             android:textColor="@color/dark"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/distance_filter" />
 
@@ -166,7 +166,7 @@
             android:layout_marginStart="24dp"
             android:text="@string/amenities"
             android:textColor="@color/dark"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/price_filter" />
 
@@ -190,7 +190,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/restrictions"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/amenities_recycler_view" />
 
