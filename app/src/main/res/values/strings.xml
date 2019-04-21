@@ -366,4 +366,6 @@
     <string name="no_roomie">You do not have any roomie added to the expense yet.</string>
     <string name="event_headline">What is the event?</string>
     <string name="event_desc">Tell your roommates more about the event</string>
+    <string name="no_valid_date">Your end date is not correct to make the last payment</string>
+    <string name="incorrect_date">Incorrect date</string>
 </resources>

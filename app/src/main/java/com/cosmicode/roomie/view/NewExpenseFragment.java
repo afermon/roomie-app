@@ -58,6 +58,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
+import org.joda.time.Days;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -343,18 +344,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                     isValid = true;
                 }
 
-//                if(dateEnd==null && dateStart==null){
-//                    DateTime dEnd,dStart;
-//                    dEnd = formatDate(dateEnd+"T00:00:00Z");
-//                    dStart = formatDate(dateStart+"T00:00:00Z");
-//                    int difday = comparator.compare(dEnd, dStart);
-//                    if(difday<0){
-//                        isValid = false;
-//                        Toast.makeText(getContext(), "End date can't be older than the start date of the expense", Toast.LENGTH_SHORT).show();
-//                    }else{
-//                        isValid = true;
-//                    }
-//                }
+                isValid = validateDates();
 
                 validator.validate();
                 break;
@@ -376,9 +366,31 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                 break;
         }
     }
+    public boolean validateDates(){
+        int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
+        int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString())*7;
+        double remainder = dayDif% totalDays;
+        if (dayDif!=0 && totalDays!=0){
+            if(remainder == 0){
 
-    public DateTime formatDate(String pdate){
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                return true;
+
+            }else{
+                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+                expenseEndDate.setError("Incorrect date");
+                showProgress(false);
+                return false;
+            }
+        }else {
+            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+            expenseEndDate.setError("Incorrect date");
+            showProgress(false);
+            return false;
+        }
+
+    }
+    public DateTime formatDatefromTxt(String pdate){
+        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy")
                 .withLocale(Locale.ROOT)
                 .withChronology(ISOChronology.getInstanceUTC());
 
