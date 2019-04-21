@@ -114,6 +114,8 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     TextView noAmenties;
     @BindView(R.id.no_restrictions)
     TextView noRestrictions;
+    @BindView(R.id.appointment_desc)
+    EditText appDesc;
 
 
     private OnFragmentInteractionListener mListener;
@@ -171,6 +173,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         addressDesc.setText(String.format("%s, %s", room.getAddress().getCity(), room.getAddress().getState()));
         roomDesc.setText(room.getDescription());
         addressAddDesc.setText(room.getAddress().getDescription());
+        appDesc.setText(room.getApoinmentsNotes());
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime available = dateTimeFormatter.parseDateTime(room.getAvailableFrom());
         DateTime now = new DateTime();
@@ -532,8 +535,4 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         transaction.commit();
     }
 
-    @OnClick(R.id.edit_button)
-    public void edit(View view){
-        openFragment(MainEditRoom.newInstance(room));
-    }
 }
