@@ -81,6 +81,7 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.5.1'
     implementation 'com.basgeekball:awesome-validation:4.2'
     implementation 'com.stripe:stripe-android:8.6.0'
+    implementation 'org.fabiomsr:moneytextview:1.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

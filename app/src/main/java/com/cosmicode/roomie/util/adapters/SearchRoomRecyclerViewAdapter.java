@@ -20,6 +20,7 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment.OnFragmentInteractionListener;
 
+import org.fabiomsr.moneytextview.MoneyTextView;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -96,13 +97,9 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
 
             RoomExpense price = mValues.get(position).getPrice();
             Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
-            if (price.getCurrency() == CurrencyType.DOLLAR) {
-                String str = NumberFormat.getNumberInstance(Locale.US).format(priceUser.intValue());
-                holder.roomPrice.setText(String.format("%s %s", "$", str));
-            } else {
-                String str = NumberFormat.getNumberInstance(new Locale("es", "cr")).format(priceUser.intValue());
-                holder.roomPrice.setText(String.format("%s %s", "₡", str));
-            }
+
+            holder.roomPrice.setAmount(priceUser.intValue());
+            holder.roomPrice.setSymbol((price.getCurrency() == CurrencyType.DOLLAR) ? "$" : "₡");
 
             float distance = mCurrentUserLocation.distanceTo(address.getLocation());
             DecimalFormat distanceFormat = new DecimalFormat("#0.00");
@@ -158,7 +155,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         @BindView(R.id.room_picture) ImageView roomPinture;
-        @BindView(R.id.room_price) TextView roomPrice;
+        @BindView(R.id.room_price) MoneyTextView roomPrice;
         @BindView(R.id.room_title) TextView roomTitle;
         @BindView(R.id.room_address) TextView roomAddress;
         @BindView(R.id.room_available) TextView roomAvailableFrom;

@@ -25,6 +25,7 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 
+import org.fabiomsr.moneytextview.MoneyTextView;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -196,7 +197,9 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 transaction.commit();
             });
 
-            holder.edit.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_profile_user_edit));
+            holder.roomie_icon.setVisibility(View.GONE);
+
+            holder.edit.setVisibility(View.VISIBLE);
             holder.edit.setOnClickListener(l ->{
                 MainEditRoom editRoom = MainEditRoom.newInstance(holder.mItem);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -217,13 +220,9 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             //Price
             RoomExpense price = mValues.get(position).getPrice();
             Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
-            if (price.getCurrency() == CurrencyType.DOLLAR) {
-                String str = NumberFormat.getNumberInstance(Locale.US).format(priceUser.intValue());
-                holder.roomPrice.setText(String.format("%s %s", "$", str));
-            } else {
-                String str = NumberFormat.getNumberInstance(new Locale("es", "cr")).format(priceUser.intValue());
-                holder.roomPrice.setText(String.format("%s %s", "₡", str));
-            }
+
+            holder.roomPrice.setAmount(priceUser.intValue());
+            holder.roomPrice.setSymbol((price.getCurrency() == CurrencyType.DOLLAR) ? "$" : "₡");
 
             holder.roomDistance.setVisibility(View.GONE);
 
@@ -264,8 +263,6 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             public final View mView;
             @BindView(R.id.room_picture)
             ImageView roomPinture;
-            @BindView(R.id.room_price)
-            TextView roomPrice;
             @BindView(R.id.room_title)
             TextView roomTitle;
             @BindView(R.id.room_address)
@@ -282,8 +279,13 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             CardView roomCard;
             @BindView(R.id.imageView6)
             ImageView loc;
-            @BindView(R.id.roomies_amount)
+            @BindView(R.id.imageView2)
+            ImageView roomie_icon;
+            @BindView(R.id.room_price)
+            MoneyTextView roomPrice;
+            @BindView(R.id.edit_btn)
             ImageView edit;
+
 
             public Room mItem;
 
