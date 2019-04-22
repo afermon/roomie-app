@@ -40,11 +40,12 @@
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_register_calendar" />
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab_members"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_bar_members" />
+            <!--<com.google.android.material.tabs.TabItem-->
+                <!--android:id="@+id/tab_members"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:icon="@drawable/ic_bar_members"-->
+                <!--android:visibility="gone" />-->
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_home"

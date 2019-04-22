@@ -110,8 +110,6 @@ public class MainOptionsBottomSheetDialogFragment extends BottomSheetDialogFragm
 
     @OnClick(R.id.option_report_problem)
     public void optionReportProblem() {
-//        RoomCalendarFragment roomCalendarFragment = RoomCalendarFragment.newInstance(Long.valueOf(1));
-//        openFragment(roomCalendarFragment);
         if (mListener != null) mListener.reportProblemApp();
         this.dismiss();
     }

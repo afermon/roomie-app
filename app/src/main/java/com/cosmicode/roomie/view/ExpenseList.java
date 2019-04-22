@@ -3,6 +3,7 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
@@ -35,7 +37,9 @@ import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomExpenseService;
 import com.cosmicode.roomie.service.RoomieService;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.fabiomsr.moneytextview.MoneyTextView;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormat;
@@ -56,8 +60,9 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     private RecyclerView.Adapter mAdapter;
     private RoomExpenseService roomExpenseService;
     private RoomieService roomieService;
+    private TextView noExpenses;
 
-    ImageView addExpenseBtn;
+    FloatingActionButton addExpenseBtn;
 
     ProgressBar progressBar;
 
@@ -91,6 +96,7 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         this.room = getArguments().getParcelable(ROOM);
 
+        noExpenses = getView().findViewById(R.id.no_expenses);
         addExpenseBtn = getView().findViewById(R.id.button_new_expense);
         addExpenseBtn.setOnClickListener(this::onClickAdd);
         progressBar = getView().findViewById(R.id.progress3);
@@ -131,9 +137,9 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     }
 
     public void onClickAdd(View view){
-
-        NewExpenseFragment todoFragment = NewExpenseFragment.newInstance(room);
-        openFragment(todoFragment);
+        Intent intent = new Intent(getContext(), ExpenseManager.class);
+        intent.putExtra("room", room);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -141,6 +147,11 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new MyAdapter(roomTasks);
         recyclerView.setAdapter(mAdapter);
+        if(roomTasks.isEmpty()){
+            noExpenses.setVisibility(View.VISIBLE);
+        }else {
+            noExpenses.setVisibility(View.GONE);
+        }
         showProgress(false);
     }
 
@@ -162,15 +173,17 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     @Override
     public void OnGetExpenseRoomError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-    }
+
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);    }
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
         currentRoomie = roomie;
 
         if (room.getOwnerId() == roomie.getId()){
-            addExpenseBtn.setVisibility(View.VISIBLE);
+            addExpenseBtn.show();
+        }else{
+            addExpenseBtn.hide();
         }
         getRooms();
     }
@@ -178,8 +191,7 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     @Override
     public void onGetCurrentRoomieError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-    }
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);    }
 
     @Override
     public void OnUpdateSuccess(Roomie roomie) {
@@ -193,6 +205,17 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        recyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        recyclerView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        recyclerView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
         progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
         progressBar.animate()
                 .setDuration(shortAnimTime)
@@ -214,7 +237,9 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
             private TextView endDate;
             private TextView description;
             private CardView cardView;
-            private CurrencyEditText typeAmount;
+            private MoneyTextView typeAmount;
+            private TextView splits;
+
             ExpenseViewHolder(View view){
                 super(view);
                 typeAmount = view.findViewById(R.id.txt_expense_list_amount_type);
@@ -285,19 +310,30 @@ public class ExpenseList extends Fragment implements RoomExpenseService.RoomExpe
                 holder.description.setText(e.getDesciption());
             }
             holder.endDate.setText(getUsableDate(e.getFinishDate()));
-            holder.typeAmount.setText(String.valueOf(e.getAmount()));
-            holder.typeAmount.setEnabled(false);
-            if (e.getCurrency() == CurrencyType.COLON) {
-                holder.typeAmount.setLocale(new Locale("es", "cr"));
-            } else {
-                holder.typeAmount.setLocale(Locale.US);
-            }
+
+            holder.typeAmount.setAmount(e.getAmount().intValue());
+            holder.typeAmount.setSymbol((e.getCurrency() == CurrencyType.DOLLAR) ? "$" : "₡");
+
 
             holder.cardView.setOnClickListener( v -> {
-                Expense todoFragment = Expense.newInstance(room, e, currentRoomie);
-                openFragment(todoFragment);
+                Intent intent = new Intent(getContext(), ExpenseManager.class);
+                intent.putExtra("room", room);
+                intent.putExtra("expense", e);
+                intent.putExtra("roomie", currentRoomie);
+                startActivityForResult(intent, 1);
             });
 
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == 1){
+            showProgress(true);
+            getRooms();
+        }else{
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

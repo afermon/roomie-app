@@ -48,6 +48,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsListener {
 
@@ -197,6 +198,7 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 transaction.commit();
             });
 
+            holder.roomCount.setVisibility(View.GONE);
             holder.roomie_icon.setVisibility(View.GONE);
 
             holder.edit.setVisibility(View.VISIBLE);
@@ -300,5 +302,10 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 return super.toString() + " '" + mItem.toString() + "'";
             }
         }
+    }
+
+    @OnClick(R.id.back_my_room)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 }

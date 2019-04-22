@@ -143,7 +143,7 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
             roomService = new RoomService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
             roomPictureService = new RoomPictureService(getContext(), this);
-            if(!isEdit){
+            if (!isEdit) {
                 picAmount = room.getPicturesUris().size();
             }
             validator = new Validator(this);
@@ -381,18 +381,18 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
     @Override
     public void OnGetRoomsError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
     public void OnUpdateSuccess(Room room) {
         showProgress(false);
-        if(isEdit){
-            Toast.makeText(getContext(), "Room updated!", Toast.LENGTH_SHORT).show();
+        if (isEdit) {
+            ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
             getFragmentManager().popBackStack();
             showProgress(false);
-        }else{
-            Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            ((BaseActivity) getContext()).showUserMessage("Room created successfully!", BaseActivity.SnackMessageType.SUCCESS);
             startActivity(new Intent(getContext(), MainActivity.class));
         }
     }
@@ -446,7 +446,7 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
     @Override
     public void onGetCurrentRoomieError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -465,7 +465,7 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
     @Override
     public void onPictureError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override

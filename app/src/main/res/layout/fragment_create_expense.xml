@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="50dp"
-    android:clipToPadding="false"
     tools:context=".view.NewExpenseFragment" >
 
     <ImageButton
@@ -43,16 +41,17 @@
         android:backgroundTint="@color/primary"
         android:text="@string/create_split"
         android:textColor="@color/secondary"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
         android:id="@+id/main_info_expense"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:visibility="visible"
@@ -551,7 +550,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
@@ -571,6 +570,7 @@
                 android:layout_marginTop="8dp"
                 android:text="Who do you want to add?"
                 android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.334"
                 app:layout_constraintStart_toStartOf="parent"
@@ -578,11 +578,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/add_person_recycler"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

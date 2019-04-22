@@ -115,7 +115,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     @BindView(R.id.no_restrictions)
     TextView noRestrictions;
     @BindView(R.id.appointment_desc)
-    EditText appDesc;
+    TextView appDesc;
 
 
     private OnFragmentInteractionListener mListener;

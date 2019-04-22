@@ -163,13 +163,13 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             amount.setText(String.format("%s", room.getRooms()));
         }
 
-        if(isEdit){
+        if (isEdit) {
             back.setVisibility(View.VISIBLE);
             cancel.setVisibility(View.GONE);
             next.setText(getString(R.string.button_save));
-            scrollView.setPadding(0,0,0,135);
+            scrollView.setPadding(0, 0, 0, 135);
             scrollView.setClipToPadding(false);
-        }else{
+        } else {
             back.setVisibility(View.GONE);
             cancel.setVisibility(View.VISIBLE);
             next.setText(getString(R.string.cont_btn));
@@ -202,7 +202,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @Override
     public void onGetFeaturesError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -210,10 +210,10 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
         room.setTitle(headline.getText().toString());
         room.setDescription(desc.getText().toString());
         room.setRooms(Integer.parseInt(amount.getText().toString()));
-        if(isEdit){
+        if (isEdit) {
             showProgress(true);
             roomService.updateRoom(room);
-        }else{
+        } else {
             showProgress(true);
             mListener.openFragment(ListingCost.newInstance(room, false), "right");
         }
@@ -229,7 +229,7 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
             if (view instanceof EditText) {
                 ((EditText) view).setError(message);
             } else {
-                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                ((BaseActivity) getContext()).showUserMessage(message, BaseActivity.SnackMessageType.ERROR);
             }
         }
         scrollView.fullScroll(ScrollView.FOCUS_UP);
@@ -247,19 +247,19 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
 
     @Override
     public void OnGetRoomsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         showProgress(false);
     }
 
     @Override
     public void OnUpdateSuccess(Room room) {
-        Toast.makeText(getContext(), "Room updated!", Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
         getFragmentManager().popBackStack();
         showProgress(false);
     }
 
     @OnClick(R.id.back_button)
-    public void goBack(View view){
+    public void goBack(View view) {
         getFragmentManager().popBackStack();
     }
 

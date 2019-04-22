@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.NewTaskManager"></activity>
+        <activity android:name=".view.ExpenseManager"></activity>
+        <activity android:name=".view.NewTaskManager" />
         <activity
             android:name=".PremiumToolsAcitivity"
             android:label="@string/title_activity_premium_tools_acitivity"

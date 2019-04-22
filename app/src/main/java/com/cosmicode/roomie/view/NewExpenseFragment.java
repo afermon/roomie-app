@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -274,12 +275,12 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
             roomExpense.setFinishDate(dateEnd+"T00:00:00Z");
             roomExpense.setStartDate(dateStart+"T00:00:00Z");
             roomExpense.setName(expenseName.getText().toString());
-            roomExpense.setRoomId(Long.parseLong("1"));
+            roomExpense.setRoomId(room.getId());
             roomExpense.setMonthDay(1);
             roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
             roomExpenseService.createExpense(roomExpense);
         }else{
-            showProgress(false);
+            showProgress(false, mainInfoView);
         }
 
     }
@@ -287,7 +288,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void onValidationFailed(List<ValidationError> errors) {
-        showProgress(false);
+        showProgress(false, mainInfoView);
         for (ValidationError error : errors) {
             View view = error.getView();
             String message = error.getCollatedErrorMessage(getContext());
@@ -321,7 +322,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
     public void onClickCreateTask(View view){
         switch (step){
             case 0:
-                showProgress(true);
+                showProgress(true, mainInfoView);
                 if(expenseStartDate.getText().toString().equals("")){
                     expenseStartDate.setError("Please choose a date");
                     isValid = false;
@@ -344,12 +345,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                     isValid = true;
                 }
 
-                isValid = validateDates();
+//                isValid = validateDates();
 
                 validator.validate();
                 break;
             case 1:
-                Toast.makeText(getContext(), Integer.toString(selectedRoomies.size()), Toast.LENGTH_LONG).show();
                 List<RoomExpenseSplit> roomExpenseSplitLIst = new ArrayList<RoomExpenseSplit>();
 
                 for (Roomie r: selectedRoomies){
@@ -362,7 +362,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
                 }
 
                 roomExpenseSplitService.createExpenseSplit(roomExpenseSplitLIst);
-                showProgress(true);
+                showProgress(true, addPersonView);
                 break;
         }
     }
@@ -378,13 +378,13 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
             }else{
                 Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
                 expenseEndDate.setError("Incorrect date");
-                showProgress(false);
+                showProgress(false, mainInfoView);
                 return false;
             }
         }else {
             Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
             expenseEndDate.setError("Incorrect date");
-            showProgress(false);
+            showProgress(false, mainInfoView);
             return false;
         }
 
@@ -412,7 +412,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void OnCreateExpenseSuccess(RoomExpense roomExpense) {
-        showProgress(false);
+        showProgress(false, null);
         roomExpenseCreated = roomExpense;
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
         step = 1;
@@ -424,7 +424,7 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void OnUpdateSuccess(RoomExpense roomExpense) {
-        showProgress(false);
+        showProgress(false, addPersonView);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
     }
 
@@ -449,9 +449,9 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
 
     @Override
     public void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplit) {
-        showProgress(false);
+        showProgress(false, addPersonView);
         Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        getActivity().finish();
     }
 
 
@@ -474,8 +474,22 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         BaseActivity getBaseActivity();
     }
 
-    private void showProgress(boolean show) {
+    private void showProgress(boolean show, ScrollView scrollView) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        if(scrollView != null){
+            scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+            scrollView.animate()
+                    .setDuration(shortAnimTime)
+                    .alpha((float) ((show) ? 0 : 1))
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                        }
+                    });
+        }
 
         progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
         progressBar.animate()
@@ -496,9 +510,11 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         public class RoomieViewHolder extends  RecyclerView.ViewHolder {
             private CardView cardView;
             private CircleImageView pfp;
+            private TextView name;
             private boolean selected;
             RoomieViewHolder(View view){
                 super(view);
+                name = view.findViewById(R.id.name);
                 cardView = view.findViewById(R.id.card_view_add_person);
                 pfp = view.findViewById(R.id.profile_image2);
                 selected = false;
@@ -528,14 +544,13 @@ public class NewExpenseFragment extends Fragment implements  Validator.Validatio
         public void onBindViewHolder(final RoomieViewHolder holder, int position) {
             Roomie roomie = this.roomieList.get(position);
             Glide.with(getContext()).load(roomie.getPicture()).centerCrop().into(holder.pfp);
-
             holder.cardView.setOnClickListener( v -> {
-                if(selectedRoomies.contains(roomie)==false) {
-                    holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                if(!selectedRoomies.contains(roomie)) {
+                    holder.cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
                     selectedRoomies.add(roomie);
                     updateAmountSplit();
                 }else{
-                    holder.cardView.setCardBackgroundColor(Color.WHITE);
+                    holder.cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
                     selectedRoomies.remove(roomie);
                     updateAmountSplit();
                 }

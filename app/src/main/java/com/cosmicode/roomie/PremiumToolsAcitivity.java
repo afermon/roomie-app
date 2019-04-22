@@ -1,6 +1,7 @@
 package com.cosmicode.roomie;
 
 import com.cosmicode.roomie.domain.Room;
+import com.cosmicode.roomie.view.ExpenseList;
 import com.cosmicode.roomie.view.NewTaskFragment;
 import com.cosmicode.roomie.view.RoomCalendarFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +28,7 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener {
+public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, ExpenseList.OnFragmentInteractionListener {
 
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -77,6 +79,11 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
         return this;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
+    }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -96,10 +103,13 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
                 case 0:
                     fragment = ToDoLIstFragment.newInstance(room.getId());
                     break;
+                case 1:
+                    fragment = ExpenseList.newInstance(room);
+                    break;
                 case 2:
                     fragment = RoomCalendarFragment.newInstance(room.getId());
                     break;
-                case 5:
+                case 3:
                     finish();
                     break;
             }

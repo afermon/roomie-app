@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,12 +31,14 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blackcat.currencyedittext.CurrencyEditText;
 import com.bumptech.glide.Glide;
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
@@ -82,6 +85,9 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     private RecyclerView.Adapter mAdapter;
     private boolean editEnable = false;
 
+
+    @BindView(R.id.main_info_expense)
+    ScrollView scrollView;
 
     @BindView(R.id.progress4)
     ProgressBar progressBar;
@@ -374,7 +380,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
     @OnClick(R.id.back_edit_expense_btn)
     public void goBack(){
-        getFragmentManager().popBackStack();
+        getActivity().finish();
     }
 
     @OnClick(R.id.edit_expense)
@@ -399,7 +405,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             isValid = true;
         }
 
-        isValid = validateDates();
+//        isValid = validateDates();
 
         validator.validate();
 
@@ -416,13 +422,16 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
                 return true;
 
             }else{
-                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+                ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+
+//                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
                 expenseEndDate.setError("Incorrect date");
                 showProgress(false);
                 return false;
             }
         }else {
-            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+            ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+//            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
             expenseEndDate.setError("Incorrect date");
             showProgress(false);
             return false;
@@ -444,6 +453,18 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     private void showProgress(boolean show) {
         Long shortAnimTime = (long) getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+
+        scrollView.animate()
+                .setDuration(shortAnimTime)
+                .alpha((float) ((show) ? 0 : 1))
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        scrollView.setVisibility(((show) ? View.GONE : View.VISIBLE));
+                    }
+                });
+
         progressBar.setVisibility(((show) ? View.VISIBLE : View.GONE));
         progressBar.animate()
                 .setDuration(shortAnimTime)
@@ -463,13 +484,15 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
     @Override
     public void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplitList) {
-        Toast.makeText(getContext(), "Update success", Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage("Expense updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
+
+//        Toast.makeText(getContext(), "Update success", Toast.LENGTH_SHORT).show();
         showProgress(false);
     }
 
     @Override
     public void OnGetRoomExpenseSplitError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         showProgress(false);
     }
 
@@ -531,8 +554,8 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     @Override
     public void OnDeleteSuccess() {
         showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        ((BaseActivity) getContext()).showUserMessage("Expense deleted successfully!", BaseActivity.SnackMessageType.SUCCESS);
+        getActivity().finish();
     }
 
     @Override
@@ -666,16 +689,16 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             Roomie roomie = this.roomieList.get(position);
             Glide.with(getContext()).load(roomie.getPicture()).centerCrop().into(holder.pfp);
 
-            if (editEnable == true){
+            if (editEnable){
 
-                if (selectedRoomies.contains(roomie)==true) holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                if (selectedRoomies.contains(roomie)) holder.cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
 
                 holder.cardView.setOnClickListener( v -> {
-                    if (listCreateNewExpense.contains(roomie)==false){
-                        holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                    if (!listCreateNewExpense.contains(roomie)){
+                        holder.cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
                         listCreateNewExpense.add(roomie);
                     }else{
-                        holder.cardView.setCardBackgroundColor(Color.WHITE);
+                        holder.cardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
                         listCreateNewExpense.remove(roomie);
                     }
                 });

@@ -31,7 +31,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="116dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="75dp"
         android:layout_marginEnd="116dp"
         android:background="@drawable/bg_primary_round"
         android:paddingTop="50dp"

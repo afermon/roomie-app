@@ -240,7 +240,7 @@
     <string name="english">English</string>
     <string name="no_rooms_registered">You have no rooms registered, click the \"+\" button on the navigation bar to create one.</string>
     <string name="no_premium_registered">You have no premium rooms registered, click the \"+\" button on the navigation bar to create one.</string>
-    <string name="no_tasks_registered">This room has no tasks assigned, click the \"+\" button on the upper right corner to create a new one.</string>
+    <string name="no_tasks_registered">No tasks yet</string>
     <string name="no_notif_text">You haven\'t received any notifications yet.</string>
     <string name="to_do_tab">To Do</string>
     <string name="expenses_tab">Expenses</string>
@@ -262,7 +262,7 @@
     <string name="frecuency">Frecuency</string>
     <string name="every">Every</string>
     <string name="week">Week</string>
-    <string name="new_expense">New expense</string>
+    <string name="new_expense">New Expense</string>
     <string name="amount_person">Amount per person: </string>
     <string name="expenses">Expenses</string>
     <string name="expe">Expense</string>
@@ -368,4 +368,7 @@
     <string name="event_desc">Tell your roommates more about the event</string>
     <string name="no_valid_date">Your end date is not correct to make the last payment</string>
     <string name="incorrect_date">Incorrect date</string>
+    <string name="no_expenses">No expenses yet</string>
+    <string name="splits">Splits</string>
+    <string name="send_report_user">Report this Roomie</string>
 </resources>

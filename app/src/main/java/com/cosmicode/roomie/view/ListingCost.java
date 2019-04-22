@@ -217,7 +217,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
     private void saveState() {
         room.getMonthly().setName("Monthly rent");
         room.getMonthly().setAmount((double) amount.getRawValue());
-        room.getMonthly().setPeriodicity(30);
+        room.getMonthly().setPeriodicity(4);
         room.getMonthly().setMonthDay(1);
         room.getMonthly().setStartDate(date);
         room.setAvailableFrom(date);
