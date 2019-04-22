@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -325,7 +326,7 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     @Override
     public void OnGetExpenseRoomError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         showProgress(false);
     }
 
@@ -341,15 +342,22 @@ public class ListingCost extends Fragment implements Validator.ValidationListene
 
     @Override
     public void OnGetRoomsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         showProgress(false);
     }
 
     @Override
     public void OnUpdateSuccess(Room room) {
-        Toast.makeText(getContext(), "Room updated!", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
         showProgress(false);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().popBackStack();
+            }
+        }, 1000);
+
     }
 
     @Override

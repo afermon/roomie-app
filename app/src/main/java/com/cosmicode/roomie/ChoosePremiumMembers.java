@@ -117,7 +117,7 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
         showProgress(false);
         clearEmail();
         if(addedMembers.stream().anyMatch(r -> r.getId().equals(roomie.getId())) || roomie.getId().equals(owner.getId())) {
-            Toast.makeText(this, roomie.getUser().getEmail() + " is already part of the room", Toast.LENGTH_SHORT).show();
+            showUserMessage(roomie.getUser().getEmail() + " is already part of the room", SnackMessageType.WARNING);
         }else{
             addedMembers.add(roomie);
             mAdapter.notifyDataSetChanged();
@@ -127,7 +127,7 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
     @Override
     public void onGetRoomieError(String error) {
         showProgress(false);
-        Toast.makeText(this, String.format("%s %s", roomieEmail.getText().toString(), "does not exist"), Toast.LENGTH_SHORT).show();
+        showUserMessage(String.format("%s %s", roomieEmail.getText().toString(), "does not exist"), SnackMessageType.WARNING);
         clearEmail();
 
     }

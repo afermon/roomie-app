@@ -138,7 +138,7 @@ public class AddLifestylesActivity extends BaseActivity implements RoomFeatureSe
 
     @Override
     public void onGetFeaturesError(String error) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @OnClick(R.id.finish_activity)

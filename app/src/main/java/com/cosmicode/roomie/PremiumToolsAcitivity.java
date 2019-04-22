@@ -6,26 +6,20 @@ import com.cosmicode.roomie.view.NewTaskFragment;
 import com.cosmicode.roomie.view.RoomCalendarFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
 import android.widget.TextView;
 
 public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, ExpenseList.OnFragmentInteractionListener {
@@ -37,13 +31,17 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
 
     private Room room;
 
+    @BindView(R.id.room_title)
+    TextView title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        room = getIntent().getParcelableExtra("room");
-
         setContentView(R.layout.activity_premium_tools_acitivity);
+
+        ButterKnife.bind(this);
+        room = getIntent().getParcelableExtra("room");
+        title.setText(room.getTitle());
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -58,6 +56,10 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
 
     }
 
+    @OnClick(R.id.back_premium)
+    public void goBack(View view){
+        finish();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -81,7 +83,7 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        
+
     }
 
 
@@ -98,8 +100,8 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            Fragment fragment = ToDoLIstFragment.newInstance(room.getId());
-            switch (position){
+            Fragment fragment;
+            switch (position) {
                 case 0:
                     fragment = ToDoLIstFragment.newInstance(room.getId());
                     break;
@@ -109,16 +111,17 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
                 case 2:
                     fragment = RoomCalendarFragment.newInstance(room.getId());
                     break;
-                case 3:
-                    finish();
-                    break;
+                default:
+                    fragment = null;
             }
+
             return fragment;
+
         }
 
         @Override
         public int getCount() {
-            return 5;
+            return 3;
         }
     }
 }

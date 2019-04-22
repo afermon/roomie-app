@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -388,12 +389,24 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
     public void OnUpdateSuccess(Room room) {
         showProgress(false);
         if (isEdit) {
-            ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
-            getFragmentManager().popBackStack();
             showProgress(false);
+            ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getFragmentManager().popBackStack();
+                }
+            }, 1000);
         } else {
             ((BaseActivity) getContext()).showUserMessage("Room created successfully!", BaseActivity.SnackMessageType.SUCCESS);
-            startActivity(new Intent(getContext(), MainActivity.class));
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(getContext(), MainActivity.class));
+                }
+            }, 1000);
         }
     }
 
@@ -501,7 +514,7 @@ public class ListingChooseLocation extends Fragment implements AddressService.On
 
     @Override
     public void onGetAddressByIdError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         showProgress(false);
     }
 

@@ -135,7 +135,7 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
 
     @Override
     public void onGetOwnedRoomsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListene
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override

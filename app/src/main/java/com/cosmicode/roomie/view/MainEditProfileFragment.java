@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -382,7 +383,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     @Override
     public void onUploadError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         Log.e(TAG, error);
     }
 
@@ -401,16 +402,22 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     @Override
     public void onGetAddressByIdError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         Log.e(TAG, error);
     }
 
     @Override
     public void onUpdateSuccess(Address address) {
         this.address = address;
-        Toast.makeText(getContext(), R.string.update_success, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage("Profile updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
         showProgress(false);
-        getFragmentManager().popBackStack();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().popBackStack();
+            }
+        }, 1000);
 
     }
 
@@ -421,7 +428,7 @@ public class MainEditProfileFragment extends Fragment implements BSImagePicker.O
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         Log.e(TAG, error);
     }
 

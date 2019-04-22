@@ -292,7 +292,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
     @Override
     public void onGetRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -313,7 +313,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
     @Override
     public void onGetUserError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override

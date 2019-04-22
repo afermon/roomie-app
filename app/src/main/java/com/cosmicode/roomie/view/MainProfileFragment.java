@@ -264,7 +264,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     @Override
     public void onGetAddressByIdError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         Log.e(TAG, error);
     }
 
@@ -281,7 +281,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     @Override
     public void onGetUserError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -293,7 +293,7 @@ public class MainProfileFragment extends Fragment implements RoomieService.OnGet
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override

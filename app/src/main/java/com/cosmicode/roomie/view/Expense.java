@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -484,10 +485,17 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
     @Override
     public void OnCreateRoomExpenseSplitSuccess(List<RoomExpenseSplit> roomExpenseSplitList) {
+        showProgress(false);
         ((BaseActivity) getContext()).showUserMessage("Expense updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().finish();
+            }
+        }, 1000);
 
 //        Toast.makeText(getContext(), "Update success", Toast.LENGTH_SHORT).show();
-        showProgress(false);
     }
 
     @Override
@@ -555,7 +563,14 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
     public void OnDeleteSuccess() {
         showProgress(false);
         ((BaseActivity) getContext()).showUserMessage("Expense deleted successfully!", BaseActivity.SnackMessageType.SUCCESS);
-        getActivity().finish();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().finish();
+            }
+        }, 1000);
     }
 
     @Override

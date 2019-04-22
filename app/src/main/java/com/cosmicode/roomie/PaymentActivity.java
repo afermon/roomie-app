@@ -219,10 +219,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
                         public void onError(Exception error) {
                             showProgress(false);
                             // Show localized error message
-                            Toast.makeText(getApplicationContext(),
-                                    error.getMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
+                            showUserMessage(error.getMessage(), BaseActivity.SnackMessageType.ERROR);
                         }
                     }
             );
@@ -275,7 +272,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
 
     @Override
     public void onPayError(String error) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
 

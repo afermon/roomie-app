@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -254,8 +255,14 @@ public class ListingBasicInformation extends Fragment implements RoomFeatureServ
     @Override
     public void OnUpdateSuccess(Room room) {
         ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
-        getFragmentManager().popBackStack();
         showProgress(false);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getFragmentManager().popBackStack();
+            }
+        }, 1000);
     }
 
     @OnClick(R.id.back_button)

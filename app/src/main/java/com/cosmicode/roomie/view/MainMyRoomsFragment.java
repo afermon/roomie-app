@@ -131,7 +131,7 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
 
     @Override
     public void onGetOwnedRoomsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
 

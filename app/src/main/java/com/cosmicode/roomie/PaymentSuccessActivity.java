@@ -1,13 +1,14 @@
 package com.cosmicode.roomie;
 
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.cosmicode.roomie.domain.Room;
 
-public class PaymentSuccessActivity extends AppCompatActivity {
+public class PaymentSuccessActivity extends BaseActivity {
 
     private Room room;
 
@@ -16,6 +17,12 @@ public class PaymentSuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_success);
         room = getIntent().getParcelableExtra("room");
+        Button go = findViewById(R.id.go_room);
+        go.setOnClickListener(l -> {
+            Intent intent = new Intent(this, PremiumToolsAcitivity.class);
+            intent.putExtra("room", room);
+            startActivity(intent);
+        });
         ImageButton cancelSuccess = findViewById(R.id.cancel_success);
         cancelSuccess.setOnClickListener( l -> finish());
     }
