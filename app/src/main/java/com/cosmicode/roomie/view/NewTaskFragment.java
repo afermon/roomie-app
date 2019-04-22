@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 
-public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener, Validator.ValidationListener{
+public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTaskServiceListener, Validator.ValidationListener {
 
     private OnFragmentInteractionListener mListener;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -69,13 +70,15 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     private static final String TASK_KEY = "task";
     private Validator validator;
     private boolean isValid = true;
+
     public NewTaskFragment() {
     }
 
-    public static NewTaskFragment newInstance(RoomTask task) {
+    public static NewTaskFragment newInstance(RoomTask task, Long id) {
         NewTaskFragment fragment = new NewTaskFragment();
         Bundle args = new Bundle();
         args.putParcelable(TASK_KEY, task);
+        args.putLong("room", id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,7 +88,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
 
-            roomTaskService = new RoomTaskService(getContext(),this);
+            roomTaskService = new RoomTaskService(getContext(), this);
         }
     }
 
@@ -127,7 +130,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
 
                 month++;
 
-                txtDeadline.setText(dayOfMonth + "/" + month  + "/" + year);
+                txtDeadline.setText(dayOfMonth + "/" + month + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -146,11 +149,11 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 String mm = Integer.toString(minute);
                 String hh = Integer.toString(hourOfDay);
-                if (minute<10){
-                    mm = "0"+minute;
+                if (minute < 10) {
+                    mm = "0" + minute;
                 }
-                if (hourOfDay<10){
-                    hh = "0"+hourOfDay;
+                if (hourOfDay < 10) {
+                    hh = "0" + hourOfDay;
                 }
                 time = hh + ":" + mm;
                 txtTime.setText(time);
@@ -159,31 +162,33 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         JodaTimeAndroid.init(getContext());
         super.onViewCreated(view, savedInstanceState);
     }
-    public String getDeadlineLimit(){
+
+    public String getDeadlineLimit() {
         String txtDead, month, days;
         DateTime max = new DateTime();
-        if(max.getMonthOfYear()+1<10){
-            month = 0+String.valueOf(max.getMonthOfYear());
-        }else{
+        if (max.getMonthOfYear() + 1 < 10) {
+            month = 0 + String.valueOf(max.getMonthOfYear());
+        } else {
             month = String.valueOf(max.getMonthOfYear());
         }
-        if (max.getDayOfMonth()<10) {
-            days = 0+ String.valueOf(max.getDayOfMonth());
-        }else{
+        if (max.getDayOfMonth() < 10) {
+            days = 0 + String.valueOf(max.getDayOfMonth());
+        } else {
             days = String.valueOf(max.getDayOfMonth());
         }
         txtDead = days + "/" + month + "/" + max.getYear();
         date = max.getYear() + "-" + month + "-" + days;
         return txtDead;
     }
-    public String getTimeLimit(){
+
+    public String getTimeLimit() {
         time = "23:59";
         return "23:59";
     }
 
     public void onClickDate(View view) {
         DateTime max = new DateTime();
-        DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear()-1, max.getDayOfMonth());
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mDateSetListener, max.getYear(), max.getMonthOfYear() - 1, max.getDayOfMonth());
         dialog.getDatePicker().setMinDate(max.getMillis());
         dialog.show();
     }
@@ -193,6 +198,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         TimePickerDialog dialog = new TimePickerDialog(getContext(), android.R.style.Theme_Holo_Light_Dialog, mTListener, max.getHourOfDay(), max.getMinuteOfDay(), true);
         dialog.show();
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -204,20 +210,20 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         }
     }
 
-    public void onClickCreateTask(View view){
+    public void onClickCreateTask(View view) {
         showProgress(true);
-        if(txtDeadline.toString().equals("")){
+        if (txtDeadline.toString().equals("")) {
             txtDeadline.setError("Please choose a date");
             isValid = false;
-        }else{
+        } else {
             isValid = true;
         }
 
 
-        if(txtTime.toString().equals("")){
+        if (txtTime.toString().equals("")) {
             txtTime.setError("Please choose a gender");
             isValid = false;
-        }else{
+        } else {
             isValid = true;
         }
         validator.validate();
@@ -234,24 +240,25 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         monthS = Integer.toString(month);
         dayS = Integer.toString(day);
 
-        if(month <= 9){
-            monthS = "0"+month;
+        if (month <= 9) {
+            monthS = "0" + month;
         }
-        if(day <= 9){
-            dayS = "0"+day;
+        if (day <= 9) {
+            dayS = "0" + day;
         }
-        String deadline = date +"T"+ time+ ":00Z";
-        String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
-        Long id = new Long(1);
+        String deadline = date + "T" + time + ":00Z";
+        String created = (today.getYear() + "-" + monthS + "-" + dayS + "T00:00:00Z");
+        Long id = getArguments().getLong("room");
         this.task.setTitle(editTitle.getText().toString());
         this.task.setDescription(editDesc.getText().toString());
-        if(date != null && time != null){
+        if (date != null && time != null) {
             this.task.setDeadline(deadline);
         }
 
         roomTaskService.updateTask(task);
         showProgress(true);
     }
+
     public void onClickDeleteTask(View view) {
         roomTaskService.deleteTask(task.getId());
         showProgress(true);
@@ -281,24 +288,40 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     @Override
     public void OnCreateTask(RoomTask roomTask) {
         showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        ((BaseActivity) getContext()).showUserMessage("Task created successfully!", BaseActivity.SnackMessageType.SUCCESS);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().finish();
+            }
+        }, 1000);
     }
 
     @Override
     public void OnUpdateSuccess(RoomTask roomTask) {
         showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
+        ((BaseActivity) getContext()).showUserMessage("Task updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().finish();
+            }
+        }, 1000);
     }
 
     @Override
     public void OnDeleteSuccess() {
         showProgress(false);
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-        getFragmentManager().popBackStack();
-
-    }
+        ((BaseActivity) getContext()).showUserMessage("Task deleted successfully!", BaseActivity.SnackMessageType.SUCCESS);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().finish();
+            }
+        }, 1000);    }
 
     @Override
     public void OnGetTaskByRoomSuccess(List<RoomTask> roomTasks) {
@@ -308,12 +331,12 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     @Override
     public void OnGetTaskByRoomError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
     public void onValidationSucceeded() {
-        if (isValid){
+        if (isValid) {
 
             DateTime today = new DateTime();
 
@@ -324,16 +347,16 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             monthS = Integer.toString(month);
             dayS = Integer.toString(day);
             RoomTask task;
-            if(month <= 9){
-                monthS = "0"+month;
+            if (month <= 9) {
+                monthS = "0" + month;
             }
-            if(day <= 9){
-                dayS = "0"+day;
+            if (day <= 9) {
+                dayS = "0" + day;
             }
-            String deadline = date +"T"+ time+ ":00Z";
-            String created = (today.getYear()+"-"+monthS+"-"+dayS+"T00:00:00Z");
+            String deadline = date + "T" + time + ":00Z";
+            String created = (today.getYear() + "-" + monthS + "-" + dayS + "T00:00:00Z");
 
-            Long id = new Long(1);
+            Long id = getArguments().getLong("room");
             task = new RoomTask(created, editTitle.getText().toString(), editDesc.getText().toString(), deadline, RoomTaskState.PENDING, id);
 
             roomTaskService.createTask(task);
@@ -360,8 +383,8 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         BaseActivity getBaseActivity();
     }
 
-    public void onClickBack(View view){
-        getFragmentManager().popBackStack();
+    public void onClickBack(View view) {
+        getActivity().finish();
     }
 
     private void openFragment(Fragment fragment) {
@@ -371,14 +394,14 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
         transaction.commit();
     }
 
-    private void taskNotNull(){
-        if(task != null){
+    private void taskNotNull() {
+        if (task != null) {
             editTitle.setText(task.getTitle());
             editDesc.setText(task.getDescription());
             String date, time;
             DateTime dt = formatDate(task.getDeadline());
-            date = dt.getDayOfMonth() + "/" + dt.getMonthOfYear()+ "/"+ dt.getYear();
-            time = dt.getHourOfDay()+":"+dt.getMinuteOfHour();
+            date = dt.getDayOfMonth() + "/" + dt.getMonthOfYear() + "/" + dt.getYear();
+            time = dt.getHourOfDay() + ":" + dt.getMinuteOfHour();
             txtDeadline.setText(date);
             txtTime.setText(time);
             createButton.setText(R.string.todo_past_save);
@@ -386,7 +409,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
             deletebtn.setVisibility(View.VISIBLE);
             deletebtn.setOnClickListener(this::onClickDeleteTask);
             createButton.setOnClickListener(this::onClickUpdateTask);
-        }else{
+        } else {
             title.setText(R.string.todo_new_title);
             deletebtn.setVisibility(View.GONE);
             createButton.setOnClickListener(this::onClickCreateTask);
@@ -395,7 +418,7 @@ public class NewTaskFragment extends Fragment implements RoomTaskService.RoomTas
     }
 
 
-    public DateTime formatDate(String pdate){
+    public DateTime formatDate(String pdate) {
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
                 .withLocale(Locale.ROOT)
                 .withChronology(ISOChronology.getInstanceUTC());

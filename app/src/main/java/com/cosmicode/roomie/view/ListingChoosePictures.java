@@ -108,7 +108,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
 
     @OnClick(R.id.btn_next)
     public void onClickNext(View view) {
-        mListener.openFragment(ListingChooseLocation.newInstance(room), "right");
+        mListener.openFragment(ListingChooseLocation.newInstance(room, false), "right");
     }
 
     @OnClick(R.id.cancel_pic)
@@ -118,7 +118,7 @@ public class ListingChoosePictures extends Fragment implements BSImagePicker.OnM
 
     @OnClick(R.id.back_button3)
     public void back(View view) {
-        mListener.openFragment(ListingCost.newInstance(room), "left");
+        mListener.openFragment(ListingCost.newInstance(room, false), "left");
     }
 
     @OnClick(R.id.img1)

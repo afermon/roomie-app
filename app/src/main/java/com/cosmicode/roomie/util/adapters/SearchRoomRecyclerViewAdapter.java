@@ -29,7 +29,10 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentTransaction;
@@ -67,7 +70,7 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.roomTitle.setText(mValues.get(position).getTitle());
-        holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
+        holder.roomCount.setText(String.format("%d", mValues.get(position).getRooms()));
 
         holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
         MainActivity activity = (MainActivity) mContext;
@@ -92,9 +95,9 @@ public class SearchRoomRecyclerViewAdapter extends RecyclerView.Adapter<SearchRo
             Address address = mValues.get(position).getAddress();
             holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
 
-            //Price
             RoomExpense price = mValues.get(position).getPrice();
             Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
+
             holder.roomPrice.setAmount(priceUser.intValue());
             holder.roomPrice.setSymbol((price.getCurrency() == CurrencyType.DOLLAR) ? "$" : "₡");
 

@@ -114,6 +114,8 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
     TextView noAmenties;
     @BindView(R.id.no_restrictions)
     TextView noRestrictions;
+    @BindView(R.id.appointment_desc)
+    TextView appDesc;
 
 
     private OnFragmentInteractionListener mListener;
@@ -171,6 +173,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         addressDesc.setText(String.format("%s, %s", room.getAddress().getCity(), room.getAddress().getState()));
         roomDesc.setText(room.getDescription());
         addressAddDesc.setText(room.getAddress().getDescription());
+        appDesc.setText(room.getApoinmentsNotes());
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
         DateTime available = dateTimeFormatter.parseDateTime(room.getAvailableFrom());
         DateTime now = new DateTime();
@@ -183,7 +186,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         if (room.getPrice().getFinishDate() == null) {
             moveOut.setText(getString(R.string.no_move_out));
         } else {
-            DateTime finish = dateTimeFormatter.parseDateTime(room.getAvailableFrom());
+            DateTime finish = dateTimeFormatter.parseDateTime(room.getPrice().getFinishDate());
             moveOut.setText(String.format("%s/%s/%s", finish.getDayOfMonth(), finish.getMonthOfYear(), finish.getYear()));
 
         }
@@ -289,7 +292,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
     @Override
     public void onGetRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -310,7 +313,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
 
     @Override
     public void onGetUserError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -445,7 +448,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View newAppointmentLayout = inflater.inflate(R.layout.new_appointment_dialog, null);
 
-        Button pickDateButton = newAppointmentLayout.findViewById(R.id.pick_appointment_date_btn);
+        ImageView pickDateButton = newAppointmentLayout.findViewById(R.id.pick_date);
         TextView appointmentDateTV = newAppointmentLayout.findViewById(R.id.appointment_date_tv);
         EditText appointmentDescriptionET = newAppointmentLayout.findViewById(R.id.appointment_description);
 
@@ -531,4 +534,5 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
 }

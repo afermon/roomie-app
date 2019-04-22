@@ -402,6 +402,7 @@
             android:padding="16dp"
             android:text="@string/create_account_btn"
             android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

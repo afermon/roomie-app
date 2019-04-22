@@ -25,6 +25,7 @@ import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 
+import org.fabiomsr.moneytextview.MoneyTextView;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -32,18 +33,22 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsListener {
 
@@ -126,7 +131,7 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
 
     @Override
     public void onGetOwnedRoomsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
 
@@ -182,7 +187,6 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.roomTitle.setText(mValues.get(position).getTitle());
-            holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
 
             holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
 
@@ -190,6 +194,18 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 MainRoomFragment roomView = MainRoomFragment.newInstance(holder.mItem);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_container, roomView);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            });
+
+            holder.roomCount.setVisibility(View.GONE);
+            holder.roomie_icon.setVisibility(View.GONE);
+
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.edit.setOnClickListener(l ->{
+                MainEditRoom editRoom = MainEditRoom.newInstance(holder.mItem);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_container, editRoom);
                 transaction.addToBackStack(null);
                 transaction.commit();
             });
@@ -206,11 +222,9 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             //Price
             RoomExpense price = mValues.get(position).getPrice();
             Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
-            if (price.getCurrency() == CurrencyType.DOLLAR) {
-                holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
-            } else {
-                holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
-            }
+
+            holder.roomPrice.setAmount(priceUser.intValue());
+            holder.roomPrice.setSymbol((price.getCurrency() == CurrencyType.DOLLAR) ? "$" : "₡");
 
             holder.roomDistance.setVisibility(View.GONE);
 
@@ -251,8 +265,6 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             public final View mView;
             @BindView(R.id.room_picture)
             ImageView roomPinture;
-            @BindView(R.id.room_price)
-            TextView roomPrice;
             @BindView(R.id.room_title)
             TextView roomTitle;
             @BindView(R.id.room_address)
@@ -269,6 +281,13 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             CardView roomCard;
             @BindView(R.id.imageView6)
             ImageView loc;
+            @BindView(R.id.imageView2)
+            ImageView roomie_icon;
+            @BindView(R.id.room_price)
+            MoneyTextView roomPrice;
+            @BindView(R.id.edit_btn)
+            ImageView edit;
+
 
             public Room mItem;
 
@@ -283,5 +302,10 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 return super.toString() + " '" + mItem.toString() + "'";
             }
         }
+    }
+
+    @OnClick(R.id.back_my_room)
+    public void goBack(View view){
+        getFragmentManager().popBackStack();
     }
 }

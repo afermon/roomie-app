@@ -2,398 +2,424 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_cont"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary"
     tools:context=".view.ListingCost">
 
-
-    <ImageButton
-        android:id="@+id/cancel_cost"
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@null"
-        android:backgroundTint="@color/primary"
-        android:contentDescription="@string/back_button"
-        android:src="@drawable/quantum_ic_clear_grey600_24"
-        android:tint="@color/primary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.blackcat.currencyedittext.CurrencyEditText
-        android:id="@+id/edit_amount"
-        android:layout_width="0dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:maxLength="254"
-        android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="16dp"
-        android:selectAllOnFocus="true"
-        android:singleLine="false"
-        android:text="0"
-        app:decimal_digits="0"
-        android:textAlignment="viewEnd"
-        android:textAppearance="@android:style/TextAppearance.Material"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view23" />
-
-    <TextView
-        android:id="@+id/edit_amount4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:maxLength="254"
-        android:padding="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="16dp"
-        android:selectAllOnFocus="true"
-        android:singleLine="false"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
-
-    <TextView
-        android:id="@+id/edit_amount2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:maxLength="254"
-        android:padding="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:selectAllOnFocus="true"
-        android:singleLine="false"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
-
-    <TextView
-        android:id="@+id/edit_amount3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/input__no_stroke"
-        android:ems="10"
-        android:maxLength="254"
-        android:padding="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:selectAllOnFocus="true"
-        android:singleLine="false"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount2" />
-
-    <View
-        android:id="@+id/view23"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="32dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
-
-    <View
-        android:id="@+id/view28"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintEnd_toStartOf="@+id/edit_amount3"
-        app:layout_constraintTop_toTopOf="@+id/view23" />
-
-    <View
-        android:id="@+id/view29"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/currency_radio"
-        app:layout_constraintTop_toTopOf="@+id/view23"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <View
-        android:id="@+id/view24"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount4" />
-
-    <View
-        android:id="@+id/view25"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
-
-    <View
-        android:id="@+id/view27"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
-
-    <View
-        android:id="@+id/view26"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/edit_amount2" />
-
-    <ImageButton
-        android:id="@+id/date_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="188dp"
-        android:background="@null"
-        android:tint="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount3"
-        app:layout_constraintTop_toBottomOf="@+id/view26"
-        app:srcCompat="@drawable/ic_register_calendar" />
-
-    <ImageButton
-        android:id="@+id/date_picker2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="188dp"
-        android:background="@null"
-        android:tint="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount4"
-        app:layout_constraintTop_toTopOf="@+id/edit_amount4"
-        app:layout_constraintVertical_bias="0.481"
-        app:srcCompat="@drawable/ic_register_calendar" />
-
-    <TextView
-        android:id="@+id/title2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/add_room_info"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@color/primary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/back_cost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:contentDescription="@string/back_button"
-        android:src="@drawable/icon_chevrons_left_brand"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/amount"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/view23" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/currency"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount2"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/view25" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/move_in"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toBottomOf="@+id/view26" />
-
-    <TextView
-        android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/move_out"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintStart_toStartOf="@+id/edit_amount"
-        app:layout_constraintTop_toTopOf="@+id/edit_amount4" />
-
-    <TextView
-        android:id="@+id/movein_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="sans-serif"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount3"
-        app:layout_constraintStart_toEndOf="@+id/date_picker"
-        app:layout_constraintTop_toBottomOf="@+id/view26" />
-
-    <TextView
-        android:id="@+id/moveout_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/no_move_out"
-        android:textAlignment="viewEnd"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount4"
-        app:layout_constraintStart_toEndOf="@+id/date_picker2"
-        app:layout_constraintTop_toTopOf="@+id/edit_amount4" />
-
-    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:backgroundTint="@color/primary"
-        android:text="@string/cont_btn"
-        android:textColor="@color/white"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <RadioGroup
-        android:id="@+id/currency_radio"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="100dp"
-        android:checkedButton="@+id/radio_crc"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/view26"
-        app:layout_constraintEnd_toEndOf="@+id/edit_amount2"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/view25">
-
-        <RadioButton
-            android:id="@+id/radio_crc"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:buttonTint="@color/primary"
-            android:text="@string/crc"
-            android:textSize="18sp" />
-
-        <RadioButton
-            android:id="@+id/radio_usd"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:buttonTint="@color/primary"
-            android:text="@string/usd"
-            android:textSize="18sp" />
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/textView11"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/listing_cost_desc"
-        android:textAlignment="center"
-        android:textColor="@color/primary"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title2" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
-    <TextView
-        android:id="@+id/error_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/move_out_error"
-        android:textColor="@color/danger"
-        android:visibility="gone"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view24" />
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageButton
+            android:id="@+id/cancel_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:backgroundTint="@color/primary"
+            android:contentDescription="@string/back_button"
+            android:src="@drawable/quantum_ic_clear_grey600_24"
+            android:tint="@color/primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.blackcat.currencyedittext.CurrencyEditText
+            android:id="@+id/edit_amount"
+            android:layout_width="0dp"
+            android:layout_height="57dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:maxLength="254"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:text="0"
+            android:textAlignment="viewEnd"
+            android:textAppearance="@android:style/TextAppearance.Material"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:decimal_digits="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view23" />
+
+        <TextView
+            android:id="@+id/edit_amount4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="16dp"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
+
+        <TextView
+            android:id="@+id/edit_amount2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
+
+        <TextView
+            android:id="@+id/edit_amount3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/input__no_stroke"
+            android:ems="10"
+            android:maxLength="254"
+            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount2" />
+
+        <View
+            android:id="@+id/view23"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="32dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+        <View
+            android:id="@+id/view28"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
+            app:layout_constraintEnd_toStartOf="@+id/edit_amount3"
+            app:layout_constraintTop_toTopOf="@+id/view23" />
+
+        <View
+            android:id="@+id/view29"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
+            app:layout_constraintStart_toEndOf="@+id/currency_radio"
+            app:layout_constraintTop_toTopOf="@+id/view23"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/view24"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount4" />
+
+        <View
+            android:id="@+id/view25"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount" />
+
+        <View
+            android:id="@+id/view27"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount3" />
+
+        <View
+            android:id="@+id/view26"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/edit_amount2" />
+
+        <ImageButton
+            android:id="@+id/date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="188dp"
+            android:background="@null"
+            android:tint="@color/primary"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount3"
+            app:layout_constraintTop_toBottomOf="@+id/view26"
+            app:srcCompat="@drawable/ic_register_calendar" />
+
+        <ImageButton
+            android:id="@+id/date_picker2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="188dp"
+            android:background="@null"
+            android:tint="@color/primary"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount4"
+            app:layout_constraintTop_toTopOf="@+id/edit_amount4"
+            app:layout_constraintVertical_bias="0.481"
+            app:srcCompat="@drawable/ic_register_calendar" />
+
+        <TextView
+            android:id="@+id/title2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/add_room_info"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/back_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@null"
+            android:contentDescription="@string/back_button"
+            android:src="@drawable/icon_chevrons_left_brand"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/amount"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/view23" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/currency"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount2"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/view25" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/move_in"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toBottomOf="@+id/view26" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/move_out"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
+            app:layout_constraintStart_toStartOf="@+id/edit_amount"
+            app:layout_constraintTop_toTopOf="@+id/edit_amount4" />
+
+        <TextView
+            android:id="@+id/movein_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="sans-serif"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount3"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount3"
+            app:layout_constraintStart_toEndOf="@+id/date_picker"
+            app:layout_constraintTop_toBottomOf="@+id/view26" />
+
+        <TextView
+            android:id="@+id/moveout_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/no_move_out"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_amount4"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount4"
+            app:layout_constraintStart_toEndOf="@+id/date_picker2"
+            app:layout_constraintTop_toTopOf="@+id/edit_amount4" />
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:backgroundTint="@color/primary"
+            android:text="@string/cont_btn"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/currency_radio"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="100dp"
+            android:checkedButton="@+id/radio_crc"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/view26"
+            app:layout_constraintEnd_toEndOf="@+id/edit_amount2"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/view25">
+
+            <RadioButton
+                android:id="@+id/radio_crc"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:buttonTint="@color/primary"
+                android:text="@string/crc"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radio_usd"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:buttonTint="@color/primary"
+                android:text="@string/usd"
+                android:textSize="18sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/listing_cost_desc"
+            android:textAlignment="center"
+            android:textColor="@color/primary"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title2" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/move_out_error"
+            android:textColor="@color/danger"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

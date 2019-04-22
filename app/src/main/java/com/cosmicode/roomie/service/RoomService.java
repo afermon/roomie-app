@@ -10,6 +10,7 @@ import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
+import com.cosmicode.roomie.util.listeners.OnPayPremiumListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
 import java.util.List;
@@ -54,6 +55,30 @@ public class RoomService {
                 listener.onGetOwnedRoomsError(t.getMessage());
             }
         });
+    }
+
+    public void getOwnedPremiumRooms(Long id, final OnGetOwnedRoomsListener listener){
+        RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+        Call<List<Room>> call = RoomApiService.getOwnedPremiumRooms(id);
+
+        call.enqueue(new Callback<List<Room>>() {
+            @Override
+            public void onResponse(Call<List<Room>> call, Response<List<Room>> response) {
+                if(response.code() == 200){
+                    listener.onGetOwnedRoomsSuccess(response.body());
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onGetOwnedRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Room>> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.onGetOwnedRoomsError(t.getMessage());
+            }
+        });
+
     }
 
     public void createRoom(RoomCreate room) {
@@ -110,6 +135,31 @@ public class RoomService {
         return null;
     }
 
+    public void updateRoom(RoomCreate room){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<Room> call = apiService.updateRoom(room);
+
+        call.enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+    }
+
     public void updateRoomIndexing(RoomCreate room, Address address, RoomExpense expense) {
 
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
@@ -163,6 +213,31 @@ public class RoomService {
             public void onFailure(Call<Address> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+    }
+
+    public void payPremium(Room room, String token){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<Room> call = apiService.payPremium(room, token);
+
+        call.enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if(response.code() == 200){
+                    listener.onPaySuccess(response.body());
+
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onPayError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+                listener.onPayError(t.getMessage());
             }
         });
     }
@@ -224,6 +299,10 @@ public class RoomService {
         void OnGetRoomsError(String error);
 
         void OnUpdateSuccess(Room room);
+
+        void onPaySuccess(Room room);
+
+        void onPayError(String error);
     }
 
 }

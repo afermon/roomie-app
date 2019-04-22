@@ -68,6 +68,8 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ph"
+            android:background="@drawable/image_stroke"
+            android:cropToPadding="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img1" />
 
@@ -94,6 +96,8 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ph"
+            android:background="@drawable/image_stroke"
+            android:cropToPadding="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img2" />
 
@@ -105,6 +109,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:adjustViewBounds="true"
+            android:background="@drawable/image_stroke"
+            android:cropToPadding="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ph"
             app:layout_constraintEnd_toEndOf="parent"
@@ -133,6 +139,8 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ph"
+            android:background="@drawable/image_stroke"
+            android:cropToPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img3" />
 
@@ -145,6 +153,8 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ph"
+            android:background="@drawable/image_stroke"
+            android:cropToPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img1" />
 
@@ -156,6 +166,7 @@
             android:backgroundTint="@color/primary"
             android:text="@string/cont_btn"
             android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"

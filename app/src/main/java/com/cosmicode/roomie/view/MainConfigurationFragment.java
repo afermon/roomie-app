@@ -205,12 +205,12 @@ public class MainConfigurationFragment extends Fragment implements Configuration
 
     @Override
     public void onUpdateConfigurationSuccess(UserPreferences userPreferences) {
-        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage("Configuration updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
     }
 
     @Override
     public void onConfigurationError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class MainConfigurationFragment extends Fragment implements Configuration
 
     @Override
     public void onGetCurrentRoomieError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
