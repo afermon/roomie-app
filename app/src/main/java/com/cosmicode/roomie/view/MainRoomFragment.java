@@ -460,7 +460,7 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
                                 (view2, hourOfDay, minute) -> {
                                     Log.d(TAG, hourOfDay + ":" + minute);
 
-                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", mDay, (mMonth + 1), mYear, hourOfDay, minute));
+                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", dayOfMonth, (monthOfYear + 1), year, hourOfDay, minute));
                                 }, mHour, mMinute, false);
                         timePickerDialog.show();
                     }, mYear, mMonth, mDay);
