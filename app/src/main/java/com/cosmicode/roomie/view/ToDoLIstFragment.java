@@ -176,6 +176,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
     @Override
     public void OnGetTaskByRoomSuccess(List<RoomTask> roomTasks) {
         this.roomTaskList = roomTasks;
+        noTasks.setVisibility(View.GONE);
         if (roomTaskList.isEmpty()) {
             noTasks.setVisibility(View.VISIBLE);
         } else {
@@ -317,7 +318,7 @@ public class ToDoLIstFragment extends Fragment implements RoomTaskService.RoomTa
             RoomTask roomTask = this.taskList.get(position);
             itemHolder.cardDescription.setText(roomTask.getDescription());
             itemHolder.cardTitle.setText(roomTask.getTitle());
-            itemHolder.cardDeadline.setText(RoomieTimeUtil.instantUTCStringToLocalDateTimeString(roomTask.getDeadline()));
+            itemHolder.cardDeadline.setText(RoomieTimeUtil.instantUTCStringToLocalDateString(roomTask.getDeadline()));
 
             if (roomTask.getState() == RoomTaskState.COMPLETED) {
                 itemHolder.buttonConfirm.setBackgroundTintList(ContextCompat.getColorStateList(getView().getContext(), R.color.toast_success));

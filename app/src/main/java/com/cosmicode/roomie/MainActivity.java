@@ -39,6 +39,7 @@ import com.cosmicode.roomie.view.MainProfileFragment;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.NewTaskFragment;
+import com.cosmicode.roomie.view.RoomStateFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -78,7 +79,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainEditRoom.OnFragmentInteractionListener,
         ListingBasicInformation.OnFragmentInteractionListener,
         ListingCost.OnFragmentInteractionListener,
-        ListingChooseLocation.OnFragmentInteractionListener{
+        ListingChooseLocation.OnFragmentInteractionListener,
+        RoomStateFragment.OnFragmentInteractionListener{
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
@@ -285,7 +287,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         AwesomeValidation mAwesomeValidation = new AwesomeValidation(BASIC);
         mAwesomeValidation.addValidation(reportDescription, "^.{4,}", getString(R.string.not_empty));
 
-        newaReportDialogBuilder.setTitle(R.string.report_a_problem)
+        newaReportDialogBuilder.setTitle(R.string.report_a_user)
                 .setIcon(R.drawable.icon_report_brand)
                 .setView(newReportLayout)
                 .setPositiveButton(R.string.send, (dialog, which) -> {

@@ -102,7 +102,6 @@
         android:hint="@string/event_headline"
         android:inputType="text"
         android:padding="16dp"
-        android:textColor="@color/primary"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/room_event_private"
         app:layout_constraintHorizontal_bias="1.0"
