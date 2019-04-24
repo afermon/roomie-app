@@ -3,6 +3,7 @@ package com.cosmicode.roomie;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.view.ExpenseList;
 import com.cosmicode.roomie.view.NewTaskFragment;
+import com.cosmicode.roomie.view.PremiumMembersList;
 import com.cosmicode.roomie.view.RoomCalendarFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.google.android.material.tabs.TabLayout;
@@ -16,13 +17,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, ExpenseList.OnFragmentInteractionListener {
+public class PremiumToolsAcitivity extends BaseActivity implements PremiumMembersList.OnFragmentInteractionListener, ToDoLIstFragment.OnFragmentInteractionListener, NewTaskFragment.OnFragmentInteractionListener, ExpenseList.OnFragmentInteractionListener {
 
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -86,6 +89,16 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
 
     }
 
+    @Override
+    public void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -111,6 +124,9 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
                 case 2:
                     fragment = RoomCalendarFragment.newInstance(room.getId());
                     break;
+                case 3:
+                    fragment = PremiumMembersList.newInstance(room);
+                    break;
                 default:
                     fragment = null;
             }
@@ -121,7 +137,7 @@ public class PremiumToolsAcitivity extends BaseActivity implements ToDoLIstFragm
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
     }
 }

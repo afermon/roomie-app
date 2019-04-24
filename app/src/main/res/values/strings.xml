@@ -371,4 +371,5 @@
     <string name="no_expenses">No expenses yet</string>
     <string name="splits">Splits</string>
     <string name="send_report_user">Report this Roomie</string>
+    <string name="room_memb">Room Members</string>
 </resources>
