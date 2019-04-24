@@ -347,7 +347,28 @@ public class NewExpenseFragment extends Fragment implements Validator.Validation
                     isValid = true;
                 }
 
-//                isValid = validateDates();
+                int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
+                int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString())*7;
+                double remainder = dayDif% totalDays;
+                if (dayDif!=0 && totalDays!=0){
+                    if(remainder == 0){
+
+                        isValid = true;
+
+                    }else{
+                        ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+
+//                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+                        expenseEndDate.setError("Incorrect date");
+                        isValid = false;
+                    }
+                }else {
+                    ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+//            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+                    expenseEndDate.setError("Incorrect date");
+                    isValid = false;
+                }
+
 
                 validator.validate();
                 break;
@@ -369,29 +390,6 @@ public class NewExpenseFragment extends Fragment implements Validator.Validation
         }
     }
 
-    public boolean validateDates() {
-        int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
-        int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString()) * 7;
-        double remainder = dayDif % totalDays;
-        if (dayDif != 0 && totalDays != 0) {
-            if (remainder == 0) {
-
-                return true;
-
-            } else {
-                ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
-                expenseEndDate.setError("Incorrect date");
-                showProgress(false, mainInfoView);
-                return false;
-            }
-        } else {
-            ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
-            expenseEndDate.setError("Incorrect date");
-            showProgress(false, mainInfoView);
-            return false;
-        }
-
-    }
 
     public DateTime formatDatefromTxt(String pdate) {
         DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy")

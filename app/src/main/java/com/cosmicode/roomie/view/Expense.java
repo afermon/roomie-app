@@ -229,7 +229,6 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
                 month++;
 
-                expenseStartDate.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -240,6 +239,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
                 if (dayOfMonth <= 9) {
                     dayS = "0" + dayOfMonth;
                 }
+                expenseStartDate.setText(dayS + "/" + monthS  + "/" + year);
                 dateStart = year + "-" + monthS + "-" + dayS;
             }
         };
@@ -250,7 +250,6 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
 
                 month++;
 
-                expenseEndDate.setText(dayOfMonth + "/" + month  + "/" + year);
                 String monthS, dayS;
                 monthS = Integer.toString(month);
                 dayS = Integer.toString(dayOfMonth);
@@ -261,6 +260,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
                 if (dayOfMonth <= 9) {
                     dayS = "0" + dayOfMonth;
                 }
+                expenseEndDate.setText(dayS + "/" + monthS  + "/" + year);
                 dateEnd = year + "-" + monthS + "-" + dayS;
             }
         };
@@ -406,39 +406,33 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             isValid = true;
         }
 
-//        isValid = validateDates();
-
-        validator.validate();
-
-        showProgress(true);
-    }
-
-    public boolean validateDates(){
         int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
         int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString())*7;
         double remainder = dayDif% totalDays;
         if (dayDif!=0 && totalDays!=0){
             if(remainder == 0){
 
-                return true;
+                isValid = true;
 
             }else{
                 ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
 
 //                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
                 expenseEndDate.setError("Incorrect date");
-                showProgress(false);
-                return false;
+                isValid = false;
             }
         }else {
             ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
 //            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
             expenseEndDate.setError("Incorrect date");
-            showProgress(false);
-            return false;
+            isValid = false;
         }
 
+        validator.validate();
+
+        showProgress(true);
     }
+
     public DateTime formatDatefromTxt(String pdate){
         DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy")
                 .withLocale(Locale.ROOT)
@@ -586,7 +580,7 @@ public class Expense extends Fragment implements RoomExpenseSplitService.RoomExp
             roomExpense.setFinishDate(getUsableDateForServer(expenseEndDate.getText().toString())+"T00:00:00Z");
             roomExpense.setStartDate(getUsableDateForServer(expenseStartDate.getText().toString())+"T00:00:00Z");
             roomExpense.setName(expenseName.getText().toString());
-            roomExpense.setRoomId(Long.parseLong("1"));
+            roomExpense.setRoomId(room.getId());
             roomExpense.setMonthDay(1);
             roomExpense.setPeriodicity(Integer.valueOf(expenseSpinner.getSelectedItem().toString()));
             roomExpenseService.updateExpense(roomExpense);
