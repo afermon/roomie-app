@@ -22,6 +22,7 @@ import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 
@@ -216,8 +217,12 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
                 Glide.with(getContext()).load(picture.getUrl()).centerCrop().into(holder.roomPinture);
             }
 
-            Address address = mValues.get(position).getAddress();
-            holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
+            if(mValues.get(position).getState() == RoomState.SEARCH){
+                holder.roomAddress.setText(String.format("%s","%s", "State:", "Published"));
+            }else{
+                holder.roomAddress.setText(String.format("%s","%s", "State:", "Inactive"));
+
+            }
 
             //Price
             RoomExpense price = mValues.get(position).getPrice();

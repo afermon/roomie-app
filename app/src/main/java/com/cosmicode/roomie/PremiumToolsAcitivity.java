@@ -99,6 +99,11 @@ public class PremiumToolsAcitivity extends BaseActivity implements PremiumMember
         }
     }
 
+    @Override
+    public void updateRoom(Room room) {
+        this.room = room;
+    }
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

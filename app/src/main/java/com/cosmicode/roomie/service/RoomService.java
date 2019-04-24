@@ -160,6 +160,31 @@ public class RoomService {
         });
     }
 
+    public void updateRoom(Room room){
+        RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+
+        Call<Room> call = apiService.updateRoomInfo(room);
+
+        call.enqueue(new Callback<Room>() {
+            @Override
+            public void onResponse(Call<Room> call, Response<Room> response) {
+                if (response.code() == 200) { // OK
+                    listener.OnUpdateSuccess(response.body());
+
+                } else {
+                    Log.e(TAG, response.toString());
+                    listener.OnGetRoomsError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Room> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.OnGetRoomsError(t.getMessage());
+            }
+        });
+    }
+
     public void updateRoomIndexing(RoomCreate room, Address address, RoomExpense expense) {
 
         RoomApiEndpointInterface apiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);

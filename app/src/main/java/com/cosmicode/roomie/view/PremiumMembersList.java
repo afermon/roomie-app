@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +32,13 @@ import com.cosmicode.roomie.ChoosePremiumMembers;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.Roomie;
+import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.util.listeners.OnGetRoomieByIdListener;
 
 import java.util.List;
 
-public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListener, RoomieService.OnGetCurrentRoomieListener {
+public class PremiumMembersList extends Fragment implements RoomService.RoomServiceListener, OnGetRoomieByIdListener, RoomieService.OnGetCurrentRoomieListener {
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
@@ -55,6 +58,7 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
     private Room room;
     private Roomie current;
     private RoomieService roomieService;
+    private RoomService roomService;
 
     public PremiumMembersList() {
         // Required empty public constructor
@@ -72,7 +76,16 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        room = getArguments().getParcelable(ROOM);
+        Log.d("room", room.toString());
         roomieService = new RoomieService(getContext(), this);
+        roomService = new RoomService(getContext(), this);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        showProgress(true);
         addMember.setOnClickListener(l -> {
             email.setError(null);
             if (email.getText().toString().equals("")) {
@@ -84,12 +97,6 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
             }
 
         });
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        showProgress(true);
         roomieService.getCurrentRoomie();
     }
 
@@ -168,13 +175,13 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
 
     @Override
     public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        showProgress(false);
         current = roomie;
         if (!current.getId().equals(room.getOwnerId())){
             title.setVisibility(View.GONE);
             email.setVisibility(View.GONE);
             addMember.setVisibility(View.GONE);
         }
-        room = getArguments().getParcelable(ROOM);
         members.setLayoutManager(new GridLayoutManager(getContext(), 4));
         mAdapter = new MembersAdapter(room.getRoomies());
         members.setAdapter(mAdapter);
@@ -229,11 +236,11 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
         @Override
         public void onBindViewHolder(final IconViewHolder holder, int position) {
             Roomie roomie = roomies.get(position);
-            holder.name.setText(roomie.getUser().getFirstName());
+//            holder.name.setText(roomie.getUser().getFirstName());
             if(current.getId().equals(roomie.getId())){
                 holder.remove.setVisibility(View.GONE);
             }
-            if(current.getId().equals(room.getOwnerId())){
+            if(!current.getId().equals(room.getOwnerId())){
                 holder.remove.setVisibility(View.GONE);
             }
             Glide.with(holder.itemView).load(roomie.getPicture()).centerCrop().into(holder.pfp);
@@ -253,5 +260,46 @@ public class PremiumMembersList extends Fragment implements OnGetRoomieByIdListe
 
     public interface OnFragmentInteractionListener {
         void hideKeyboard();
+        void updateRoom(Room room);
+    }
+
+    @OnClick(R.id.save_btn)
+    public void save(View view){
+        showProgress(true);
+        roomService.updateRoom(room);
+    }
+
+    @Override
+    public void OnCreateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void OnGetRoomsSuccess(List<Room> rooms) {
+
+    }
+
+    @Override
+    public void OnGetRoomsError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
+        showProgress(false);
+    }
+
+    @Override
+    public void OnUpdateSuccess(Room room) {
+        this.room = room;
+        ((BaseActivity) getContext()).showUserMessage("Members updated successfully", BaseActivity.SnackMessageType.SUCCESS);
+        mListener.updateRoom(this.room);
+        showProgress(false);
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
     }
 }

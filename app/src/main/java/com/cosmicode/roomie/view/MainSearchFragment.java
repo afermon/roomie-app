@@ -31,6 +31,7 @@ import com.cosmicode.roomie.domain.RoomFeature;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.cosmicode.roomie.service.RoomFeatureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
@@ -49,6 +50,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -451,6 +453,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         if (rooms.size() > 0) {
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            rooms = rooms.stream().filter(r -> r.getState() == RoomState.SEARCH).collect(Collectors.toList());
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, searchFilter.getLocation(), mListener, getContext()));
         } else {
             roomListRecyclerView.setAdapter(null);

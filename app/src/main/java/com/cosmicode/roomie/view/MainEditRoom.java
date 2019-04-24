@@ -116,6 +116,11 @@ public class MainEditRoom extends Fragment {
         mListener.openFragment(ListingChooseLocation.newInstance(roomCreate, true), "right");
     }
 
+    @OnClick(R.id.state_text)
+    public void editState(View view){
+        mListener.openFragment(RoomStateFragment.newInstance(roomCreate), "right");
+    }
+
     @OnClick(R.id.back_button)
     public void goBack(View view){
         getFragmentManager().popBackStack();

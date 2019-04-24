@@ -231,6 +231,7 @@
     <string name="subscriptions">Subscriptions</string>
     <string name="configuration">Configuration</string>
     <string name="report_a_problem">Report a problem</string>
+    <string name="report_a_user">Report this roomie</string>
     <string name="todo_notifications">ToDo List Notifications</string>
     <string name="calendar_notifications">Calendar Notifications</string>
     <string name="appointment_notifications">Appointments Notifications</string>
@@ -259,7 +260,7 @@
     <string name="amount_split">Amount</string>
     <string name="end_date">End date</string>
     <string name="start_date">Start date</string>
-    <string name="frecuency">Frecuency</string>
+    <string name="frecuency">Frequency</string>
     <string name="every">Every</string>
     <string name="week">Week</string>
     <string name="new_expense">New Expense</string>
@@ -372,4 +373,10 @@
     <string name="splits">Splits</string>
     <string name="send_report_user">Report this Roomie</string>
     <string name="room_memb">Room Members</string>
+    <string name="member_list">Member List</string>
+    <string name="state">Change State</string>
+    <string name="state_info">Change your rooms state, inactivating it will take it off the search results, you can republish it whenever you want!</string>
+    <string name="published">Published</string>
+    <string name="inactive">Inactive</string>
+    <string name="state_state">State</string>
 </resources>
