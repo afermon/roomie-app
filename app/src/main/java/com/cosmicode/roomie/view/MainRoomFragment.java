@@ -459,7 +459,8 @@ public class MainRoomFragment extends Fragment implements OnGetUserByIdListener,
                         TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.RoomieDialogTheme,
                                 (view2, hourOfDay, minute) -> {
                                     Log.d(TAG, hourOfDay + ":" + minute);
-                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", mDay, (mMonth + 1), mYear, mHour, mMinute));
+
+                                    appointmentDateTV.setText(String.format("%s/%s/%s %s:%s", mDay, (mMonth + 1), mYear, hourOfDay, minute));
                                 }, mHour, mMinute, false);
                         timePickerDialog.show();
                     }, mYear, mMonth, mDay);
