@@ -1,5 +1,6 @@
 package com.cosmicode.roomie;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -218,23 +219,28 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
         if (isValid) {
             showProgress(true);
             Stripe stripe = new Stripe(this, "pk_test_tvOqreoDBMCR33zFGuIpqwHM00njthUCtW");
-            stripe.createToken(
-                    card,
-                    new TokenCallback() {
-                        public void onSuccess(Token token) {
-                            Log.d("Payment", token.toString());
-                            roomService.payPremium(premiumRoom, token.getId());
-                        }
-
-                        public void onError(Exception error) {
-                            showProgress(false);
-                            showUserMessage(error.getMessage(), BaseActivity.SnackMessageType.ERROR);
-                        }
-                    }
-            );
-
+            stripe.createToken(card, mTokenCallback);
         }
     }
+
+    @NonNull private final TokenCallback mTokenCallback = new TokenCallback() {
+        @Override
+        public void onSuccess(Token token) {
+            Log.d("Stripe Token Success: ", token.toString());
+            roomService.payPremium(premiumRoom, token.getId());
+        }
+
+        @Override
+        public void onError(Exception error) {
+            showProgress(false);
+            if (error != null && error.getMessage().length() > 0) {
+                Log.d("Stripe Token Error: ", error.getLocalizedMessage());
+                showUserMessage(error.getMessage(), BaseActivity.SnackMessageType.ERROR);
+            }
+        }
+    };
+
+
 
     @Override
     public void onValidationFailed(List<ValidationError> errors) {
