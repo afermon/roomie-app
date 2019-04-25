@@ -19,10 +19,12 @@ import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.domain.UserReport;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.ReportType;
+import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.service.UserReportService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.RoomieTimeUtil;
+import com.cosmicode.roomie.util.listeners.OnGetPaymentInfo;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
 import com.cosmicode.roomie.view.ListingBasicInformation;
 import com.cosmicode.roomie.view.ListingChooseLocation;
@@ -80,7 +82,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         ListingBasicInformation.OnFragmentInteractionListener,
         ListingCost.OnFragmentInteractionListener,
         ListingChooseLocation.OnFragmentInteractionListener,
-        RoomStateFragment.OnFragmentInteractionListener{
+        RoomStateFragment.OnFragmentInteractionListener,
+        OnGetPaymentInfo {
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
@@ -94,6 +97,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     private Roomie currentRoomie;
     private MenuItem currentMenuItem;
     private SearchFilter searchFilter;
+    private RoomService roomService;
+    private Double price;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -109,6 +114,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
+        roomService = new RoomService(this);
+        roomService.getPayment(this);
         searchFilter = new SearchFilter("", 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
@@ -393,5 +400,19 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     public void newListing() {
         ListingStepChooseType typeFragment = ListingStepChooseType.newInstance();
         openFragment(typeFragment, "up");
+    }
+
+    public Double getAmount(){
+        return price;
+    }
+
+    @Override
+    public void onGetPaymentSuccess(Double amount) {
+        this.price = amount;
+    }
+
+    @Override
+    public void onGetPaymentError(String error) {
+
     }
 }

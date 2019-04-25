@@ -72,19 +72,21 @@ public class ListingStepChooseType extends Fragment {
     public void openFragment() {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
-        transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room, false) );
+        transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room, false));
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
     @OnClick(R.id.room_btn)
-    public void onClickRoom(View view){
+    public void onClickRoom(View view) {
         activeButton(roommate, rent, new Intent(getContext(), CreateListingActivity.class));
     }
 
     @OnClick(R.id.rent_btn)
-    public void onClickPremium(View view){
-        activeButton(rent, roommate, new Intent(getContext(), CreatePremiumRoom.class));
+    public void onClickPremium(View view) {
+        Intent intent = new Intent(getContext(), CreatePremiumRoom.class);
+        intent.putExtra("amount", mListener.getAmount());
+        activeButton(rent, roommate, intent);
     }
 
     public void activeButton(TextView active, TextView inactive, Intent intent) {
@@ -119,5 +121,7 @@ public class ListingStepChooseType extends Fragment {
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
+
+        Double getAmount();
     }
 }

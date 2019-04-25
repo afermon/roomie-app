@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -61,7 +62,7 @@ public class PremiumToolsAcitivity extends BaseActivity implements PremiumMember
 
     @OnClick(R.id.back_premium)
     public void goBack(View view){
-        finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override

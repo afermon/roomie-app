@@ -218,9 +218,9 @@ public class MainMyRoomsFragment extends Fragment implements OnGetOwnedRoomsList
             }
 
             if(mValues.get(position).getState() == RoomState.SEARCH){
-                holder.roomAddress.setText(String.format("%s","%s", "State:", "Published"));
+                holder.roomAddress.setText(String.format("%s %s", "State:", "Published"));
             }else{
-                holder.roomAddress.setText(String.format("%s","%s", "State:", "Inactive"));
+                holder.roomAddress.setText(String.format("%s %s", "State:", "Inactive"));
 
             }
 

@@ -240,6 +240,11 @@ public class ChoosePremiumMembers extends BaseActivity implements OnGetRoomieByI
 
     @OnClick(R.id.cancel_premium)
     public void cancelPremium (View view){
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    @OnClick(R.id.bk)
+    public void back(View view){
         finish();
     }
 }

@@ -10,6 +10,7 @@ import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
+import com.cosmicode.roomie.util.listeners.OnGetPaymentInfo;
 import com.cosmicode.roomie.util.listeners.OnPayPremiumListener;
 import com.cosmicode.roomie.util.network.ApiServiceGenerator;
 
@@ -79,6 +80,29 @@ public class RoomService {
             }
         });
 
+    }
+
+    public void getPayment(final OnGetPaymentInfo listener){
+        RoomApiEndpointInterface RoomApiService = ApiServiceGenerator.createService(RoomApiEndpointInterface.class, authToken);
+        Call<Double> call = RoomApiService.getPrice();
+
+        call.enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, Response<Double> response) {
+                if(response.code() == 200){
+                    listener.onGetPaymentSuccess(response.body());
+                }else{
+                    Log.e(TAG, response.toString());
+                    listener.onGetPaymentError(Integer.toString(response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                listener.onGetPaymentError(t.getMessage());
+            }
+        });
     }
 
     public void createRoom(RoomCreate room) {
@@ -255,14 +279,14 @@ public class RoomService {
 
                 }else{
                     Log.e(TAG, response.toString());
-                    listener.onPayError(Integer.toString(response.code()));
+                    listener.onPayError("Transaction failed, please try again");
                 }
             }
 
             @Override
             public void onFailure(Call<Room> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
-                listener.onPayError(t.getMessage());
+                listener.onPayError("Transaction failed, please try again");
             }
         });
     }
