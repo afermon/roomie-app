@@ -350,24 +350,24 @@ public class NewExpenseFragment extends Fragment implements Validator.Validation
                 int dayDif = Days.daysBetween(formatDatefromTxt(expenseStartDate.getText().toString()), formatDatefromTxt(expenseEndDate.getText().toString())).getDays();
                 int totalDays = Integer.parseInt(expenseSpinner.getSelectedItem().toString())*7;
                 double remainder = dayDif% totalDays;
-                if (dayDif!=0 && totalDays!=0){
-                    if(remainder == 0){
-
-                        isValid = true;
-
-                    }else{
-                        ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
-
-//                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
-                        expenseEndDate.setError("Incorrect date");
-                        isValid = false;
-                    }
-                }else {
-                    ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
-//            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
-                    expenseEndDate.setError("Incorrect date");
-                    isValid = false;
-                }
+//                if (dayDif!=0 && totalDays!=0){
+//                    if(remainder == 0){
+//
+//                        isValid = true;
+//
+//                    }else{
+//                        ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+//
+////                Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+//                        expenseEndDate.setError("Incorrect date");
+//                        isValid = false;
+//                    }
+//                }else {
+//                    ((BaseActivity) getContext()).showUserMessage(getString(R.string.no_valid_date), BaseActivity.SnackMessageType.ERROR);
+////            Toast.makeText(getContext(), R.string.no_valid_date , Toast.LENGTH_SHORT).show();
+//                    expenseEndDate.setError("Incorrect date");
+//                    isValid = false;
+//                }
 
 
                 validator.validate();
