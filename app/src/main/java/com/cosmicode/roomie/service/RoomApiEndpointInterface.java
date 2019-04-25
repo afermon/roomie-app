@@ -42,4 +42,7 @@ public interface RoomApiEndpointInterface {
 
     @GET("owned-premium-rooms/{id}")
     Call<List<Room>> getOwnedPremiumRooms(@Path("id") Long id);
+
+    @GET("price")
+    Call<Double> getPrice();
 }

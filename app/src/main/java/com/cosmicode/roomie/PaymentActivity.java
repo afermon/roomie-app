@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -174,7 +175,14 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
     }
 
     @OnClick(R.id.cancel_payment)
-    public void cancelPayment(View view){ finish();}
+    public void cancelPayment(View view) {
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    @OnClick(R.id.bk2)
+    public void back(View view) {
+        finish();
+    }
 
 
     @Override
@@ -192,33 +200,34 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
                 cvc.getText().toString()
         );
 
-        if(!card.validateNumber()) {
+        if (!card.validateNumber()) {
             cardNumber.setError("Invalid number");
             isValid = false;
         }
 
-        if(!card.validateExpiryDate()) {
+        if (!card.validateExpiryDate()) {
             expire.setError("Invalid date");
             isValid = false;
         }
 
-        if(!card.validateCVC()) {
+        if (!card.validateCVC()) {
             cvc.setError("Invalid CVC");
             isValid = false;
         }
 
-        if(isValid){
+        if (isValid) {
             showProgress(true);
             Stripe stripe = new Stripe(this, "pk_test_tvOqreoDBMCR33zFGuIpqwHM00njthUCtW");
             stripe.createToken(
                     card,
                     new TokenCallback() {
                         public void onSuccess(Token token) {
+                            Log.d("Payment", token.toString());
                             roomService.payPremium(premiumRoom, token.getId());
                         }
+
                         public void onError(Exception error) {
                             showProgress(false);
-                            // Show localized error message
                             showUserMessage(error.getMessage(), BaseActivity.SnackMessageType.ERROR);
                         }
                     }
@@ -272,6 +281,7 @@ public class PaymentActivity extends BaseActivity implements Validator.Validatio
 
     @Override
     public void onPayError(String error) {
+        showProgress(false);
         showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 

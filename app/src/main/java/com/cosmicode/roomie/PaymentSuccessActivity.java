@@ -24,6 +24,6 @@ public class PaymentSuccessActivity extends BaseActivity {
             startActivity(intent);
         });
         ImageButton cancelSuccess = findViewById(R.id.cancel_success);
-        cancelSuccess.setOnClickListener( l -> finish());
+        cancelSuccess.setOnClickListener( l -> startActivity(new Intent(this, MainActivity.class)));
     }
 }

@@ -73,4 +73,9 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         return this;
     }
 
+    @Override
+    public Double getAmount() {
+        return null;
+    }
+
 }

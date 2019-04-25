@@ -28,6 +28,7 @@ import com.cosmicode.roomie.ChooseLocationActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
+import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
@@ -454,6 +455,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             rooms = rooms.stream().filter(r -> r.getState() == RoomState.SEARCH).collect(Collectors.toList());
+            rooms = rooms.stream().filter(r -> r.getOwnerId() != mListener.getCurrentRoomie().getId()).collect(Collectors.toList());
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, searchFilter.getLocation(), mListener, getContext()));
         } else {
             roomListRecyclerView.setAdapter(null);
@@ -532,7 +534,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
-
+        Roomie getCurrentRoomie();
         void onSearchFragmentInteraction(Room item);
         void onSearchFilterUpdated(SearchFilter searchFilter);
     }
