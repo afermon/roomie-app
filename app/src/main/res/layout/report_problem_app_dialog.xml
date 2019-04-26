@@ -28,25 +28,18 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:background="@drawable/input_stroke"
         android:ems="10"
         android:hint="@string/what_went_wrong"
         android:inputType="textMultiLine"
         android:maxLength="220"
         android:maxLines="6"
+        android:padding="16dp"
         android:singleLine="false"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appointment_date_tv" />
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/report_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icon_message_text_brand" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.cosmicode.roomie.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.ChoosePremiumMembers;
 import com.cosmicode.roomie.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 

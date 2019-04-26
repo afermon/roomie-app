@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.cosmicode.roomie.domain.RoomCreate;
 import com.cosmicode.roomie.domain.RoomPicture;
 import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.RoomType;
+import com.cosmicode.roomie.service.AddressService;
 import com.cosmicode.roomie.service.RoomPictureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
@@ -72,11 +74,13 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_OK;
 
 
-public class ListingChooseLocation extends Fragment implements Validator.ValidationListener, RoomPictureService.OnCreatePictureListener, RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
+public class ListingChooseLocation extends Fragment implements AddressService.OnGetAdrressByIdListener, Validator.ValidationListener, RoomPictureService.OnCreatePictureListener, RoomieService.OnGetCurrentRoomieListener, RoomService.RoomServiceListener, OnMapReadyCallback, UploadPictureService.OnUploadPictureListener {
 
 
     private OnFragmentInteractionListener mListener;
     private static final String ROOM = "room";
+    private static final String IS_EDIT = "edit";
+    private Boolean isEdit;
     private RoomCreate room;
     public static final String CHOOSE_LOCATION_ADDRESS = "Address";
     public static final int REQUEST_MAP_CODE = 1;
@@ -90,6 +94,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     private UploadPictureService uploadPictureService;
     private RoomService roomService;
     private RoomieService roomieService;
+    private AddressService addressService;
     private RoomPictureService roomPictureService;
     private static int picAmount;
     private Validator validator;
@@ -110,16 +115,19 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     Button finish;
     @BindView(R.id.scroll_location)
     ScrollView scrollView;
+    @BindView(R.id.cancel_location)
+    ImageButton cancel;
 
     public ListingChooseLocation() {
         // Required empty public constructor
     }
 
 
-    public static ListingChooseLocation newInstance(RoomCreate room) {
+    public static ListingChooseLocation newInstance(RoomCreate room, Boolean editFlag) {
         ListingChooseLocation fragment = new ListingChooseLocation();
         Bundle args = new Bundle();
         args.putParcelable(ROOM, room);
+        args.putBoolean(IS_EDIT, editFlag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -129,15 +137,19 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             room = getArguments().getParcelable(ROOM);
+            isEdit = getArguments().getBoolean(IS_EDIT);
             room.setPictures(new ArrayList<>());
             uploadPictureService = new UploadPictureService(getContext(), this);
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
             roomService = new RoomService(getContext(), this);
             roomieService = new RoomieService(getContext(), this);
             roomPictureService = new RoomPictureService(getContext(), this);
-            picAmount = room.getPicturesUris().size();
+            if (!isEdit) {
+                picAmount = room.getPicturesUris().size();
+            }
             validator = new Validator(this);
             validator.setValidationListener(this);
+            addressService = new AddressService(getContext(), this);
             createLocationRequest();
         }
     }
@@ -160,6 +172,16 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
             desc.setText(room.getAddress().getDescription());
             notes.setText(room.getApoinmentsNotes());
             locationChanged = true;
+        }
+
+        if (isEdit) {
+            cancel.setVisibility(View.GONE);
+            finish.setText(getString(R.string.button_save));
+            scrollView.setPadding(0, 0, 0, 135);
+            scrollView.setClipToPadding(false);
+        } else {
+            cancel.setVisibility(View.VISIBLE);
+            finish.setText(getString(R.string.finish));
         }
 
         mapFragment.getMapAsync(this);
@@ -220,7 +242,11 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @OnClick(R.id.back_location)
     public void back(View view) {
         saveState();
-        mListener.openFragment(ListingChoosePictures.newInstance(room), "left");
+        if (isEdit) {
+            getFragmentManager().popBackStack();
+        } else {
+            mListener.openFragment(ListingChoosePictures.newInstance(room), "left");
+        }
     }
 
     @Override
@@ -356,14 +382,42 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @Override
     public void OnGetRoomsError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
     public void OnUpdateSuccess(Room room) {
         showProgress(false);
-        Toast.makeText(getContext(), "Room created successfully", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(getContext(), MainActivity.class));
+        if (isEdit) {
+            showProgress(false);
+            ((BaseActivity) getContext()).showUserMessage("Room updated successfully!", BaseActivity.SnackMessageType.SUCCESS);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getFragmentManager().popBackStack();
+                }
+            }, 1000);
+        } else {
+            ((BaseActivity) getContext()).showUserMessage("Room created successfully!", BaseActivity.SnackMessageType.SUCCESS);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(getContext(), MainActivity.class));
+                }
+            }, 1000);
+        }
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
+
     }
 
     @Override
@@ -405,7 +459,7 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @Override
     public void onGetCurrentRoomieError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -424,13 +478,18 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
     @Override
     public void onPictureError(String error) {
         showProgress(false);
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
     public void onValidationSucceeded() {
         showProgress(true);
-        roomieService.getCurrentRoomie();
+        saveState();
+        if (isEdit) {
+            addressService.updateAddress(room.getAddress());
+        } else {
+            roomieService.getCurrentRoomie();
+        }
     }
 
     @Override
@@ -446,6 +505,22 @@ public class ListingChooseLocation extends Fragment implements Validator.Validat
                 Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void onGetAddressByIdSuccess(Address address) {
+
+    }
+
+    @Override
+    public void onGetAddressByIdError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
+        showProgress(false);
+    }
+
+    @Override
+    public void onUpdateSuccess(Address address) {
+        roomService.updateRoom(room);
     }
 
     public interface OnFragmentInteractionListener {

@@ -106,6 +106,17 @@ public class Room implements Parcelable {
         this.pictures = pictures;
     }
 
+    public Room(RoomState state, String title, String description, Integer rooms, RoomType roomType, Boolean lookingForRoomie, String availableFrom, Boolean isPremium) {
+        this.state = state;
+        this.title = title;
+        this.description = description;
+        this.rooms = rooms;
+        this.roomType = roomType;
+        this.lookingForRoomie = lookingForRoomie;
+        this.availableFrom = availableFrom;
+        this.isPremium = isPremium;
+    }
+
     public Long getId() {
         return id;
     }

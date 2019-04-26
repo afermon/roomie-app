@@ -145,7 +145,31 @@ public class RoomExpense implements Parcelable {
         this.roomId = roomId;
     }
 
+    @Override
+    public String toString() {
+        return "RoomExpense{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", currency='" + getCurrency().toString() + '\'' +
+                ", amount='" + amount + '\'' +
+                ", monthDay=" + monthDay + '\'' +
+                ", startDate=" + startDate + '\'' +
+                ", finishDate=" + finishDate + '\'' +
+                ", roomId=" + roomId + '\'' +
+                '}';
 
+//        this.id = id;
+//        this.name = name;
+//        this.description = description;
+//        this.currency = currency;
+//        this.amount = amount;
+//        this.periodicity = periodicity;
+//        this.monthDay = monthDay;
+//        this.startDate = startDate;
+//        this.finishDate = finishDate;
+//        this.roomId = roomId;
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -190,4 +214,5 @@ public class RoomExpense implements Parcelable {
             return new RoomExpense[size];
         }
     };
+
 }

@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
@@ -224,14 +225,14 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
 
     @Override
     public void onRegisterSuccess() {
-        Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show();
+        showUserMessage("Registration complete!", SnackMessageType.SUCCESS);
         getJhiUsers().findByEmail(email.getText().toString(), this);
     }
 
     @Override
     public void onRegisterError(String error) {
         showProgress(false);
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
 
     }
 
@@ -245,7 +246,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @Override
     public void onGetUserError(String error) {
         showProgress(false);
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
     }
 
     @Override
@@ -253,8 +254,14 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
         showProgress(false);
         Intent intent;
         if (getIntent().getStringExtra(MainActivity.JHIUSER_EMAIL) != null) {
-            Toast.makeText(this, getString(R.string.success_info), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, MainActivity.class));
+            showUserMessage(getString(R.string.success_info), SnackMessageType.SUCCESS);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                }
+            }, 1000);
 
         } else {
             intent = new Intent(this, RegisterSuccess.class);
@@ -267,7 +274,7 @@ public class RegisterActivity extends BaseActivity implements OnRegisterListener
     @Override
     public void onCreateRoomieError(String error) {
         showProgress(false);
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
 
     }
 

@@ -140,7 +140,6 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/circle_button"
                 android:padding="10dp"
-                android:text="x2"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -179,6 +178,21 @@
                 app:layout_constraintEnd_toStartOf="@+id/room_distance"
                 app:layout_constraintTop_toTopOf="@+id/room_distance"
                 app:srcCompat="@drawable/icon_position_gray" />
+
+            <ImageView
+                android:id="@+id/edit_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/circle_button"
+                android:padding="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/room_picture"
+                app:srcCompat="@drawable/ic_profile_user_edit" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
