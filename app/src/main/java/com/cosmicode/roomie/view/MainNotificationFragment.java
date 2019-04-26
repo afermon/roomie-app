@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cosmicode.roomie.BaseActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Notification;
 import com.cosmicode.roomie.service.NotificationService;
@@ -110,7 +111,7 @@ public class MainNotificationFragment extends Fragment implements NotificationSe
 
     @Override
     public void OnGetNotificationsError(String error) {
-        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
         if(mListener != null)
             mListener.returnToHomeFragment();
     }

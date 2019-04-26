@@ -28,9 +28,11 @@ import com.cosmicode.roomie.ChooseLocationActivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomFeature;
+import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.FeatureType;
+import com.cosmicode.roomie.domain.enumeration.RoomState;
 import com.cosmicode.roomie.service.RoomFeatureService;
 import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.util.adapters.SearchRoomRecyclerViewAdapter;
@@ -49,6 +51,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -451,6 +454,8 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
         if (rooms.size() > 0) {
             noResults.setVisibility(View.GONE);
             roomListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            rooms = rooms.stream().filter(r -> r.getState() == RoomState.SEARCH).collect(Collectors.toList());
+            rooms = rooms.stream().filter(r -> r.getOwnerId() != mListener.getCurrentRoomie().getId()).collect(Collectors.toList());
             roomListRecyclerView.setAdapter(new SearchRoomRecyclerViewAdapter(rooms, searchFilter.getLocation(), mListener, getContext()));
         } else {
             roomListRecyclerView.setAdapter(null);
@@ -468,6 +473,16 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     @Override
     public void OnUpdateSuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPaySuccess(Room room) {
+
+    }
+
+    @Override
+    public void onPayError(String error) {
 
     }
 
@@ -519,7 +534,7 @@ public class MainSearchFragment extends Fragment implements RoomService.RoomServ
 
     public interface OnFragmentInteractionListener {
         BaseActivity getBaseActivity();
-
+        Roomie getCurrentRoomie();
         void onSearchFragmentInteraction(Room item);
         void onSearchFilterUpdated(SearchFilter searchFilter);
     }

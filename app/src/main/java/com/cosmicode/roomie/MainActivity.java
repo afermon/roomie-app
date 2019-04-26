@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -18,13 +19,20 @@ import com.cosmicode.roomie.domain.SearchFilter;
 import com.cosmicode.roomie.domain.UserReport;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.domain.enumeration.ReportType;
+import com.cosmicode.roomie.service.RoomService;
 import com.cosmicode.roomie.service.RoomieService;
 import com.cosmicode.roomie.service.UserReportService;
 import com.cosmicode.roomie.util.RoomieBottomNavigationView;
 import com.cosmicode.roomie.util.RoomieTimeUtil;
+import com.cosmicode.roomie.util.listeners.OnGetPaymentInfo;
 import com.cosmicode.roomie.util.listeners.OnGetUserEmailListener;
+import com.cosmicode.roomie.view.ListingBasicInformation;
+import com.cosmicode.roomie.view.ListingChooseLocation;
+import com.cosmicode.roomie.view.ListingCost;
+import com.cosmicode.roomie.view.ListingStepChooseType;
 import com.cosmicode.roomie.view.MainConfigurationFragment;
 import com.cosmicode.roomie.view.MainEditProfileFragment;
+import com.cosmicode.roomie.view.MainEditRoom;
 import com.cosmicode.roomie.view.MainMyRoomsFragment;
 import com.cosmicode.roomie.view.MainNotificationFragment;
 import com.cosmicode.roomie.view.MainOptionsBottomSheetDialogFragment;
@@ -33,6 +41,7 @@ import com.cosmicode.roomie.view.MainProfileFragment;
 import com.cosmicode.roomie.view.MainRoomFragment;
 import com.cosmicode.roomie.view.MainSearchFragment;
 import com.cosmicode.roomie.view.NewTaskFragment;
+import com.cosmicode.roomie.view.RoomStateFragment;
 import com.cosmicode.roomie.view.ToDoLIstFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -67,7 +76,14 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         MainRoomFragment.OnFragmentInteractionListener,
         MainMyRoomsFragment.OnFragmentInteractionListener,
         MainPremiumRooms.OnFragmentInteractionListener,
-        OnGetUserEmailListener {
+        ListingStepChooseType.OnFragmentInteractionListener,
+        OnGetUserEmailListener,
+        MainEditRoom.OnFragmentInteractionListener,
+        ListingBasicInformation.OnFragmentInteractionListener,
+        ListingCost.OnFragmentInteractionListener,
+        ListingChooseLocation.OnFragmentInteractionListener,
+        RoomStateFragment.OnFragmentInteractionListener,
+        OnGetPaymentInfo {
 
     public static final String JHIUSER_EMAIL = "jhiEmail";
     public static final String JHIUSER_ID = "jhiID";
@@ -81,6 +97,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
     private Roomie currentRoomie;
     private MenuItem currentMenuItem;
     private SearchFilter searchFilter;
+    private RoomService roomService;
+    private Double price;
 
     public static final Intent clearTopIntent(Context from) {
         Intent intent = new Intent(from, MainActivity.class);
@@ -96,6 +114,8 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         bottomNavigationView.showBadge(3);
         roomieService = new RoomieService(this, this);
         roomieService.getCurrentRoomie();
+        roomService = new RoomService(this);
+        roomService.getPayment(this);
         searchFilter = new SearchFilter("", 20, CurrencyType.DOLLAR, 100, 500, new ArrayList<>());
     }
 
@@ -127,7 +147,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         }
     }
 
-    private void openFragment(Fragment fragment, String start) {
+    public void openFragment(Fragment fragment, String start) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         switch (start) {
             case "left":
@@ -141,6 +161,21 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         transaction.replace(R.id.main_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void changePercentage(int progress) {
+
+    }
+
+    @Override
+    public void hideKeyboard() {
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public final void performLogout() {
@@ -259,7 +294,7 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
         AwesomeValidation mAwesomeValidation = new AwesomeValidation(BASIC);
         mAwesomeValidation.addValidation(reportDescription, "^.{4,}", getString(R.string.not_empty));
 
-        newaReportDialogBuilder.setTitle(R.string.report_a_problem)
+        newaReportDialogBuilder.setTitle(R.string.report_a_user)
                 .setIcon(R.drawable.icon_report_brand)
                 .setView(newReportLayout)
                 .setPositiveButton(R.string.send, (dialog, which) -> {
@@ -363,6 +398,21 @@ public class MainActivity extends BaseActivity implements RoomieService.OnGetCur
 
     @OnClick(R.id.navigation_view_add_fab)
     public void newListing() {
-        startActivity(new Intent(this, CreateListingActivity.class));
+        ListingStepChooseType typeFragment = ListingStepChooseType.newInstance();
+        openFragment(typeFragment, "up");
+    }
+
+    public Double getAmount(){
+        return price;
+    }
+
+    @Override
+    public void onGetPaymentSuccess(Double amount) {
+        this.price = amount;
+    }
+
+    @Override
+    public void onGetPaymentError(String error) {
+
     }
 }

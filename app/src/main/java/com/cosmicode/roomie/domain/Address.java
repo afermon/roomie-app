@@ -125,4 +125,15 @@ public class Address implements Parcelable {
             return new Address[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", location='" + location + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

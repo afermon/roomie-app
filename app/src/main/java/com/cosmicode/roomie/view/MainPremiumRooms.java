@@ -3,6 +3,7 @@ package com.cosmicode.roomie.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +11,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cosmicode.roomie.BaseActivity;
+import com.cosmicode.roomie.PremiumToolsAcitivity;
 import com.cosmicode.roomie.R;
 import com.cosmicode.roomie.domain.Address;
 import com.cosmicode.roomie.domain.Room;
 import com.cosmicode.roomie.domain.RoomExpense;
 import com.cosmicode.roomie.domain.RoomPicture;
+import com.cosmicode.roomie.domain.Roomie;
 import com.cosmicode.roomie.domain.enumeration.CurrencyType;
 import com.cosmicode.roomie.service.RoomService;
+import com.cosmicode.roomie.service.RoomieService;
+import com.cosmicode.roomie.util.listeners.OnGetOwnedRoomsListener;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -44,16 +50,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainPremiumRooms extends Fragment implements RoomService.RoomServiceListener {
+public class MainPremiumRooms extends Fragment implements OnGetOwnedRoomsListener, RoomieService.OnGetCurrentRoomieListener {
 
     private OnFragmentInteractionListener mListener;
     private RoomService roomService;
+    private RoomieService roomieService;
     @BindView(R.id.prem_rooms_cont)
     ConstraintLayout cont;
     @BindView(R.id.prem_recycler)
     RecyclerView premRecycler;
     @BindView(R.id.progress)
     ProgressBar progressBar;
+    @BindView(R.id.no_premium)
+    TextView noPremium;
 
     public MainPremiumRooms() {
         // Required empty public constructor
@@ -74,7 +83,8 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        roomService = new RoomService(getContext(), this);
+        roomService = new RoomService(getContext());
+        roomieService = new RoomieService(getContext(), this);
     }
 
     @Override
@@ -89,8 +99,9 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        roomieService.getCurrentRoomie();
         showProgress(true);
-        roomService.getAllRooms();
+
     }
 
     @Override
@@ -110,6 +121,38 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
         mListener = null;
     }
 
+    @Override
+    public void onGetOwnedRoomsSuccess(List<Room> rooms) {
+        if(rooms.isEmpty()){
+            noPremium.setVisibility(View.VISIBLE);
+        }else{
+            premRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+            premRecycler.setAdapter(new PremRoomsAdapter(rooms));
+            noPremium.setVisibility(View.GONE);
+        }
+        showProgress(false);
+    }
+
+    @Override
+    public void onGetOwnedRoomsError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
+    }
+
+    @Override
+    public void onGetCurrentRoomieSuccess(Roomie roomie) {
+        roomService.getOwnedPremiumRooms(roomie.getId(), this);
+    }
+
+    @Override
+    public void onGetCurrentRoomieError(String error) {
+        ((BaseActivity) getContext()).showUserMessage(error, BaseActivity.SnackMessageType.ERROR);
+    }
+
+    @Override
+    public void OnUpdateSuccess(Roomie roomie) {
+
+    }
+
     public class PremRoomsAdapter extends RecyclerView.Adapter<PremRoomsAdapter.ViewHolder> {
 
         private final List<Room> mValues;
@@ -121,7 +164,7 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.home_room_item, parent, false);
+                    .inflate(R.layout.premium_room_item, parent, false);
             return new ViewHolder(view);
         }
 
@@ -129,63 +172,21 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.roomTitle.setText(mValues.get(position).getTitle());
-            holder.roomCount.setText(String.format("x%d", mValues.get(position).getRooms()));
+            holder.members.setText(Integer.toString(mValues.get(position).getRooms()));
+            holder.card.setOnClickListener(l -> {
+                        Intent intent = new Intent(getActivity(), PremiumToolsAcitivity.class);
+                        intent.putExtra("room", mValues.get(position));
+                        startActivity(intent);
+                    });
 
-            holder.roomAvailableFrom.setText(mValues.get(position).getAvailableFrom());
-
-            holder.roomCard.setOnClickListener(l -> {
-                ToDoLIstFragment toDoLIstFragment = ToDoLIstFragment.newInstance(mValues.get(position).getId());
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_container, toDoLIstFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            });
-
-
-            RoomPicture picture = mValues.get(position).getMainPicture();
-            if (picture != null) {
-                Glide.with(getContext()).load(picture.getUrl()).centerCrop().into(holder.roomPinture);
-            }
-
-            Address address = mValues.get(position).getAddress();
-            holder.roomAddress.setText(String.format("%s, %s", address.getCity(), address.getState()));
-
-            //Price
-            RoomExpense price = mValues.get(position).getPrice();
-            Double priceUser = price.getAmount(); /// mValues.get(position).getRooms(); // Price per user
-            if (price.getCurrency() == CurrencyType.DOLLAR) {
-                holder.roomPrice.setText(String.format("%s %s %s", "$", priceUser.intValue(), "USD"));
-            } else {
-                holder.roomPrice.setText(String.format("%s %s %s", "₡", priceUser.intValue(), "CRC"));
-            }
-
-            holder.roomDistance.setVisibility(View.GONE);
-
-
-            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-            DateTime published = dateTimeFormatter.parseDateTime(mValues.get(position).getPublished());
-            DateTime now = new DateTime();
-            Period period = new Period(published, now);
-
-            PeriodFormatterBuilder builder = new PeriodFormatterBuilder();
-
-            if (period.getYears() != 0) {
-                builder.appendYears().appendSuffix(getString(R.string.time_year), getString(R.string.time_years));
-            } else if (period.getMonths() != 0) {
-                builder.appendMonths().appendSuffix(getString(R.string.time_month), getString(R.string.time_months));
-            } else if (period.getDays() != 0) {
-                builder.appendDays().appendSuffix(getString(R.string.time_day), getString(R.string.time_days));
-            } else if (period.getHours() != 0) {
-                builder.appendHours().appendSuffix(getString(R.string.time_hour), getString(R.string.time_hours));
-            } else if (period.getMinutes() != 0) {
-                builder.appendMinutes().appendSuffix(getString(R.string.time_minute), getString(R.string.time_minutes));
-            } else if (period.getSeconds() != 0) {
-                builder.appendSeconds().appendSuffix(getString(R.string.time_second), getString(R.string.time_seconds));
-            }
-            PeriodFormatter formatter = builder.printZeroNever().toFormatter();
-            String elapsed = formatter.print(period);
-            holder.loc.setVisibility(View.GONE);
-            holder.roomPublished.setText(elapsed);
+//            holder.roomCard.setOnClickListener(l -> {
+//                ExpenseList newExpenseFragment = ExpenseList.newInstance(mValues.get(position));
+//                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.main_container, newExpenseFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//
+//            });
 
         }
 
@@ -196,26 +197,12 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            @BindView(R.id.room_picture)
-            ImageView roomPinture;
-            @BindView(R.id.room_price)
-            TextView roomPrice;
             @BindView(R.id.room_title)
             TextView roomTitle;
-            @BindView(R.id.room_address)
-            TextView roomAddress;
-            @BindView(R.id.room_available)
-            TextView roomAvailableFrom;
-            @BindView(R.id.room_published)
-            TextView roomPublished;
-            @BindView(R.id.room_count)
-            TextView roomCount;
-            @BindView(R.id.room_distance)
-            TextView roomDistance;
-            @BindView(R.id.room_card)
-            CardView roomCard;
-            @BindView(R.id.imageView6)
-            ImageView loc;
+            @BindView(R.id.members)
+            TextView members;
+            @BindView(R.id.premium_card)
+            CardView card;
 
             public Room mItem;
 
@@ -230,30 +217,6 @@ public class MainPremiumRooms extends Fragment implements RoomService.RoomServic
                 return super.toString() + " '" + mItem.toString() + "'";
             }
         }
-    }
-
-    @Override
-    public void OnCreateSuccess(Room room) {
-
-    }
-
-    @Override
-    public void OnGetRoomsSuccess(List<Room> rooms) {
-        List<Room> premium = new ArrayList<>();
-        premium.add(rooms.get(0));
-        premRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        premRecycler.setAdapter(new PremRoomsAdapter(premium));
-        showProgress(false);
-    }
-
-    @Override
-    public void OnGetRoomsError(String error) {
-
-    }
-
-    @Override
-    public void OnUpdateSuccess(Room room) {
-
     }
 
     public interface OnFragmentInteractionListener {

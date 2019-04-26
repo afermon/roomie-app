@@ -28,9 +28,21 @@ public interface RoomApiEndpointInterface {
     @PUT("rooms")
     Call<Room> updateRoom(@Body RoomCreate room);
 
+    @PUT("rooms")
+    Call<Room> updateRoomInfo(@Body Room room);
+
     @POST("_search/rooms/advanced")
     Call<List<Room>> searchRoomsAdvanced(@Body SearchFilter searchFilter);
 
     @GET("owned-rooms/{id}")
     Call<List<Room>> getOwnedRooms(@Path("id") Long id);
+
+    @POST("pay-room/{token}")
+    Call<Room> payPremium(@Body Room room, @Path("token") String token);
+
+    @GET("owned-premium-rooms/{id}")
+    Call<List<Room>> getOwnedPremiumRooms(@Path("id") Long id);
+
+    @GET("price")
+    Call<Double> getPrice();
 }

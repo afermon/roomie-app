@@ -35,7 +35,7 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
         room.setPicturesUris(null);
         stepBar = findViewById(R.id.step_bar);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room));
+        transaction.replace(R.id.listing_container, ListingBasicInformation.newInstance(room, false));
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -71,6 +71,11 @@ public class CreateListingActivity extends BaseActivity implements ListingChoose
 
     public BaseActivity getBaseActivity() {
         return this;
+    }
+
+    @Override
+    public Double getAmount() {
+        return null;
     }
 
 }
