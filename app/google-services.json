@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "750035731549",
+    "project_number": "PJ",
     "firebase_url": "https://authentic-wharf-233518.firebaseio.com",
-    "project_id": "authentic-wharf-233518",
-    "storage_bucket": "authentic-wharf-233518.appspot.com"
+    "project_id": "PID",
+    "storage_bucket": "STORAGE_BUCKECT"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:750035731549:android:45531b26184e7c21",
+        "mobilesdk_app_id": "XXXXXXXXXXX",
         "android_client_info": {
           "package_name": "com.cosmicode.roomie"
         }
       },
       "oauth_client": [
         {
-          "client_id": "750035731549-upjmrm7ujtqpkppaf7v9qbdibjcq70qq.apps.googleusercontent.com",
+          "client_id": "client-id",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBwik2BnaUTpZBVGBgDwyby3OzDSTG0NjM"
+          "current_key": "KEY"
         }
       ],
       "services": {
