@@ -8,11 +8,11 @@
     <string name="roomie_api_server_local" translatable="false">http://10.0.2.1:8080/api/</string>
 
     <!-- Facebook login -->
-    <string name="fb_login_protocol_scheme" translatable="false">fb235433017402895</string>
-    <string name="facebook_app_id" translatable="false">235433017402895</string>
+    <string name="fb_login_protocol_scheme" translatable="false">XXXXXXXXXXXXXX</string>
+    <string name="facebook_app_id" translatable="false">XXXXXXXXXXX</string>
 
     <!-- Google login -->
-    <string name="default_web_client_id2" translatable="false">64621209556-l09m88enb8afsn04sbeb111shpoq1etf.apps.googleusercontent.com</string>
+    <string name="default_web_client_id2" translatable="false">XXXXXXXXXXXXXX.apps.googleusercontent.com</string>
 
     <!--Profile-->
     <string name="profile_gender_age">Gender: %1$s\u0020\u0020\u0020\u0020Age: %2$s</string>
